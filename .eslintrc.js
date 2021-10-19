@@ -32,5 +32,6 @@ module.exports = {
         tsx: 'never',
       },
     ],
+    'linebreak-style': 0,
   },
 };
