@@ -39,5 +39,5 @@ We are creating a social networking application where users will be able to crea
 Dhruv Pai   dhruv.k.pai@gmail.com
 John Angelidis
 Ishrat Singh
-Nick Yglesias
+Nick Yglesias   nyglesias64@outlook.com
 Ethan Schimelman
