@@ -40,4 +40,4 @@ Dhruv Pai   dhruv.k.pai@gmail.com
 John Angelidis
 Ishrat Singh
 Nick Yglesias
-Ethan Schimelman
+Ethan Schimelman    eschimelman@gmail.com
