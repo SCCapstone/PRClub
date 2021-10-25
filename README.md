@@ -44,5 +44,5 @@ TODO
 - Dhruv Pai (dhruv.k.pai@gmail.com)
 - John Angelidis
 - Ishrat Singh (ishrat512@icloud.com)
-- Nick Yglesias
+- Nick Yglesias  (nyglesias64@outlook.com)
 - Ethan Schimelman (eschimelman@gmail.com)
