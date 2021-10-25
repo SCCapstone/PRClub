@@ -7,6 +7,7 @@ export default function App() {
     <View style={styles.container}>
       <Text>Open up App.tsx to start working on your app!</Text>
       <Text>Ish&apos;s Branch</Text>
+      <Text> Ethan&apos;s branch</Text>
       <StatusBar />
     </View>
   );
