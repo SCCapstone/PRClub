@@ -26,7 +26,7 @@ We are creating a social networking application where users will be able to crea
 2. Run `npm install`.
 
 ## Running
-Run `expo start` from the root directory of this repository
+Run `expo start` from the root directory of this repository.
 
 ## Deployment
 TODO
