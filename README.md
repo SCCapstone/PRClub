@@ -43,6 +43,6 @@ TODO
 # Authors
 - Dhruv Pai (dhruv.k.pai@gmail.com)
 - John Angelidis
-- Ishrat Singh (ishrat512@icloud.com)
+- Ishrat Singh ( ishrat512@icloud.com)
 - Nick Yglesias
 - Ethan Schimelman (eschimelman@gmail.com)
