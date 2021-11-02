@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: deepakputhraya/action-branch-name@v1.0.0
         with:
-          regex: "(\b[a-z0-9]+(?:['-]?[a-z0-9]+)*\b)"
+          regex: "^([a-z]+)\/(\b[a-z0-9]+(?:['-]?[a-z0-9]+)*\b)$"
           allowed_prefixes: 'feature,fix'
           ignore: main
           min_length: 5
