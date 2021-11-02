@@ -1,0 +1,19 @@
+name: CI
+on:
+  pull_request:
+    branches: [ main ]
+jobs:
+  ci:
+    name: Continuous Integration
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: npx eslint . --ext .js,.jsx,.ts,.tsx
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+      - uses: expo/expo-github-action@v6
+        with:
+          expo-version: 4.x
+      - run: npm install
+      - run: expo build:web
