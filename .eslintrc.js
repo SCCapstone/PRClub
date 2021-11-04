@@ -33,5 +33,8 @@ module.exports = {
       },
     ],
     'linebreak-style': 0,
+    semi: 'off',
+    '@typescript-eslint/semi': ['error'],
+    'no-param-reassign': ['error', { props: false }],
   },
 };
