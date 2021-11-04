@@ -1,8 +1,7 @@
 import produce from 'immer';
 import React, { useState } from 'react';
 import { View } from 'react-native';
-import { Button, Text } from 'react-native-elements';
-import { Input } from 'react-native-elements/dist/input/Input';
+import { Button, Text, Input } from 'react-native-elements';
 import tw from 'twrnc';
 import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
