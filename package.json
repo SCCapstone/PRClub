@@ -25,7 +25,9 @@
     "react-native-vector-icons": "^9.0.0",
     "react-native-web": "~0.13.12",
     "twrnc": "^2.0.3",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "expo-image-picker": "~10.2.2",
+    "expo-constants": "~11.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",
