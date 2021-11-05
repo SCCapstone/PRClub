@@ -8,18 +8,18 @@ import ExerciseForm from './ExerciseForm';
 export default function CreateWorkoutForm() {
   const [image, setImage] = useState<any | null>(null);
   useEffect(() => {
-    const grantPermission = async () => {
+    async function grantPermission() {
       if (Platform.OS !== 'web') {
         await ImagePicker.requestMediaLibraryPermissionsAsync();
         // if (status !== 'granted') {
         //   alert('Permission denied');
         // }
       }
-    };
+    }
     grantPermission();
   }, []);
 
-  const PickImage = async () => {
+  async function pickImage() {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
@@ -30,20 +30,19 @@ export default function CreateWorkoutForm() {
     if (!result.cancelled) {
       setImage(result.uri);
     }
-  };
+  }
   return (
     <>
       <>
         <Input
           placeholder="workout name"
         />
-        <Button title="Choose Image" onPress={PickImage} />
+        {/* eslint-disable-next-line react/jsx-no-bind */}
+        <Button title="Choose Image" onPress={pickImage} />
         {image && (
         <Image
           source={{ uri: image }}
-          style={{
-            width: 200, height: 200, margin: 'auto',
-          }}
+          style={tw`mx-auto h-2/4 w-2/4`}
         />
         ) }
         <ExerciseForm />
