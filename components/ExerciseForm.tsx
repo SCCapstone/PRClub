@@ -7,7 +7,7 @@ import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
 import { useSelector } from 'react-redux';
 import ExerciseSet from '../models/ExerciseSet';
-import { upsertExerciseSet, deleteExerciseSet, selectExerciseSets } from '../redux/slices/exerciseSetsSlice';
+import { deleteExerciseSet, selectExerciseSets, upsertExerciseSet } from '../redux/slices/exerciseSetsSlice';
 import { useAppDispatch } from '../hooks/redux';
 
 export default function ExerciseForm() {
@@ -16,8 +16,8 @@ export default function ExerciseForm() {
   const [currRepsInput, setCurrRepsInput] = useState<string>('');
   const [currSet, setCurrSet] = useState<ExerciseSet>({ id: uuidv4(), weight: -1, reps: -1 });
 
-  const exerciseSets = useSelector(selectExerciseSets);
   const dispatch = useAppDispatch();
+  const exerciseSets = useSelector(selectExerciseSets);
 
   return (
     <View style={tw`bg-gray-300`}>
