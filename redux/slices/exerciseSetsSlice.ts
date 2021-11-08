@@ -33,5 +33,9 @@ export const { upsertExerciseSet, deleteExerciseSet } = exerciseSetsSlice.action
 
 export const selectExerciseSets = (state: RootState) => state.exerciseSets.exerciseSets;
 
+export function selectExerciseSetsForExercise(exerciseId: string) {
+  return (state: RootState) => state.exerciseSets.exerciseSets.filter((e) => exerciseId === e.id);
+}
+
 const exerciseSetsReducer = exerciseSetsSlice.reducer;
 export default exerciseSetsReducer;
