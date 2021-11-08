@@ -5,14 +5,19 @@ import { Button, Text, Input } from 'react-native-elements';
 import tw from 'twrnc';
 import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
+import { useSelector } from 'react-redux';
 import ExerciseSet from '../models/ExerciseSet';
+import { addExerciseSet, deleteExerciseSet, selectExerciseSets } from '../redux/slices/exerciseSetsSlice';
+import { useAppDispatch } from '../hooks/redux';
 
 export default function ExerciseForm() {
   const [name, setName] = useState<string>('');
-  const [sets, setSets] = useState<ExerciseSet[]>([]);
   const [currWeightInput, setCurrWeightInput] = useState<string>('');
   const [currRepsInput, setCurrRepsInput] = useState<string>('');
   const [currSet, setCurrSet] = useState<ExerciseSet>({ id: uuidv4(), weight: -1, reps: -1 });
+
+  const exerciseSets = useSelector(selectExerciseSets);
+  const dispatch = useAppDispatch();
 
   return (
     <View style={tw`bg-gray-300`}>
@@ -35,7 +40,7 @@ export default function ExerciseForm() {
           <View style={{ flex: 1 }} />
         </View>
         {
-        sets.map((set, i) => (
+        exerciseSets.map((set, i) => (
           <View key={set.id} style={{ flexDirection: 'row' }}>
             <View style={{ flex: 1 }}>
               <Text style={tw`text-center text-xl`}>{i + 1}</Text>
@@ -59,7 +64,7 @@ export default function ExerciseForm() {
                   color: 'white',
                 }}
                 buttonStyle={tw`bg-red-500`}
-                onPress={() => setSets(sets.filter((s) => s.id !== set.id))}
+                onPress={() => dispatch(deleteExerciseSet(set))}
               />
             </View>
           </View>
@@ -67,7 +72,7 @@ export default function ExerciseForm() {
       }
         <View style={{ flexDirection: 'row' }}>
           <View style={{ flex: 1 }}>
-            <Text style={tw`text-center text-xl`}>{sets.length + 1}</Text>
+            <Text style={tw`text-center text-xl`}>{exerciseSets.length + 1}</Text>
           </View>
           <View style={{ flex: 3 }}>
             <Input
@@ -104,7 +109,7 @@ export default function ExerciseForm() {
               buttonStyle={tw`bg-purple-500`}
               onPress={() => {
                 if (currSet.weight >= 0 && currSet.reps >= 0) {
-                  setSets([...sets, currSet]);
+                  dispatch(addExerciseSet(currSet));
                   setCurrSet(produce(currSet, (draft) => { draft.id = uuidv4(); }));
                 }
               }}
