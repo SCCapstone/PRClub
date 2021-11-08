@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Platform, Image } from 'react-native';
+import { Platform, Image } from 'react-native';
 import { Button, Input } from 'react-native-elements';
 import tw from 'twrnc';
 import * as ImagePicker from 'expo-image-picker';
-import ExerciseForm from './ExerciseForm';
+import ExercisesInput from './ExercisesInput';
 
 export default function CreateWorkoutForm() {
   const [image, setImage] = useState<any | null>(null);
@@ -45,17 +45,8 @@ export default function CreateWorkoutForm() {
           style={tw`mx-auto h-2/4 w-2/4`}
         />
         ) }
-        <ExerciseForm />
-        <Button
-          title="add exercise"
-          icon={{
-            name: 'add',
-            color: 'white',
-          }}
-          buttonStyle={tw`bg-green-500`}
-        />
       </>
-      <View style={tw`pt-5`} />
+      <ExercisesInput />
       <Button
         title="submit"
       />
