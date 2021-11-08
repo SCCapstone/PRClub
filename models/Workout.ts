@@ -5,4 +5,5 @@ export default interface Workout {
     date: Date;
     name: string;
     exercises: Exercise[];
+    image?: string;
 }
