@@ -15,8 +15,13 @@ const exercisesSlice = createSlice({
   name: 'exercises',
   initialState,
   reducers: {
-    addExercise: (state, action: PayloadAction<Exercise>) => {
-      state.exercises = [...state.exercises, action.payload];
+    upsertExercise: (state, action: PayloadAction<Exercise>) => {
+      const i = state.exercises.findIndex((e) => e.id === action.payload.id);
+      if (i >= 0) {
+        state.exercises[i] = action.payload;
+      } else {
+        state.exercises = [...state.exercises, action.payload];
+      }
     },
     deleteExercise: (state, action: PayloadAction<Exercise>) => {
       state.exercises = state.exercises.filter((e) => e.id !== action.payload.id);
@@ -24,7 +29,7 @@ const exercisesSlice = createSlice({
   },
 });
 
-export const { addExercise, deleteExercise } = exercisesSlice.actions;
+export const { upsertExercise, deleteExercise } = exercisesSlice.actions;
 
 export const selectExercises = (state: RootState) => state.exercises.exercises;
 

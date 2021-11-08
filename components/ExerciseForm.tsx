@@ -7,7 +7,7 @@ import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
 import { useSelector } from 'react-redux';
 import ExerciseSet from '../models/ExerciseSet';
-import { addExerciseSet, deleteExerciseSet, selectExerciseSets } from '../redux/slices/exerciseSetsSlice';
+import { upsertExerciseSet, deleteExerciseSet, selectExerciseSets } from '../redux/slices/exerciseSetsSlice';
 import { useAppDispatch } from '../hooks/redux';
 
 export default function ExerciseForm() {
@@ -109,7 +109,7 @@ export default function ExerciseForm() {
               buttonStyle={tw`bg-purple-500`}
               onPress={() => {
                 if (currSet.weight >= 0 && currSet.reps >= 0) {
-                  dispatch(addExerciseSet(currSet));
+                  dispatch(upsertExerciseSet(currSet));
                   setCurrSet(produce(currSet, (draft) => { draft.id = uuidv4(); }));
                 }
               }}
