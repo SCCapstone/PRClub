@@ -11,28 +11,19 @@ import Workouts from './Workouts';
 import PR from './PR';
 
 export default function Profile() {
-  const [state, setState] = useState<any | null>('posts');
-  function showFollowers() {
-    setState('followers');
-  }
+  const Tab = {
+    Followers: <Followers />,
+    Posts: <Posts />,
+    Workouts: <Workouts />,
+    PRs: <PR />,
+  };
 
-  function showPosts() {
-    setState('posts');
-  }
-
-  function showWorkouts() {
-    setState('workouts');
-  }
-
-  function showPR() {
-    setState('pr');
-  }
-
+  const [currTab, setCurrTab] = useState<any | null>(Tab.Workouts);
   return (
     <View>
       <View style={tw`bg-gray-800`}>
         <View style={tw`flex-row m-auto p-10`}>
-          <TouchableHighlight onPress={showPosts}>
+          <TouchableHighlight onPress={() => setCurrTab(Tab.Posts)}>
             <View style={tw``}>
               <Text style={tw`text-3xl text-center text-white`}>90</Text>
               <Text style={tw`text-xl text-center text-white`}>Posts</Text>
@@ -42,7 +33,7 @@ export default function Profile() {
             {/* eslint-disable-next-line global-require */}
             <Image source={require('../assets/profile.jfif')} style={tw`m-auto h-32 w-32 ml-8 mr-8 rounded-full border-black border-4`} />
           </View>
-          <TouchableHighlight onPress={showPR}>
+          <TouchableHighlight onPress={() => setCurrTab(Tab.PRs)}>
             <View style={tw``}>
               <Text style={tw`text-3xl text-center text-white`}>23</Text>
               <Text style={tw`text-xl text-center text-white`}>PRs</Text>
@@ -54,30 +45,19 @@ export default function Profile() {
           <Text style={tw`text-base text-white`}> @FullName </Text>
         </View>
         <View style={tw`flex-row items-center justify-center`}>
-          <TouchableHighlight onPress={showFollowers}>
+          <TouchableHighlight onPress={() => setCurrTab(Tab.Followers)}>
             <Ionicons name="people" size={35} color="white" />
           </TouchableHighlight>
-          <TouchableHighlight onPress={showPosts} style={tw`ml-5 mr-5`}>
+          <TouchableHighlight onPress={() => setCurrTab(Tab.Posts)} style={tw`ml-5 mr-5`}>
             <Ionicons name="images" size={35} color="white" />
           </TouchableHighlight>
-          <TouchableHighlight onPress={showWorkouts}>
+          <TouchableHighlight onPress={() => setCurrTab(Tab.Workouts)}>
             <Ionicons name="barbell" size={35} color="white" />
           </TouchableHighlight>
         </View>
       </View>
       <View>
-        {state === 'followers' && (
-        <Followers />
-        )}
-        {state === 'posts' && (
-        <Posts />
-        )}
-        {state === 'pr' && (
-        <PR />
-        )}
-        {state === 'workouts' && (
-        <Workouts />
-        )}
+        {currTab}
       </View>
     </View>
   );
