@@ -1,3 +1,6 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-shadow */
+/* eslint-disable no-nested-ternary */
 /* eslint-disable react/jsx-no-bind */
 import React, { useState } from 'react';
 import {
@@ -8,17 +11,16 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Followers from './Followers';
 import Posts from './Posts';
 import Workouts from './Workouts';
-import PR from './PR';
+import PRs from './PRs';
 
+enum Tab {
+  Followers,
+  Workouts,
+  PRs,
+  Posts
+}
 export default function Profile() {
-  const Tab = {
-    Followers: <Followers />,
-    Posts: <Posts />,
-    Workouts: <Workouts />,
-    PRs: <PR />,
-  };
-
-  const [currTab, setCurrTab] = useState<any | null>(Tab.Workouts);
+  const [currTab, setCurrTab] = useState<Tab>(Tab.Workouts);
   return (
     <View>
       <View style={tw`bg-gray-800`}>
@@ -57,7 +59,17 @@ export default function Profile() {
         </View>
       </View>
       <View>
-        {currTab}
+        {
+          currTab === Tab.Workouts
+            ? <Workouts />
+            : currTab === Tab.PRs
+              ? <PRs />
+              : currTab === Tab.Posts
+                ? <Posts />
+                : currTab === Tab.Followers
+                  ? <Followers />
+                  : <></>
+        }
       </View>
     </View>
   );
