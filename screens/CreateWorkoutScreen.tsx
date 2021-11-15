@@ -1,11 +1,11 @@
 import React from 'react';
-import { View } from 'react-native';
+import { ScrollView } from 'react-native';
 import CreateWorkoutForm from '../components/CreateWorkoutForm';
 
 export default function CreateWorkoutScreen() {
   return (
-    <View>
+    <ScrollView>
       <CreateWorkoutForm />
-    </View>
+    </ScrollView>
   );
 }
