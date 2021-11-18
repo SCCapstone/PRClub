@@ -7,6 +7,9 @@ module.exports = {
     'plugin:react/recommended',
     'airbnb',
     'plugin:import/typescript',
+    'eslint:recommended',
+    'plugin:@typescript-eslint/eslint-recommended',
+    'plugin:@typescript-eslint/recommended',
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -37,5 +40,8 @@ module.exports = {
     '@typescript-eslint/semi': ['error'],
     'no-param-reassign': ['error', { props: false }],
     'import/no-named-as-default': 0,
+    'no-shadow': 'off',
+    '@typescript-eslint/no-shadow': ['error'],
+    '@typescript-eslint/no-explicit-any': 'error',
   },
 };
