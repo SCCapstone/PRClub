@@ -12,7 +12,7 @@ export default function Navigator() {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
-          let iconName: string = '';
+          let iconName = '';
 
           if (route.name === 'Workouts') {
             iconName = focused ? 'barbell' : 'barbell-outline';

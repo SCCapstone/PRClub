@@ -50,6 +50,7 @@ export default function CreateWorkoutForm() {
       } as WorkoutInput}
       validationSchema={WorkoutInputSchema}
       onSubmit={(values) => {
+        // eslint-disable-next-line no-console
         console.log(values); // TODO: parse form submission data and send to workoutsReducer
       }}
     >
