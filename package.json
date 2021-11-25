@@ -34,7 +34,8 @@
     "react-redux": "^7.2.6",
     "twrnc": "^2.0.3",
     "uuid": "^8.3.2",
-    "yup": "^0.32.11"
+    "yup": "^0.32.11",
+    "firebase": "8.2.3"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",
