@@ -23,6 +23,7 @@
     "humps": "^2.0.1",
     "immer": "^9.0.6",
     "react": "16.13.1",
+    "react-collapsible": "^2.8.4",
     "react-dom": "16.13.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-42.0.0.tar.gz",
     "react-native-elements": "^3.4.2",
