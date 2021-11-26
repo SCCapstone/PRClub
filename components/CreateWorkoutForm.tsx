@@ -66,7 +66,7 @@ export default function CreateWorkoutForm() {
               <>
                 <>
                   {formikProps.values.exercises
-                    && formikProps.values.exercises.length > 0 ? (
+                      && formikProps.values.exercises.length > 0 ? (
                       formikProps.values.exercises.map((exercise, i) => (
                         <View key={exercise.reactKey} style={tw`bg-gray-300 p-3`}>
                           <View style={tw`flex flex-row`}>
@@ -74,20 +74,22 @@ export default function CreateWorkoutForm() {
                               <select
                                 name={`exercises.${i}.name`}
                                 value={formikProps.values.exercises[i].name}
+                                onChange={formikProps.handleChange(`exercises.${i}.name`)}
                                 style={{ display: 'block' }}
                               >
+                                {/* Here is where we need to connect the API values */}
                                 <option value="" label="Select a workout" />
                                 <option value="workout1V" label="workout1L" />
                                 <option value="workout2V" label="workout2L" />
                               </select>
                               {/* <Field name={`exercises.${i}.name`}>
-                                {() => (
-                                  <Input
-                                    placeholder="exercise name"
-                                    onChangeText={formikProps.handleChange(`exercises.${i}.name`)}
-                                    value={formikProps.values.exercises[i].name}
-                                  />
-                                )}
+                                  {() => (
+                                    <Input
+                                      placeholder="exercise name"
+                                      onChangeText={formikProps.handleChange(`exercises.${i}.name`)}
+                                      value={formikProps.values.exercises[i].name}
+                                    />
+                                  )}
                                 </Field> */}
                             </View>
                             <View style={tw`flex flex-1`}>
