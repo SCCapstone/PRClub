@@ -71,7 +71,16 @@ export default function CreateWorkoutForm() {
                         <View key={exercise.reactKey} style={tw`bg-gray-300 p-3`}>
                           <View style={tw`flex flex-row`}>
                             <View style={tw`flex flex-3`}>
-                              <Field name={`exercises.${i}.name`}>
+                              <select
+                                name={`exercises.${i}.name`}
+                                value={formikProps.values.exercises[i].name}
+                                style={{ display: 'block' }}
+                              >
+                                <option value="" label="Select a workout" />
+                                <option value="workout1V" label="workout1L" />
+                                <option value="workout2V" label="workout2L" />
+                              </select>
+                              {/* <Field name={`exercises.${i}.name`}>
                                 {() => (
                                   <Input
                                     placeholder="exercise name"
@@ -79,7 +88,7 @@ export default function CreateWorkoutForm() {
                                     value={formikProps.values.exercises[i].name}
                                   />
                                 )}
-                              </Field>
+                                </Field> */}
                             </View>
                             <View style={tw`flex flex-1`}>
                               <Button
