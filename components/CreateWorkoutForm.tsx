@@ -6,6 +6,8 @@ import { View } from 'react-native';
 import tw from 'twrnc';
 import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
+import { useAppDispatch } from '../hooks/redux';
+import { upsertWorkout } from '../redux/slices/workoutsSlice';
 
 // #region form validation schemas
 const ExerciseSetInputSchema = yup.object({
@@ -42,6 +44,8 @@ type WorkoutInput = yup.InferType<typeof WorkoutInputSchema>;
 // #endregion
 
 export default function CreateWorkoutForm() {
+  const dispatch = useAppDispatch();
+
   return (
     <Formik
       initialValues={{
@@ -50,8 +54,22 @@ export default function CreateWorkoutForm() {
       } as WorkoutInput}
       validationSchema={WorkoutInputSchema}
       onSubmit={(values) => {
-        // eslint-disable-next-line no-console
-        console.log(values); // TODO: parse form submission data and send to workoutsReducer
+        dispatch(
+          upsertWorkout({
+            id: uuidv4(),
+            date: (new Date()).toString(),
+            name: values.name,
+            exercises: values.exercises.map((e) => ({
+              id: e.reactKey,
+              name: e.name,
+              exerciseSets: e.exerciseSets.map((s) => ({
+                id: s.reactKey,
+                weight: Number(s.weight),
+                reps: Number(s.reps),
+              })),
+            })),
+          }),
+        );
       }}
     >
       {(formikProps) => (

@@ -2,8 +2,9 @@ import Exercise from './Exercise';
 
 export default interface Workout {
     id: string;
-    date: Date;
+    date: string;
     name: string;
     exercises: Exercise[];
     image?: string;
+    // createdBy: string;
 }

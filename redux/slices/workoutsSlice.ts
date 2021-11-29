@@ -1,24 +1,31 @@
-import { createSlice } from '@reduxjs/toolkit';
+/* eslint-disable import/no-cycle */
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import Workout from '../../models/Workout';
+import { RootState } from '../store';
 
 const workoutsSlice = createSlice({
   name: 'workouts',
-  initialState: {
-    workouts: <Workout[]>[],
-  },
+  initialState: Object.create(null) as Record<string, Workout>,
   reducers: {
-    addWorkout: (state, action) => {
-      const workout: Workout = action.payload;
-      state.workouts = [...state.workouts, workout];
+    upsertWorkout: (state, action: PayloadAction<Workout>) => {
+      state[action.payload.id] = action.payload;
     },
-    deleteWorkout: (state, action) => {
-      const workout: Workout = action.payload;
-      state.workouts = state.workouts.filter((w) => w.id !== workout.id);
+    deleteWorkout: (state, action: PayloadAction<Workout>) => {
+      delete state[action.payload.id];
     },
   },
 });
 
-export const { addWorkout, deleteWorkout } = workoutsSlice.actions;
+export const {
+  upsertWorkout,
+  deleteWorkout,
+} = workoutsSlice.actions;
 
 const workoutsReducer = workoutsSlice.reducer;
 export default workoutsReducer;
+
+// #region selectors
+export function selectWorkouts(state: RootState): Workout[] {
+  return Object.values(state.workouts);
+}
+// #endregion
