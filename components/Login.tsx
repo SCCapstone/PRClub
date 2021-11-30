@@ -24,6 +24,7 @@ export default function Login() {
       .createUserWithEmailAndPassword(email, password)
       .then((userCredentials) => {
         const { user } = userCredentials;
+        console.log(email);
       })
       .catch((error) => alert(error.message));
   };
