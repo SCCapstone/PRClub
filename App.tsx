@@ -8,7 +8,7 @@ import WgerService from './services/wger';
 export default function App() {
   (async () => {
     // eslint-disable-next-line no-console
-    console.log(await WgerService.getExerciseInfos());
+    console.log(await WgerService.getExerciseInfos(37)); // 37 to get top 10 english exercises
   })();
 
   return (

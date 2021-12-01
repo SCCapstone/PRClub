@@ -6,6 +6,7 @@ import { View } from 'react-native';
 import tw from 'twrnc';
 import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
+import WgerService from '../services/wger';
 
 // #region form validation schemas
 const ExerciseSetInputSchema = yup.object({
@@ -78,19 +79,19 @@ export default function CreateWorkoutForm() {
                                 style={{ display: 'block' }}
                               >
                                 {/* Here is where we need to connect the API values */}
-                                <option value="" label="Select a workout" />
+                                <option value="" label="Select a workout" disabled />
                                 <option value="workout1V" label="workout1L" />
                                 <option value="workout2V" label="workout2L" />
                               </select>
                               {/* <Field name={`exercises.${i}.name`}>
-                                  {() => (
-                                    <Input
-                                      placeholder="exercise name"
-                                      onChangeText={formikProps.handleChange(`exercises.${i}.name`)}
-                                      value={formikProps.values.exercises[i].name}
-                                    />
-                                  )}
-                                </Field> */}
+                                {() => (
+                                  <Input
+                                    placeholder="exercise name"
+                                    onChangeText={formikProps.handleChange(`exercises.${i}.name`)}
+                                    value={formikProps.values.exercises[i].name}
+                                  />
+                                )}
+                              </Field> */}
                             </View>
                             <View style={tw`flex flex-1`}>
                               <Button
