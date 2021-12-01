@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import * as yup from 'yup';
 import { Field, FieldArray, Formik } from 'formik';
 import { Button, Input, Text } from 'react-native-elements';
@@ -7,6 +7,7 @@ import tw from 'twrnc';
 import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
 import WgerService from '../services/wger';
+import ExerciseInfo from '../services/wger/models/ExerciseInfo';
 
 // #region form validation schemas
 const ExerciseSetInputSchema = yup.object({
@@ -43,6 +44,16 @@ type WorkoutInput = yup.InferType<typeof WorkoutInputSchema>;
 // #endregion
 
 export default function CreateWorkoutForm() {
+  const [exerciseInfos, setExerciseInfos] = useState<ExerciseInfo[]>([]);
+
+  useEffect(() => {
+    async function fetchExerciseInfos() {
+      setExerciseInfos(await WgerService.getExerciseInfos(37));
+    }
+
+    fetchExerciseInfos();
+  }, [exerciseInfos]);
+
   return (
     <Formik
       initialValues={{
@@ -72,26 +83,19 @@ export default function CreateWorkoutForm() {
                         <View key={exercise.reactKey} style={tw`bg-gray-300 p-3`}>
                           <View style={tw`flex flex-row`}>
                             <View style={tw`flex flex-3`}>
-                              <select
+                              <select // TODO: convert to react native picker
                                 name={`exercises.${i}.name`}
                                 value={formikProps.values.exercises[i].name}
                                 onChange={formikProps.handleChange(`exercises.${i}.name`)}
                                 style={{ display: 'block' }}
                               >
+                                <option value="" label="Select an exercise..." disabled />
                                 {/* Here is where we need to connect the API values */}
-                                <option value="" label="Select a workout" disabled />
-                                <option value="workout1V" label="workout1L" />
-                                <option value="workout2V" label="workout2L" />
+                                {exerciseInfos.map((wgerExercise) => (
+                                  <option value={wgerExercise.name} label={wgerExercise.name} />
+                                ))}
+                                ;
                               </select>
-                              {/* <Field name={`exercises.${i}.name`}>
-                                {() => (
-                                  <Input
-                                    placeholder="exercise name"
-                                    onChangeText={formikProps.handleChange(`exercises.${i}.name`)}
-                                    value={formikProps.values.exercises[i].name}
-                                  />
-                                )}
-                              </Field> */}
                             </View>
                             <View style={tw`flex flex-1`}>
                               <Button
