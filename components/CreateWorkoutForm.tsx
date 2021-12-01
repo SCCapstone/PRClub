@@ -47,12 +47,10 @@ export default function CreateWorkoutForm() {
   const [exerciseInfos, setExerciseInfos] = useState<ExerciseInfo[]>([]);
 
   useEffect(() => {
-    async function fetchExerciseInfos() {
+    (async () => {
       setExerciseInfos(await WgerService.getExerciseInfos(37));
-    }
-
-    fetchExerciseInfos();
-  }, [exerciseInfos]);
+    })();
+  });
 
   return (
     <Formik
