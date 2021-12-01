@@ -5,5 +5,6 @@ module.exports = (api) => {
       'babel-preset-expo',
       '@babel/preset-typescript',
     ],
+    plugins: ['inline-dotenv'],
   };
 };
