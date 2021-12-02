@@ -15,7 +15,7 @@ We are creating a social networking application where users will be able to crea
 - IDE: Visual Studio Code
 - Backend Server: Firebase
 - Third Party Libraries: React Native Elements, ReduxJS Toolkit, Firebase Javascript SDK, ~~React Native Health~~\*
-  - \* only compatible with iOS, making it unusable on Android targets (build target for course)
+  - \* omitted as it's only compatible with iOS, making it unusable on Android targets (build target for course)
 - Third Party APIs: [wger Workout Manager REST API](https://wger.de/en/software/api), ~~MyFitnessPal API~~\*\*, ~~Fitbit API~~\*\*\*
   - \*\* currently unable to gain access as a public project landing page is required and OAuth/Activity Callback URLs are required (see their [form](https://docs.google.com/forms/d/e/1FAIpQLScRgAz4W_1QQ2He5QvUXsSfJxJ4xJZTbPUnzxo-uQahT3SESQ/viewform)).
   - \*\*\* blocked on this as none of our group members own a Fitbit; API also primarily focuses on biometric information rather than workout log data which is currently out of the scope of our PoC
