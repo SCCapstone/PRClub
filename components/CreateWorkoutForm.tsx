@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import * as yup from 'yup';
 import { Field, FieldArray, Formik } from 'formik';
-import { Button, Input, Text } from 'react-native-elements';
+import {
+  Button, Input, Text,
+} from 'react-native-elements';
 import { View } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
 import tw from 'twrnc';
 import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
+import { OptionType, Select } from '@mobile-reality/react-native-select-pro';
+import _ from 'lodash';
 import WgerService from '../services/wger';
 import ExerciseInfo from '../services/wger/models/ExerciseInfo';
 import { useAppDispatch } from '../hooks/redux';
@@ -50,10 +53,13 @@ export default function CreateWorkoutForm() {
   const [exerciseInfos, setExerciseInfos] = useState<ExerciseInfo[]>([]);
 
   useEffect(() => {
-    (async () => {
+    async function fetchExerciseInfos() {
       setExerciseInfos(await WgerService.getExerciseInfos(37));
-    })();
+    }
+
+    fetchExerciseInfos();
   });
+
   const dispatch = useAppDispatch();
 
   return (
@@ -67,7 +73,7 @@ export default function CreateWorkoutForm() {
         dispatch(
           upsertWorkout({
             id: uuidv4(),
-            date: (new Date()).toString(),
+            date: new Date().toString(),
             name: values.name,
             exercises: values.exercises.map((e) => ({
               id: e.reactKey,
@@ -99,23 +105,25 @@ export default function CreateWorkoutForm() {
                         <View key={exercise.reactKey} style={tw`bg-gray-300 p-3`}>
                           <View style={tw`flex flex-row`}>
                             <View style={tw`flex flex-3`}>
-                              <Picker // look into prompt prop
-                                selectedValue={formikProps.values.exercises[i].name}
-                                onValueChange={formikProps.handleChange(`exercises.${i}.name`)}
-                              >
-                                <option // can't make it Picker.Item because it has no disabled prop
-                                  label="Select an exercise..."
-                                  value=""
-                                  disabled
-                                />
-                                {exerciseInfos.map((wgerExercise) => (
-                                  <Picker.Item
-                                    label={wgerExercise.name}
-                                    value={wgerExercise.name}
-                                  />
-                                ))}
-                                ;
-                              </Picker>
+                              <Select
+                                options={exerciseInfos.map(
+                                  (e) => ({
+                                    value: e.name,
+                                    label: e.name,
+                                  }),
+                                )}
+                                placeholderText="select an exercise..."
+                                onSelect={(option: OptionType | null) => {
+                                  if (option) {
+                                    formikProps.setFieldValue(`exercises.${i}.name`, option.value);
+                                  }
+                                }}
+                                defaultOption={{
+                                  value: formikProps.values.exercises[i].name,
+                                  label: formikProps.values.exercises[i].name,
+                                }}
+                                clearable={false}
+                              />
                             </View>
                             <View style={tw`flex flex-1`}>
                               <Button
@@ -249,6 +257,22 @@ export default function CreateWorkoutForm() {
           <Button
             title="submit"
             onPress={() => formikProps.handleSubmit()}
+            disabled={!formikProps.values.name
+              || !formikProps.values.exercises.length
+              || (
+                formikProps.values.exercises.length > 0
+                && (
+                  _.some(formikProps.values.exercises, (e) => !e.exerciseSets.length)
+                  || _.some(formikProps.values.exercises, (e) => e.name === '')
+                  || _.some(
+                    formikProps.values.exercises,
+                    (e) => _.some(
+                      e.exerciseSets,
+                      (s) => s.weight === '' || s.reps === '' || !s.weight || !s.reps,
+                    ),
+                  )
+                )
+              )}
           />
         </View>
       )}

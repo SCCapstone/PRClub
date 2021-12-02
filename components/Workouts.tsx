@@ -1,32 +1,48 @@
 import React from 'react';
-import {
-  View, Text, Button,
-} from 'react-native';
+import { View } from 'react-native';
 import tw from 'twrnc';
-import Collapsible from 'react-collapsible';
+import { Button, Text } from 'react-native-elements';
 import { useAppDispatch, useAppSelector } from '../hooks/redux';
 import { deleteWorkout, selectWorkouts } from '../redux/slices/workoutsSlice';
 import Workout from '../models/Workout';
 
 export default function Workouts() {
   const workouts: Workout[] = useAppSelector(selectWorkouts);
+
   const dispatch = useAppDispatch();
 
   return (
     <>
-      {workouts.map((workout) => (
-        <View key={workout.id} style={tw`rounded overflow-hidden shadow-lg m-2 p-2`}>
-          <Collapsible trigger={(
-            <View style={tw`flex-row justify-between`}>
-              <Text>{workout.date}</Text>
-              <Text>{workout.name}</Text>
-              <View>
-                <Button color="red" title="Delete" onPress={() => dispatch(deleteWorkout(workout))} />
+      {!workouts.length
+        ? (
+          <View style={tw`flex h-100 justify-center items-center`}>
+            <Text style={tw`text-center text-xl`}>No workouts!</Text>
+          </View>
+        )
+        : workouts.map((workout) => (
+          <View key={workout.id} style={tw`rounded overflow-hidden shadow-lg m-2 p-2`}>
+            <View style={tw`flex flex-row`}>
+              <View style={tw`flex flex-3`}>
+                <Text>
+                  On
+                  {' '}
+                  {new Date(workout.date).toLocaleString()}
+                  :
+                </Text>
+                <Text style={tw`font-bold text-base`}>{workout.name}</Text>
+              </View>
+              <View style={tw`flex flex-1`}>
+                <Button
+                  icon={{
+                    name: 'delete',
+                    color: 'white',
+                  }}
+                  buttonStyle={tw`bg-red-500`}
+                  onPress={() => dispatch(deleteWorkout(workout))}
+                />
               </View>
             </View>
-        )}
-          >
-            <View style={tw`mt-2`}>
+            <View>
               {/*
               <View style={tw`flex-row`}>
                 <Text>
@@ -42,32 +58,37 @@ export default function Workouts() {
               </View>
               <br />
               */}
-              { workout.exercises.map((exercise) => (
-                <View>
-                  <View>
-                    <Text>
-                      {' '}
-                      {exercise.name}
-                      :
-                      {' '}
-                    </Text>
-                  </View>
-                  <View style={tw`flex-row text-center m-auto align-center`}>
-                    <Text style={tw`mr-4 font-bold w-12`}>Reps</Text>
-                    <Text style={tw`font-bold w-12`}>Weight</Text>
-                  </View>
-                  {exercise.exerciseSets.map((set) => (
-                    <View style={tw`mr-1 flex-row text-center m-auto align-center`}>
-                      <Text style={tw`mr-4 w-12`}>{set.reps}</Text>
-                      <Text style={tw`w-12`}>{set.weight}</Text>
+              {workout.exercises.map((exercise) => (
+                <View key={exercise.id} style={tw`bg-gray-300 p-3`}>
+                  <Text style={tw`font-bold text-base text-center`}>
+                    {exercise.name}
+                  </Text>
+                  <View style={tw`bg-gray-400 p-3`}>
+                    <View style={tw`flex flex-row`}>
+                      <View style={tw`flex flex-1`}>
+                        <Text style={tw`text-center font-bold`}>Weight</Text>
+                      </View>
+                      <View style={tw`flex flex-1`}>
+                        <Text style={tw`text-center font-bold`}>Reps</Text>
+                      </View>
                     </View>
-                  ))}
+                    {exercise.exerciseSets.map((set) => (
+                      <View key={set.id} style={tw`flex flex-row`}>
+                        <View style={tw`flex flex-1`}>
+                          <Text style={tw`text-center font-bold`}>{set.weight}</Text>
+                        </View>
+                        <View style={tw`flex flex-1`}>
+                          <Text style={tw`text-center font-bold`}>{set.reps}</Text>
+                        </View>
+                      </View>
+                    ))}
+                  </View>
+
                 </View>
               ))}
             </View>
-          </Collapsible>
-        </View>
-      ))}
+          </View>
+        ))}
     </>
   );
 }

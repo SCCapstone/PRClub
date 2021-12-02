@@ -1,9 +1,9 @@
-import { useNavigation } from '@react-navigation/native';
-import React, { useEffect, useState } from 'react';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from '@firebase/auth';
+import React, { useState } from 'react';
 import {
   TextInput, TouchableOpacity, Text, View,
 } from 'react-native';
-import { auth } from '../services/firebase';
+import { auth } from '../firebase';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -20,22 +20,21 @@ export default function Login() {
   // }, []);
 
   const handleSignup = () => {
-    auth
-      .createUserWithEmailAndPassword(email, password)
+    createUserWithEmailAndPassword(auth, email, password)
       .then((userCredentials) => {
         const { user } = userCredentials;
-        console.log(email);
+        console.log(user);
       })
-      .catch((error) => alert(error.message));
+      .catch(console.error);
   };
 
   const handleSignin = () => {
-    auth
-      .signInWithEmailAndPassword(email, password)
+    signInWithEmailAndPassword(auth, email, password)
       .then((userCredentials) => {
         const { user } = userCredentials;
+        console.log(user);
       })
-      .catch((error) => alert(error.message));
+      .catch(console.error);
   };
   return (
     <View>

@@ -1,12 +1,11 @@
 import React from 'react';
-import { View } from 'react-native';
-import { Text } from 'react-native-elements';
+import { ScrollView } from 'react-native';
 import Workouts from '../components/Workouts';
 
 export default function WorkoutsScreen() {
   return (
-    <View>
+    <ScrollView>
       <Workouts />
-    </View>
+    </ScrollView>
   );
 }
