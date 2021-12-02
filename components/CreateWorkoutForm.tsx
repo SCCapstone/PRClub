@@ -57,7 +57,7 @@ export default function CreateWorkoutForm() {
         dispatch(
           upsertWorkout({
             id: uuidv4(),
-            date: (new Date()).toString(),
+            date: new Date().toString(),
             name: values.name,
             exercises: values.exercises.map((e) => ({
               id: e.reactKey,

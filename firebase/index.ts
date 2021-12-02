@@ -1,7 +1,6 @@
-import firebase from 'firebase/app';
-import 'firebase/auth';
-import 'firebase/database';
-import 'firebase/firestore';
+import { initializeApp } from '@firebase/app';
+import { getAuth } from '@firebase/auth';
+import { getFirestore } from '@firebase/firestore';
 
 const firebaseConfig = {
   apiKey: process.env.FIREBASE_API_KEY,
@@ -13,20 +12,9 @@ const firebaseConfig = {
   measurementId: process.env.FIREBASE_MEASUREMENT_ID,
 };
 
-// initialize firebase
-const app = firebase.apps.length === 0 ? firebase.initializeApp(firebaseConfig) : firebase.app();
-
-// initialize authentication
-
-const auth = firebase.auth();
-
-const realtimeDB = firebase.database();
-
-const firestoreDB = firebase.firestore();
-
-export { auth, realtimeDB, firestoreDB };
-
-export default app;
+export const app = initializeApp(firebaseConfig);
+export const db = getFirestore(app);
+export const auth = getAuth(app);
 
 // Listen for authentication state to change.
 auth.onAuthStateChanged((user) => {

@@ -1,11 +1,14 @@
 /* eslint-disable import/no-cycle */
-import { configureStore } from '@reduxjs/toolkit';
+import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
 import workoutsReducer from './slices/workoutsSlice';
 
 const store = configureStore({
   reducer: {
     workouts: workoutsReducer,
   },
+  middleware: getDefaultMiddleware({
+    serializableCheck: false,
+  }),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

@@ -3,14 +3,11 @@ import { NavigationContainer } from '@react-navigation/native';
 import { Provider } from 'react-redux';
 import Navigator from './navigation/Navigator';
 import store from './redux/store';
-import WgerService from './services/wger';
+import { hydrateInitialState } from './redux/slices/workoutsSlice';
+
+store.dispatch(hydrateInitialState());
 
 export default function App() {
-  (async () => {
-    // eslint-disable-next-line no-console
-    console.log(await WgerService.getExerciseInfos());
-  })();
-
   return (
     <Provider store={store}>
       <NavigationContainer>

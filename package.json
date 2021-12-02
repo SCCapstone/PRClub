@@ -8,6 +8,9 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "@firebase/app": "^0.7.9",
+    "@firebase/auth": "^0.19.3",
+    "@firebase/firestore": "^3.3.1",
     "@react-navigation/bottom-tabs": "^6.0.9",
     "@react-navigation/native": "^6.0.6",
     "@react-navigation/native-stack": "^6.2.5",
@@ -20,10 +23,9 @@
     "expo-constants": "~11.0.1",
     "expo-image-picker": "~10.2.2",
     "expo-status-bar": "~1.0.4",
-    "firebase": "8.2.3",
+    "firebase": "^9.5.0",
     "formik": "^2.2.9",
     "humps": "^2.0.1",
-    "immer": "^9.0.6",
     "react": "16.13.1",
     "react-collapsible": "^2.8.4",
     "react-dom": "16.13.1",
