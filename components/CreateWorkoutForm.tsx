@@ -3,6 +3,7 @@ import * as yup from 'yup';
 import { Field, FieldArray, Formik } from 'formik';
 import { Button, Input, Text } from 'react-native-elements';
 import { View } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 import tw from 'twrnc';
 import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
@@ -81,19 +82,23 @@ export default function CreateWorkoutForm() {
                         <View key={exercise.reactKey} style={tw`bg-gray-300 p-3`}>
                           <View style={tw`flex flex-row`}>
                             <View style={tw`flex flex-3`}>
-                              <select // TODO: convert to react native picker
-                                name={`exercises.${i}.name`}
-                                value={formikProps.values.exercises[i].name}
-                                onChange={formikProps.handleChange(`exercises.${i}.name`)}
-                                style={{ display: 'block' }}
+                              <Picker // look into prompt prop
+                                selectedValue={formikProps.values.exercises[i].name}
+                                onValueChange={formikProps.handleChange(`exercises.${i}.name`)}
                               >
-                                <option value="" label="Select an exercise..." disabled />
-                                {/* Here is where we need to connect the API values */}
+                                <option // can't make it Picker.Item because it has no disabled prop
+                                  label="Select an exercise..."
+                                  value=""
+                                  disabled
+                                />
                                 {exerciseInfos.map((wgerExercise) => (
-                                  <option value={wgerExercise.name} label={wgerExercise.name} />
+                                  <Picker.Item
+                                    label={wgerExercise.name}
+                                    value={wgerExercise.name}
+                                  />
                                 ))}
                                 ;
-                              </select>
+                              </Picker>
                             </View>
                             <View style={tw`flex flex-1`}>
                               <Button

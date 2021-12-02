@@ -35,7 +35,9 @@
     "react-redux": "^7.2.6",
     "twrnc": "^2.0.3",
     "uuid": "^8.3.2",
-    "yup": "^0.32.11"
+    "yup": "^0.32.11",
+    "@react-native-picker/picker": "1.16.1",
+    "undefined": "react-native-picker/picker"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",
