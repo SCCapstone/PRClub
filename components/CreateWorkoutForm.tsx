@@ -2,13 +2,14 @@ import React, { useState, useEffect } from 'react';
 import * as yup from 'yup';
 import { Field, FieldArray, Formik } from 'formik';
 import {
-  Button, Icon, Input, Text,
+  Button, Input, Text,
 } from 'react-native-elements';
 import { View } from 'react-native';
-import RNPickerSelect from 'react-native-picker-select';
 import tw from 'twrnc';
 import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
+import { OptionType, Select } from '@mobile-reality/react-native-select-pro';
+import _ from 'lodash';
 import WgerService from '../services/wger';
 import ExerciseInfo from '../services/wger/models/ExerciseInfo';
 import { useAppDispatch } from '../hooks/redux';
@@ -104,19 +105,24 @@ export default function CreateWorkoutForm() {
                         <View key={exercise.reactKey} style={tw`bg-gray-300 p-3`}>
                           <View style={tw`flex flex-row`}>
                             <View style={tw`flex flex-3`}>
-                              <RNPickerSelect
-                                placeholder="select exercise"
-                                onValueChange={(input) => formikProps.setFieldValue(`exercises.${i}.name`, input)}
-                                value={formikProps.values.exercises[i].name}
-                                items={exerciseInfos.map(
-                                  (e) => ({ key: e.uuid, label: e.name, value: e.name }),
+                              <Select
+                                options={exerciseInfos.map(
+                                  (e) => ({
+                                    value: e.name,
+                                    label: e.name,
+                                  }),
                                 )}
-                                Icon={() => (
-                                  <Icon
-                                    name="chevron-down"
-                                    type="ionicon"
-                                  />
-                                )}
+                                placeholderText="select an exercise..."
+                                onSelect={(option: OptionType | null) => {
+                                  if (option) {
+                                    formikProps.setFieldValue(`exercises.${i}.name`, option.value);
+                                  }
+                                }}
+                                defaultOption={{
+                                  value: formikProps.values.exercises[i].name,
+                                  label: formikProps.values.exercises[i].name,
+                                }}
+                                clearable={false}
                               />
                             </View>
                             <View style={tw`flex flex-1`}>
@@ -251,6 +257,22 @@ export default function CreateWorkoutForm() {
           <Button
             title="submit"
             onPress={() => formikProps.handleSubmit()}
+            disabled={!formikProps.values.name
+              || !formikProps.values.exercises.length
+              || (
+                formikProps.values.exercises.length > 0
+                && (
+                  _.some(formikProps.values.exercises, (e) => !e.exerciseSets.length)
+                  || _.some(formikProps.values.exercises, (e) => e.name === '')
+                  || _.some(
+                    formikProps.values.exercises,
+                    (e) => _.some(
+                      e.exerciseSets,
+                      (s) => s.weight === '' || s.reps === '' || !s.weight || !s.reps,
+                    ),
+                  )
+                )
+              )}
           />
         </View>
       )}

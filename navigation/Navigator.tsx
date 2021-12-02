@@ -28,12 +28,12 @@ export default function Navigator() {
       })}
     >
       <Tab.Screen
-        name="Workouts"
-        component={WorkoutsScreen}
-      />
-      <Tab.Screen
         name="Create Workout"
         component={CreateWorkoutScreen}
+      />
+      <Tab.Screen
+        name="Workouts"
+        component={WorkoutsScreen}
       />
       {/*
       <Tab.Screen
