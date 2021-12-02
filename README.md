@@ -1,5 +1,6 @@
 # PRClub
-Project Structure Document: https://docs.google.com/document/d/1Q6jiE0bRHjM4UogHsJBCiUVq1bl6iZTmBYgcztHcrqo/edit?usp=sharing
+*Project Structure Document: https://docs.google.com/document/d/1Q6jiE0bRHjM4UogHsJBCiUVq1bl6iZTmBYgcztHcrqo/edit?usp=sharing*
+
 We are creating a social networking application where users will be able to create and share workouts with other users. The goal of this project is to allow users to share their passion for fitness by exchanging workouts and meeting new people with the same interests. Some of the features of our applications include:
 - Creating a user profile
 - Following other users
@@ -13,8 +14,11 @@ We are creating a social networking application where users will be able to crea
 - Languages: Typescript/Javascript
 - IDE: Visual Studio Code
 - Backend Server: Firebase
-- Third Party Libraries: React Native Health, React Native Async Storage, React Native Elements, Redux
-- Third Party APIs: MyFitnessPal API, Fitbit API
+- Third Party Libraries: React Native Elements, ReduxJS Toolkit, Firebase Javascript SDK, ~~React Native Health~~\*
+  - \* only compatible with iOS, making it unusable on Android targets (build target for course)
+- Third Party APIs: [wger Workout Manager REST API](https://wger.de/en/software/api), ~~MyFitnessPal API~~\*\*, ~~Fitbit API~~\*\*\*
+  - \*\* currently unable to gain access as a public project landing page is required and OAuth/Activity Callback URLs are required (see their [form](https://docs.google.com/forms/d/e/1FAIpQLScRgAz4W_1QQ2He5QvUXsSfJxJ4xJZTbPUnzxo-uQahT3SESQ/viewform)).
+  - \*\*\* blocked on this as none of our group members own a Fitbit; API also primarily focuses on biometric information rather than workout log data which is currently out of the scope of our PoC
 
 ## External Requirements
 - Javascript
