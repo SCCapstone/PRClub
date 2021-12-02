@@ -17,7 +17,14 @@ client.interceptors.response.use((response: AxiosResponse) => {
   return response;
 });
 
-async function getAllExerciseInfos(): Promise<ExerciseInfo[]> {
+async function getAllExerciseInfos(count?: number): Promise<ExerciseInfo[]> {
+  if (count) {
+    return (
+      await client
+        .get<ExerciseInfoResponse>(`/exerciseinfo/?format=json&limit=${count}&offset=0`)
+    ).data.results;
+  }
+
   const response = (
     await client
       .get<ExerciseInfoResponse>('/exerciseinfo/?format=json&limit=1&offset=0')
@@ -29,10 +36,15 @@ async function getAllExerciseInfos(): Promise<ExerciseInfo[]> {
   ).data.results;
 }
 
-async function getAllOfficialEnglishExerciseInfos(): Promise<ExerciseInfo[]> {
-  const allExerciseInfos = await getAllExerciseInfos();
+async function getAllOfficialEnglishExerciseInfos(count?: number): Promise<ExerciseInfo[]> {
+  let exerciseInfos: ExerciseInfo[];
+  if (count) {
+    exerciseInfos = await getAllExerciseInfos(count);
+  } else {
+    exerciseInfos = await getAllExerciseInfos();
+  }
 
-  return allExerciseInfos
+  return exerciseInfos
     .filter((e) => e.language.shortName === 'en')
     .sort((a, b) => a.category.name.localeCompare(b.category.name));
 }

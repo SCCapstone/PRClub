@@ -59,6 +59,8 @@ export default workoutsReducer;
 
 // #region selectors
 export function selectWorkouts(state: RootState): Workout[] {
-  return Object.values(state.workouts);
+  return Object.values(state.workouts).sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+  );
 }
 // #endregion

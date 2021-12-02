@@ -1,11 +1,16 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import * as yup from 'yup';
 import { Field, FieldArray, Formik } from 'formik';
-import { Button, Input, Text } from 'react-native-elements';
+import {
+  Button, Icon, Input, Text,
+} from 'react-native-elements';
 import { View } from 'react-native';
+import RNPickerSelect from 'react-native-picker-select';
 import tw from 'twrnc';
 import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
+import WgerService from '../services/wger';
+import ExerciseInfo from '../services/wger/models/ExerciseInfo';
 import { useAppDispatch } from '../hooks/redux';
 import { upsertWorkout } from '../redux/slices/workoutsSlice';
 
@@ -44,6 +49,16 @@ type WorkoutInput = yup.InferType<typeof WorkoutInputSchema>;
 // #endregion
 
 export default function CreateWorkoutForm() {
+  const [exerciseInfos, setExerciseInfos] = useState<ExerciseInfo[]>([]);
+
+  useEffect(() => {
+    async function fetchExerciseInfos() {
+      setExerciseInfos(await WgerService.getExerciseInfos(37));
+    }
+
+    fetchExerciseInfos();
+  });
+
   const dispatch = useAppDispatch();
 
   return (
@@ -84,20 +99,25 @@ export default function CreateWorkoutForm() {
               <>
                 <>
                   {formikProps.values.exercises
-                    && formikProps.values.exercises.length > 0 ? (
+                      && formikProps.values.exercises.length > 0 ? (
                       formikProps.values.exercises.map((exercise, i) => (
                         <View key={exercise.reactKey} style={tw`bg-gray-300 p-3`}>
                           <View style={tw`flex flex-row`}>
                             <View style={tw`flex flex-3`}>
-                              <Field name={`exercises.${i}.name`}>
-                                {() => (
-                                  <Input
-                                    placeholder="exercise name"
-                                    onChangeText={formikProps.handleChange(`exercises.${i}.name`)}
-                                    value={formikProps.values.exercises[i].name}
+                              <RNPickerSelect
+                                placeholder="select exercise"
+                                onValueChange={(input) => formikProps.setFieldValue(`exercises.${i}.name`, input)}
+                                value={formikProps.values.exercises[i].name}
+                                items={exerciseInfos.map(
+                                  (e) => ({ key: e.uuid, label: e.name, value: e.name }),
+                                )}
+                                Icon={() => (
+                                  <Icon
+                                    name="chevron-down"
+                                    type="ionicon"
                                   />
                                 )}
-                              </Field>
+                              />
                             </View>
                             <View style={tw`flex flex-1`}>
                               <Button
