@@ -47,7 +47,7 @@ TODO
 
 # Authors
 - Dhruv Pai (dhruv.k.pai@gmail.com)
-- John Angelidis
+- John Angelidis (johnangelidis12@gmail.com)
 - Ishrat Singh (ishrat512@icloud.com)
 - Nick Yglesias  (nyglesias64@outlook.com)
 - Ethan Schimelman (eschimelman@gmail.com)
