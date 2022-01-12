@@ -44,4 +44,5 @@ module.exports = {
     '@typescript-eslint/no-shadow': ['error'],
     '@typescript-eslint/no-explicit-any': 'error',
   },
+  ignorePatterns: ['cypress/**'], // temporary fix -- REMOVE LINE WHEN STARTING WRITING UI TESTS
 };
