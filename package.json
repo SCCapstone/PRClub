@@ -6,8 +6,9 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "eject": "expo eject",
-    "test": "jest",
-    "test-cypress": "cypress run --headless"
+    "test": "jest **/__tests__/",
+    "cypress": "concurrently -k -s first \"npm run web\" \"npx cypress run --headless\"",
+    "cypress:open": "concurrently -k -s first \"npm run web\" \"npx cypress open\""
   },
   "dependencies": {
     "@firebase/app": "^0.7.9",
