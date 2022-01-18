@@ -37,7 +37,10 @@ Run `expo start` from the root directory of this repository.
 TODO
 
 # Testing
-TODO
+## Behavioral tests
+* Located in ```cypress/integration```.
+* To run headless tests, run ```npm run test-cypress```.
+* To run tests in the browser, run ```npx cypress open``` and select a spec file.
 
 ## Testing Technology
 TODO

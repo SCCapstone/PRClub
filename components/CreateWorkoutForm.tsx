@@ -238,6 +238,7 @@ export default function CreateWorkoutForm() {
                 </>
                 <View style={tw`p-3`}>
                   <Button
+                    testID="addExercise"
                     title="add exercise"
                     icon={{
                       name: 'add',
