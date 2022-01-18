@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-describe('Test 1', () => {
+describe('Testing Create Workout screen', () => {
     beforeEach(() => {
         cy.visit('/')
     })
@@ -11,7 +11,7 @@ describe('Test 1', () => {
     })
 
     it('Tests add exercise button', () => {
-        cy.get('[data-testid="addExercise"]').click()
+        cy.contains('add exercise').click()
         cy.contains('Set')
         cy.contains('Weight')
         cy.contains('Reps')
