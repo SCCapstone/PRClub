@@ -37,10 +37,9 @@ Run `expo start` from the root directory of this repository.
 TODO
 
 # Testing
-TODO
 
 ## Testing Technology
-TODO
+We are using `cypress` for our behavioral tests, and `jest` for our unit tests.
 
 ## Running Tests
 TODO
