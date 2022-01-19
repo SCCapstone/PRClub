@@ -47,8 +47,8 @@ We are using `jest` for unit tests and `cypress` for behavioral tests.
 * To run tests interactively in the browser, run `npm run cypress:open` and select a spec file in the GUI that appears.
 
 ### Unit Tests
-* Located in `__tests__/` as appropriate.
-  * e.g. in `services/` for now but could also be added to `components/` to unit test React components.
+* Located in all `**/__tests__/` subfolders as appropriate.
+  * e.g. in `services/__tests__/` for now but could also be added to `components/__tests__/` to unit test React components.
 * To run, simply run `npm test`.
 
 # Authors
