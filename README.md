@@ -44,7 +44,7 @@ We are using `jest` for unit tests and `cypress` for behavioral tests.
 ### Behavioral Tests
 * Located in `cypress/integration/`.
 * To run tests in headless mode, run `npm run cypress`.
-* To run tests interactively in the browser, run `npm run cypress:open` and select a spec file in the GUI that appears.
+* To run tests interactively in the browser, run `npm run cypress:gui` and select a spec file in the GUI that appears.
 
 ### Unit Tests
 * Located in all `**/__tests__/` subfolders as appropriate.
