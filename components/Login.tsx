@@ -1,5 +1,5 @@
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from '@firebase/auth';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   TextInput, TouchableOpacity, Text, View,
 } from 'react-native';
@@ -11,13 +11,13 @@ export default function Login() {
 
   // const navigation = useNavigation();
 
-  // useEffect(() => {
-  //   const unsubscribe = auth.onAuthStateChanged((user) => {
-  //     if (user) { navigation.navigate(); }
-  //   });
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) { /* Navigate to profile */ }
+    });
 
-  //   return unsubscribe;
-  // }, []);
+    return unsubscribe;
+  }, []);
 
   const handleSignup = () => {
     createUserWithEmailAndPassword(auth, email, password)
