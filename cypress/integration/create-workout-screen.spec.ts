@@ -1,16 +1,17 @@
 /// <reference types="cypress" />
 
-describe('Testing Create Workout screen', () => {
+describe('Create Workout screen', () => {
     beforeEach(() => {
         cy.visit('/')
     })
-    it('Tests workout name input', () => {
+
+    it('input a workout name', () => {
         cy.get('input').type('Test Workout')
         cy.get('input').should('have.value', 'Test Workout')
         cy.end()
     })
 
-    it('Tests add exercise button', () => {
+    it('add an exercise', () => {
         cy.contains('add exercise').click()
         cy.contains('Set')
         cy.contains('Weight')

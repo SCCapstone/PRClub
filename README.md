@@ -37,16 +37,19 @@ Run `expo start` from the root directory of this repository.
 TODO
 
 # Testing
-## Behavioral tests
-* Located in ```cypress/integration```.
-* To run headless tests, run ```npm run test-cypress```.
-* To run tests in the browser, run ```npx cypress open``` and select a spec file.
-
 ## Testing Technology
-TODO
+We are using `jest` for unit tests and `cypress` for behavioral tests.
 
 ## Running Tests
-TODO
+### Behavioral Tests
+* Located in `cypress/integration/`.
+* To run tests in headless mode, run `npm run cypress`.
+* To run tests interactively in the browser, run `npm run cypress:gui` and select a spec file in the GUI that appears.
+
+### Unit Tests
+* Located in all `**/__tests__/` subfolders as appropriate.
+  * e.g. in `services/__tests__/` for now but could also be added to `components/__tests__/` to unit test React components.
+* To run, simply run `npm test`.
 
 # Authors
 - Dhruv Pai (dhruv.k.pai@gmail.com)
