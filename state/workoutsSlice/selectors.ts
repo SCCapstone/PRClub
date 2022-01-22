@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import Workout from '../../models/Workout';
 import { RootState } from '../store';
 import { workoutsAdapter } from './state';
