@@ -1,8 +1,8 @@
 /* eslint-disable import/no-cycle */
 import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
-import workoutsReducer from './slices/workoutsSlice';
+import workoutsReducer from './workoutsSlice';
 
-const store = configureStore({
+export const store = configureStore({
   reducer: {
     workouts: workoutsReducer,
   },
@@ -13,5 +13,3 @@ const store = configureStore({
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
-
-export default store;

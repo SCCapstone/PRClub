@@ -13,7 +13,7 @@ import _ from 'lodash';
 import WgerService from '../services/wger';
 import ExerciseInfo from '../services/wger/models/ExerciseInfo';
 import { useAppDispatch } from '../hooks/redux';
-import { upsertWorkout } from '../redux/slices/workoutsSlice';
+import { upsertWorkout } from '../state/workoutsSlice';
 
 // #region form validation schemas
 const ExerciseSetInputSchema = yup.object({

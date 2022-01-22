@@ -3,11 +3,12 @@ import { View } from 'react-native';
 import tw from 'twrnc';
 import { Button, Text } from 'react-native-elements';
 import { useAppDispatch, useAppSelector } from '../hooks/redux';
-import { deleteWorkout, selectWorkouts } from '../redux/slices/workoutsSlice';
+import { removeWorkout } from '../state/workoutsSlice';
 import Workout from '../models/Workout';
+import { selectWorkoutsSortedByMostRecent } from '../state/workoutsSlice/selectors';
 
 export default function Workouts() {
-  const workouts: Workout[] = useAppSelector(selectWorkouts);
+  const workouts: Workout[] = useAppSelector(selectWorkoutsSortedByMostRecent);
 
   const dispatch = useAppDispatch();
 
@@ -38,26 +39,11 @@ export default function Workouts() {
                     color: 'white',
                   }}
                   buttonStyle={tw`bg-red-500`}
-                  onPress={() => dispatch(deleteWorkout(workout))}
+                  onPress={() => dispatch(removeWorkout(workout.id))}
                 />
               </View>
             </View>
             <View>
-              {/*
-              <View style={tw`flex-row`}>
-                <Text>
-                  Created by
-                  {' '}
-                  {workout.createdBy}
-                  {' '}
-                </Text>
-                <Image
-                  source={require('../assets/profile.jfif')}
-                  style={tw`h-5 w-5 rounded-full`}
-                />
-              </View>
-              <br />
-              */}
               {workout.exercises.map((exercise) => (
                 <View key={exercise.id} style={tw`bg-gray-300 p-3`}>
                   <Text style={tw`font-bold text-base text-center`}>
