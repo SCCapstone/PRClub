@@ -45,7 +45,7 @@ We are using `jest` for unit tests and `cypress` for behavioral tests.
 * Located in `cypress/integration/`.
 * To run:
   1. Launch the expo web server, and wait for it to fully load: `npm run web`.
-  2. Run `npx cypress run --headless` to run tests in headless mode,
+  2. In a parallel command prompt, run `npx cypress run --headless` to run tests in headless mode,
   or `npx cypress open` to run tests interactively in the browser.
 
 ### Unit Tests
