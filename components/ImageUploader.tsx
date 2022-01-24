@@ -36,12 +36,12 @@ export default function ImageUploader() {
         }}
       />
       {
-          image && (
+        image && (
           <Image
             source={{ uri: image }}
             style={tw`mx-auto h-2/4 w-2/4`}
           />
-          )
+        )
       }
 
     </>
