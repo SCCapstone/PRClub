@@ -1,4 +1,3 @@
-// THUNKS: handle calls to database that hydrate Redux store on startup
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import Workout from '../../models/Workout';
 import WorkoutsService from '../../services/WorkoutsService';

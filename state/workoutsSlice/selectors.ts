@@ -1,4 +1,3 @@
-// SELECTORS: React hooks that allow for real-time querying of data from store in components
 import { SliceStatus } from '../../models/SliceStatus';
 import Workout from '../../models/Workout';
 import { RootState } from '../store';

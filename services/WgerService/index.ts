@@ -1,8 +1,10 @@
 import axios, { AxiosResponse } from 'axios';
 import { camelizeKeys } from 'humps';
+import _ from 'lodash';
 import ExerciseInfo from './models/ExerciseInfo';
 import ExerciseInfoResponse from './models/ExerciseInfoResponse';
 
+// initialize and configure Axios client for wger.de API
 const client = axios.create({
   baseURL: 'https://wger.de/api/v2/',
   headers: {
@@ -17,38 +19,70 @@ client.interceptors.response.use((response: AxiosResponse) => {
   return response;
 });
 
-async function getAllExerciseInfos(count?: number): Promise<ExerciseInfo[]> {
-  if (count) {
-    return (
-      await client
-        .get<ExerciseInfoResponse>(`/exerciseinfo/?format=json&limit=${count}&offset=0`)
-    ).data.results;
-  }
+// constants
+const exerciseInfosEndpoint = '/exerciseinfo/?';
+const baseQueryParams = {
+  format: 'json',
+  offset: 0,
+  language: 2, // wger.de's language code for English
+};
 
-  const response = (
-    await client
-      .get<ExerciseInfoResponse>('/exerciseinfo/?format=json&limit=1&offset=0')
-  ).data;
-
+async function getExerciseInfosCount() {
   return (
     await client
-      .get<ExerciseInfoResponse>(`/exerciseinfo/?format=json&limit=${response.count}&offset=0`)
-  ).data.results;
+      .get<ExerciseInfoResponse>(exerciseInfosEndpoint, {
+      params: {
+        ...baseQueryParams,
+        limit: 1,
+      },
+    })
+  ).data.count;
 }
 
-async function getAllOfficialEnglishExerciseInfos(count?: number): Promise<ExerciseInfo[]> {
-  let exerciseInfos: ExerciseInfo[];
-  if (count) {
-    exerciseInfos = await getAllExerciseInfos(count);
-  } else {
-    exerciseInfos = await getAllExerciseInfos();
+/**
+ * Gets every exercise info object from wger.de that is in English.
+ * @returns a list of ExerciseInfo objects
+ */
+async function getAllExerciseInfos(): Promise<ExerciseInfo[]> {
+  const exerciseInfos = (
+    await client
+      .get<ExerciseInfoResponse>(exerciseInfosEndpoint, {
+      params: {
+        ...baseQueryParams,
+        limit: await getExerciseInfosCount(),
+      },
+    })
+  ).data.results.sort((a, b) => a.category.name.localeCompare(b.category.name));
+
+  return _.uniqBy(_.uniqBy(exerciseInfos, (i) => i.id), (i) => i.name);
+}
+
+/**
+ * Gets the first `limit` number of exercise info objects from wger.de that are in English.
+ * @param limit the number of exercises to query
+ * @returns a list of ExerciseInfo objects
+ */
+async function takeExerciseInfos(limit: number): Promise<ExerciseInfo[]> {
+  const count = await getExerciseInfosCount();
+
+  if (limit > count) {
+    throw new Error(`Number of exercises to query (${limit}) exceeds exercise count on server (${count}).`);
   }
 
-  return exerciseInfos
-    .filter((e) => e.language.shortName === 'en')
-    .sort((a, b) => a.category.name.localeCompare(b.category.name));
+  const exerciseInfos = (
+    await client
+      .get<ExerciseInfoResponse>(exerciseInfosEndpoint, {
+      params: {
+        ...baseQueryParams,
+        limit,
+      },
+    })
+  ).data.results.sort((a, b) => a.category.name.localeCompare(b.category.name));
+
+  return _.uniqBy(_.uniqBy(exerciseInfos, (i) => i.id), (i) => i.name);
 }
 
 export default {
-  getExerciseInfos: getAllOfficialEnglishExerciseInfos,
+  getAllExerciseInfos,
+  takeExerciseInfos,
 };

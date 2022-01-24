@@ -1,4 +1,3 @@
-// INDEX: where main slice creation & reducer logic lives
 import { createSlice, Dictionary, PayloadAction } from '@reduxjs/toolkit';
 import Workout from '../../models/Workout';
 import { initialState, workoutsAdapter } from './state';

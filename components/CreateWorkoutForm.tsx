@@ -4,7 +4,7 @@ import { Field, FieldArray, Formik } from 'formik';
 import {
   Button, Input, Text,
 } from 'react-native-elements';
-import { View } from 'react-native';
+import { ActivityIndicator, View } from 'react-native';
 import tw from 'twrnc';
 import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
@@ -17,7 +17,7 @@ import { upsertWorkout } from '../state/workoutsSlice';
 
 // #region form validation schemas
 const ExerciseSetInputSchema = yup.object({
-  reactKey: yup.string()
+  id: yup.string()
     .matches(/^[0-9A-F]{8}-[0-9A-F]{4}-[4][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i)
     .required(), // uuidv4 string
   weight: yup.lazy(
@@ -34,7 +34,7 @@ const ExerciseSetInputSchema = yup.object({
 type ExerciseSetInput = yup.InferType<typeof ExerciseSetInputSchema>;
 
 const ExerciseInputSchema = yup.object({
-  reactKey: yup.string()
+  id: yup.string()
     .matches(/^[0-9A-F]{8}-[0-9A-F]{4}-[4][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i)
     .required(), // uuidv4 string
   name: yup.string().min(1).required(),
@@ -50,15 +50,19 @@ type WorkoutInput = yup.InferType<typeof WorkoutInputSchema>;
 // #endregion
 
 export default function CreateWorkoutForm() {
+  const [exerciseInfosAreFetching, setExerciseInfosAreFetching] = useState<boolean>(false);
   const [exerciseInfos, setExerciseInfos] = useState<ExerciseInfo[]>([]);
 
   useEffect(() => {
     async function fetchExerciseInfos() {
-      setExerciseInfos(await WgerService.getExerciseInfos(37));
+      setExerciseInfosAreFetching(true);
+      const fetchedExerciseInfos = await WgerService.getAllExerciseInfos();
+      setExerciseInfos(fetchedExerciseInfos);
+      setExerciseInfosAreFetching(false);
     }
 
     fetchExerciseInfos();
-  });
+  }, []);
 
   const dispatch = useAppDispatch();
 
@@ -77,10 +81,10 @@ export default function CreateWorkoutForm() {
             date: new Date().toString(),
             name: values.name,
             exercises: values.exercises.map((e) => ({
-              id: e.reactKey,
+              id: e.id,
               name: e.name,
               exerciseSets: e.exerciseSets.map((s) => ({
-                id: s.reactKey,
+                id: s.id,
                 weight: Number(s.weight),
                 reps: Number(s.reps),
               })),
@@ -103,28 +107,44 @@ export default function CreateWorkoutForm() {
                   {formikProps.values.exercises
                       && formikProps.values.exercises.length > 0 ? (
                       formikProps.values.exercises.map((exercise, i) => (
-                        <View key={exercise.reactKey} style={tw`bg-gray-300 p-3`}>
+                        <View key={exercise.id} style={tw`bg-gray-300 p-3`}>
                           <View style={tw`flex flex-row`}>
                             <View style={tw`flex flex-3`}>
-                              <Select
-                                options={exerciseInfos.map(
-                                  (e) => ({
-                                    value: e.name,
-                                    label: e.name,
-                                  }),
-                                )}
-                                placeholderText="select an exercise..."
-                                onSelect={(option: OptionType | null) => {
-                                  if (option) {
-                                    formikProps.setFieldValue(`exercises.${i}.name`, option.value);
-                                  }
-                                }}
-                                defaultOption={{
-                                  value: formikProps.values.exercises[i].name,
-                                  label: formikProps.values.exercises[i].name,
-                                }}
-                                clearable={false}
-                              />
+                              {
+                                exerciseInfosAreFetching
+                                  ? (
+                                    <View style={tw`flex flex-row`}>
+                                      <View style={tw`flex flex-3`}>
+                                        <Text style={tw`text-right font-bold`}>Fetching exercises...</Text>
+                                      </View>
+                                      <View style={tw`flex flex-2 items-center`}>
+                                        <ActivityIndicator />
+                                      </View>
+                                    </View>
+                                  )
+                                  : (
+                                    <Select
+                                      options={exerciseInfos.map(
+                                        (e) => ({
+                                          value: e.name,
+                                          label: e.name,
+                                        }),
+                                      )}
+                                      placeholderText="select an exercise..."
+                                      onSelect={(option: OptionType | null) => {
+                                        if (option) {
+                                          formikProps.setFieldValue(`exercises.${i}.name`, option.value);
+                                        }
+                                      }}
+                                      defaultOption={{
+                                        value: formikProps.values.exercises[i].name,
+                                        label: formikProps.values.exercises[i].name,
+                                      }}
+                                      clearable={false}
+                                    />
+                                  )
+                              }
+
                             </View>
                             <View style={tw`flex flex-1`}>
                               <Button
@@ -157,7 +177,7 @@ export default function CreateWorkoutForm() {
                                   && formikProps.values.exercises[i].exerciseSets.length > 0 ? (
                                     formikProps.values.exercises[i].exerciseSets.map(
                                       (exerciseSet, j) => (
-                                        <View key={exerciseSet.reactKey} style={tw`flex flex-row`}>
+                                        <View key={exerciseSet.id} style={tw`flex flex-row`}>
                                           <View style={tw`flex flex-1`}>
                                             <Text style={tw`text-center text-xl`}>{j + 1}</Text>
                                           </View>
@@ -225,7 +245,7 @@ export default function CreateWorkoutForm() {
                                   }}
                                   buttonStyle={tw`bg-green-500`}
                                   onPress={() => exerciseSetsHelpers.push({
-                                    reactKey: uuidv4(),
+                                    id: uuidv4(),
                                     weight: '',
                                     reps: '',
                                   } as ExerciseSetInput)}
@@ -246,7 +266,7 @@ export default function CreateWorkoutForm() {
                     }}
                     buttonStyle={tw`bg-green-500`}
                     onPress={() => exercisesHelpers.push({
-                      reactKey: uuidv4(),
+                      id: uuidv4(),
                       name: '',
                       exerciseSets: [],
                     } as ExerciseInput)}

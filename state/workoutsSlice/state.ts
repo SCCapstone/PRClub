@@ -1,4 +1,3 @@
-// STATE: holds declaration of slice's initial state
 import { createEntityAdapter } from '@reduxjs/toolkit';
 import { SliceStatus } from '../../models/SliceStatus';
 import Workout from '../../models/Workout';
