@@ -2,7 +2,7 @@
 import createSagaMiddleware from 'redux-saga';
 import { configureStore } from '@reduxjs/toolkit';
 import workoutsReducer from './workoutsSlice';
-import workoutsSaga from './workoutsSlice/sagas';
+import workoutsSaga from './workoutsSlice/saga';
 
 const sagaMiddleware = createSagaMiddleware();
 
