@@ -6,7 +6,8 @@ state management workflow in and of itself is fairly complicated so it deserves 
 Each slice is made up of the following five files. The first three are pretty straightforward:
 - `index.ts`: where main slice creation & reducer logic lives.
 - `state.ts`: holds declarations for a slice's adapter (an object that contains boilerplate code
-  for selectors, reducers, etc.) and initial state. `selectors.ts`: contains definitions for React
+  for selectors, reducers, etc.) and initial state.
+- `selectors.ts`: contains definitions for React
   hooks that allow for real-time querying of data from store in components. A lot of these are
   already defined by the adapter that gets initialized in `state.ts` but it is still necessary to
   write custom selectors a lot of the time.
