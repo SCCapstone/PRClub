@@ -2,7 +2,7 @@
 
 describe('Create Workout screen', () => {
     beforeEach(() => {
-        cy.visit('/')
+        cy.visit('/', {timeout: 80000})
     })
 
     it('input a workout name', () => {
