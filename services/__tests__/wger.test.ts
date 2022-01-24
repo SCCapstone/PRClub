@@ -1,4 +1,4 @@
-import WgerService from '../wger';
+import WgerService from '../WgerService';
 
 describe('WgerService', () => {
   test('get first 3 english workouts', async () => {

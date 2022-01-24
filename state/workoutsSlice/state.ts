@@ -1,9 +1,10 @@
+// STATE: holds declaration of slice's initial state
 import { createEntityAdapter } from '@reduxjs/toolkit';
-import { AdapterStatus } from '../../models/AdapterStatus';
+import { SliceStatus } from '../../models/SliceStatus';
 import Workout from '../../models/Workout';
 
 interface WorkoutsInitialState {
-  status: AdapterStatus
+  status: SliceStatus
 }
 
 export const workoutsAdapter = createEntityAdapter<Workout>();

@@ -4,6 +4,10 @@ import { Provider } from 'react-redux';
 import { SelectProvider } from '@mobile-reality/react-native-select-pro';
 import Navigator from './navigation/Navigator';
 import { store } from './state/store';
+import { getWorkoutsFromDb } from './state/workoutsSlice/thunks';
+
+// TODO figure out how to inject user id here
+store.dispatch(getWorkoutsFromDb('test-user'));
 
 export default function App() {
   return (

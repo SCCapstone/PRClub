@@ -10,8 +10,8 @@ import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
 import { OptionType, Select } from '@mobile-reality/react-native-select-pro';
 import _ from 'lodash';
-import WgerService from '../services/wger';
-import ExerciseInfo from '../services/wger/models/ExerciseInfo';
+import WgerService from '../services/WgerService';
+import ExerciseInfo from '../services/WgerService/models/ExerciseInfo';
 import { useAppDispatch } from '../hooks/redux';
 import { upsertWorkout } from '../state/workoutsSlice';
 
@@ -73,6 +73,7 @@ export default function CreateWorkoutForm() {
         dispatch(
           upsertWorkout({
             id: uuidv4(),
+            userId: 'test-user', // TODO replace this with current user's id
             date: new Date().toString(),
             name: values.name,
             exercises: values.exercises.map((e) => ({
