@@ -1,12 +1,13 @@
 import React from 'react';
 import { ActivityIndicator, View } from 'react-native';
 import tw from 'twrnc';
-import { Button, Text } from 'react-native-elements';
+import { Text } from 'react-native-paper';
 import { useAppDispatch, useAppSelector } from '../hooks/redux';
 import { removeWorkoutByEntity } from '../state/workoutsSlice';
 import Workout from '../models/Workout';
 import { selectWorkoutsSortedByMostRecent, selectWorkoutsStatus } from '../state/workoutsSlice/selectors';
 import { SliceStatus } from '../models/SliceStatus';
+import DeleteButton from './DeleteButton';
 
 export default function Workouts() {
   const workouts: Workout[] = useAppSelector(selectWorkoutsSortedByMostRecent);
@@ -43,7 +44,7 @@ export default function Workouts() {
           : workouts.map((workout) => (
             <View key={workout.id} style={tw`rounded overflow-hidden shadow-lg m-2 p-2`}>
               <View style={tw`flex flex-row`}>
-                <View style={tw`flex flex-3`}>
+                <View style={tw`flex flex-5`}>
                   <Text>
                     On
                     {' '}
@@ -53,14 +54,7 @@ export default function Workouts() {
                   <Text style={tw`font-bold text-base`}>{workout.name}</Text>
                 </View>
                 <View style={tw`flex flex-1`}>
-                  <Button
-                    icon={{
-                      name: 'delete',
-                      color: 'white',
-                    }}
-                    buttonStyle={tw`bg-red-500`}
-                    onPress={() => dispatch(removeWorkoutByEntity(workout))}
-                  />
+                  <DeleteButton onPress={() => dispatch(removeWorkoutByEntity(workout))} />
                 </View>
               </View>
               <View>

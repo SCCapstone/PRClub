@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import * as yup from 'yup';
 import { Field, FieldArray, Formik } from 'formik';
 import {
-  Button, Input, Text,
-} from 'react-native-elements';
+  Button, TextInput, Text,
+} from 'react-native-paper';
 import { ActivityIndicator, View } from 'react-native';
 import tw from 'twrnc';
 import 'react-native-get-random-values';
@@ -14,6 +14,7 @@ import WgerService from '../services/WgerService';
 import ExerciseInfo from '../services/WgerService/models/ExerciseInfo';
 import { useAppDispatch } from '../hooks/redux';
 import { upsertWorkout } from '../state/workoutsSlice';
+import DeleteButton from './DeleteButton';
 
 // #region form validation schemas
 const ExerciseSetInputSchema = yup.object({
@@ -95,7 +96,7 @@ export default function CreateWorkoutForm() {
     >
       {(formikProps) => (
         <View>
-          <Input
+          <TextInput
             placeholder="workout name"
             onChangeText={formikProps.handleChange('name')}
             value={formikProps.values.name}
@@ -147,14 +148,7 @@ export default function CreateWorkoutForm() {
 
                             </View>
                             <View style={tw`flex flex-1`}>
-                              <Button
-                                icon={{
-                                  name: 'delete',
-                                  color: 'white',
-                                }}
-                                buttonStyle={tw`bg-red-500`}
-                                onPress={() => exercisesHelpers.remove(i)}
-                              />
+                              <DeleteButton onPress={() => exercisesHelpers.remove(i)} />
                             </View>
                           </View>
                           <FieldArray name={`exercises.${i}.exerciseSets`}>
@@ -164,10 +158,10 @@ export default function CreateWorkoutForm() {
                                   <View style={tw`flex flex-1`}>
                                     <Text style={tw`text-center text-xl font-bold`}>Set #</Text>
                                   </View>
-                                  <View style={tw`flex flex-3`}>
+                                  <View style={tw`flex flex-2`}>
                                     <Text style={tw`text-center text-xl font-bold`}>Weight</Text>
                                   </View>
-                                  <View style={tw`flex flex-3`}>
+                                  <View style={tw`flex flex-2`}>
                                     <Text style={tw`text-center text-xl font-bold`}>Reps</Text>
                                   </View>
                                   <View style={tw`flex flex-1`} />
@@ -177,14 +171,15 @@ export default function CreateWorkoutForm() {
                                   && formikProps.values.exercises[i].exerciseSets.length > 0 ? (
                                     formikProps.values.exercises[i].exerciseSets.map(
                                       (exerciseSet, j) => (
-                                        <View key={exerciseSet.id} style={tw`flex flex-row`}>
+                                        <View key={exerciseSet.id} style={tw`flex flex-row justify-center items-center`}>
                                           <View style={tw`flex flex-1`}>
                                             <Text style={tw`text-center text-xl`}>{j + 1}</Text>
                                           </View>
-                                          <View style={tw`flex flex-3`}>
+                                          <View style={tw`flex flex-2`}>
                                             <Field name={`exercises.${i}.exerciseSets.${j}.weight`}>
                                               {() => (
-                                                <Input
+                                                <TextInput
+                                                  mode="outlined"
                                                   placeholder="weight (lbs)"
                                                   onChangeText={(input) => {
                                                     formikProps.setFieldValue(
@@ -202,10 +197,11 @@ export default function CreateWorkoutForm() {
                                               )}
                                             </Field>
                                           </View>
-                                          <View style={tw`flex flex-3`}>
+                                          <View style={tw`flex flex-2`}>
                                             <Field name={`exercises.${i}.exerciseSets.${j}.reps`}>
                                               {() => (
-                                                <Input
+                                                <TextInput
+                                                  mode="outlined"
                                                   placeholder="reps"
                                                   onChangeText={(input) => {
                                                     formikProps.setFieldValue(
@@ -224,12 +220,7 @@ export default function CreateWorkoutForm() {
                                             </Field>
                                           </View>
                                           <View style={tw`flex flex-1`}>
-                                            <Button
-                                              icon={{
-                                                name: 'delete',
-                                                color: 'white',
-                                              }}
-                                              buttonStyle={tw`bg-red-500`}
+                                            <DeleteButton
                                               onPress={() => exerciseSetsHelpers.remove(j)}
                                             />
                                           </View>
@@ -237,19 +228,20 @@ export default function CreateWorkoutForm() {
                                       ),
                                     )
                                   ) : <></>}
-                                <Button
-                                  title="add set"
-                                  icon={{
-                                    name: 'add',
-                                    color: 'white',
-                                  }}
-                                  buttonStyle={tw`bg-green-500`}
-                                  onPress={() => exerciseSetsHelpers.push({
-                                    id: uuidv4(),
-                                    weight: '',
-                                    reps: '',
-                                  } as ExerciseSetInput)}
-                                />
+                                <View style={tw`pt-3`}>
+                                  <Button
+                                    mode="contained"
+                                    icon="plus"
+                                    color="green"
+                                    onPress={() => exerciseSetsHelpers.push({
+                                      id: uuidv4(),
+                                      weight: '',
+                                      reps: '',
+                                    } as ExerciseSetInput)}
+                                  >
+                                    add set
+                                  </Button>
+                                </View>
                               </View>
                             )}
                           </FieldArray>
@@ -259,24 +251,23 @@ export default function CreateWorkoutForm() {
                 </>
                 <View style={tw`p-3`}>
                   <Button
-                    title="add exercise"
-                    icon={{
-                      name: 'add',
-                      color: 'white',
-                    }}
-                    buttonStyle={tw`bg-green-500`}
+                    mode="contained"
+                    icon="plus"
+                    color="green"
                     onPress={() => exercisesHelpers.push({
                       id: uuidv4(),
                       name: '',
                       exerciseSets: [],
                     } as ExerciseInput)}
-                  />
+                  >
+                    add exercise
+                  </Button>
                 </View>
               </>
             )}
           </FieldArray>
           <Button
-            title="submit"
+            mode="contained"
             onPress={() => formikProps.handleSubmit()}
             disabled={!formikProps.values.name
               || !formikProps.values.exercises.length
@@ -294,7 +285,9 @@ export default function CreateWorkoutForm() {
                   )
                 )
               )}
-          />
+          >
+            submit
+          </Button>
         </View>
       )}
     </Formik>
