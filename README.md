@@ -46,12 +46,13 @@ We are using `jest` for unit tests and `cypress` for behavioral tests.
 * To run:
   1. Launch the expo web server, and wait for it to fully load: `npm run web`.
   2. In a parallel command prompt, run `npx cypress run --headless` to run tests in headless mode,
-  or `npx cypress open` to run tests interactively in the browser.
+  or `npx cypress open` to run tests interactively in the browser. *This must be done from the
+  root of this repository.*
 
 ### Unit Tests
 * Located in all `**/__tests__/` subfolders as appropriate.
   * e.g. in `services/__tests__/` for now but could also be added to `components/__tests__/` to unit test React components.
-* To run, simply run `npm test`.
+* To run, simply run `npm test` from the root of this repository.
 
 # Authors
 - Dhruv Pai (dhruv.k.pai@gmail.com)
