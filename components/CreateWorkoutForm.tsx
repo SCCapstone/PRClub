@@ -110,7 +110,7 @@ export default function CreateWorkoutForm() {
                       formikProps.values.exercises.map((exercise, i) => (
                         <View key={exercise.id} style={tw`bg-gray-300 p-3`}>
                           <View style={tw`flex flex-row`}>
-                            <View style={tw`flex flex-3`}>
+                            <View style={tw`flex flex-3 p-2`}>
                               {
                                 exerciseInfosAreFetching
                                   ? (
@@ -147,7 +147,7 @@ export default function CreateWorkoutForm() {
                               }
 
                             </View>
-                            <View style={tw`flex flex-1`}>
+                            <View style={tw`flex flex-1 p-2`}>
                               <DeleteButton onPress={() => exercisesHelpers.remove(i)} />
                             </View>
                           </View>
@@ -175,7 +175,7 @@ export default function CreateWorkoutForm() {
                                           <View style={tw`flex flex-1`}>
                                             <Text style={tw`text-center text-xl`}>{j + 1}</Text>
                                           </View>
-                                          <View style={tw`flex flex-2`}>
+                                          <View style={tw`flex flex-2 p-1`}>
                                             <Field name={`exercises.${i}.exerciseSets.${j}.weight`}>
                                               {() => (
                                                 <TextInput
@@ -197,7 +197,7 @@ export default function CreateWorkoutForm() {
                                               )}
                                             </Field>
                                           </View>
-                                          <View style={tw`flex flex-2`}>
+                                          <View style={tw`flex flex-2 p-1`}>
                                             <Field name={`exercises.${i}.exerciseSets.${j}.reps`}>
                                               {() => (
                                                 <TextInput
@@ -219,7 +219,7 @@ export default function CreateWorkoutForm() {
                                               )}
                                             </Field>
                                           </View>
-                                          <View style={tw`flex flex-1`}>
+                                          <View style={tw`flex flex-1 p-1`}>
                                             <DeleteButton
                                               onPress={() => exerciseSetsHelpers.remove(j)}
                                             />
