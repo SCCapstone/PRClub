@@ -11,11 +11,11 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  // const navigation = useNavigation();
-
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) { /* Navigate to profile */ }
+      if (user) {
+        // Change global state to logged in
+      }
     });
 
     return unsubscribe;
