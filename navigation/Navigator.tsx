@@ -1,5 +1,6 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import WorkoutsScreen from '../screens/WorkoutsScreen';
 import CreateWorkoutScreen from '../screens/CreateWorkoutScreen';
