@@ -1,12 +1,12 @@
 import React from 'react';
 import { ActivityIndicator, View } from 'react-native';
-import tw from 'twrnc';
 import { Text } from 'react-native-paper';
+import tw from 'twrnc';
 import { useAppDispatch, useAppSelector } from '../hooks/redux';
 import { removeWorkoutByEntity } from '../state/workoutsSlice';
-import Workout from '../models/Workout';
 import { selectWorkoutsSortedByMostRecent, selectWorkoutsStatus } from '../state/workoutsSlice/selectors';
-import { SliceStatus } from '../models/SliceStatus';
+import Workout from '../types/shared/Workout';
+import { SliceStatus } from '../types/state/SliceStatus';
 import DeleteButton from './DeleteButton';
 import EditButton from './EditButton';
 

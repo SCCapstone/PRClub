@@ -2,8 +2,8 @@ import {
   collection,
   deleteDoc, doc, DocumentData, getDocs, QueryDocumentSnapshot, setDoc,
 } from '@firebase/firestore';
-import { db } from '../../firebase';
-import Workout from '../../models/Workout';
+import { db } from '../firebase';
+import Workout from '../types/shared/Workout';
 
 async function getWorkouts(userId: string): Promise<Workout[]> {
   const querySnapshot = await getDocs(collection(db, userId));

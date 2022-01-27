@@ -1,4 +1,4 @@
-export default interface ExerciseInfo {
+export default interface WgerExerciseInfo {
   id: number;
   name: string;
   uuid: string;
