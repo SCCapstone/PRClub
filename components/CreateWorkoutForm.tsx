@@ -15,6 +15,8 @@ import ExerciseInfo from '../services/WgerService/models/ExerciseInfo';
 import { useAppDispatch } from '../hooks/redux';
 import { upsertWorkout } from '../state/workoutsSlice';
 import DeleteButton from './DeleteButton';
+import SnackBar from 'react-native-snackbar-component';
+
 
 // #region form validation schemas
 const ExerciseSetInputSchema = yup.object({
@@ -66,6 +68,11 @@ export default function CreateWorkoutForm() {
   }, []);
 
   const dispatch = useAppDispatch();
+
+  const snackBarState = {
+    snackIsVisible: false,
+    distance: 0,
+  };
 
   return (
     <Formik
@@ -268,7 +275,10 @@ export default function CreateWorkoutForm() {
           </FieldArray>
           <Button
             mode="contained"
-            onPress={() => formikProps.handleSubmit()}
+            onPress={() => {
+              snackBarState.snackIsVisible = !snackBarState.snackIsVisible;
+              formikProps.handleSubmit()
+            }}
             disabled={!formikProps.values.name
               || !formikProps.values.exercises.length
               || (
@@ -288,6 +298,20 @@ export default function CreateWorkoutForm() {
           >
             submit
           </Button>
+          
+
+          <SnackBar
+          visible={snackBarState.snackIsVisible}
+          textMessage="Workout Submitted!"
+          actionHandler={() => {
+            alert("OK");
+            snackBarState.snackIsVisible = !snackBarState.snackIsVisible
+          }}
+          actionText="OK"
+         /*  distanceCallback = {distance =>  {
+            snackBarState.distance = distance;
+          }} */
+        />
         </View>
       )}
     </Formik>
