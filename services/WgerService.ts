@@ -1,8 +1,8 @@
 import axios, { AxiosResponse } from 'axios';
 import { camelizeKeys } from 'humps';
 import _ from 'lodash';
-import ExerciseInfo from './models/ExerciseInfo';
-import ExerciseInfoResponse from './models/ExerciseInfoResponse';
+import WgerExerciseInfo from '../types/services/WgerExerciseInfo';
+import WgerExerciseInfoResponse from '../types/services/WgerExerciseInfoResponse';
 
 // initialize and configure Axios client for wger.de API
 const client = axios.create({
@@ -30,7 +30,7 @@ const baseQueryParams = {
 async function getExerciseInfosCount() {
   return (
     await client
-      .get<ExerciseInfoResponse>(exerciseInfosEndpoint, {
+      .get<WgerExerciseInfoResponse>(exerciseInfosEndpoint, {
       params: {
         ...baseQueryParams,
         limit: 1,
@@ -43,10 +43,10 @@ async function getExerciseInfosCount() {
  * Gets every exercise info object from wger.de that is in English.
  * @returns a list of ExerciseInfo objects
  */
-async function getAllExerciseInfos(): Promise<ExerciseInfo[]> {
+async function getAllExerciseInfos(): Promise<WgerExerciseInfo[]> {
   const exerciseInfos = (
     await client
-      .get<ExerciseInfoResponse>(exerciseInfosEndpoint, {
+      .get<WgerExerciseInfoResponse>(exerciseInfosEndpoint, {
       params: {
         ...baseQueryParams,
         limit: await getExerciseInfosCount(),
@@ -62,7 +62,7 @@ async function getAllExerciseInfos(): Promise<ExerciseInfo[]> {
  * @param limit the number of exercises to query
  * @returns a list of ExerciseInfo objects
  */
-async function takeExerciseInfos(limit: number): Promise<ExerciseInfo[]> {
+async function takeExerciseInfos(limit: number): Promise<WgerExerciseInfo[]> {
   const count = await getExerciseInfosCount();
 
   if (limit > count) {
@@ -71,7 +71,7 @@ async function takeExerciseInfos(limit: number): Promise<ExerciseInfo[]> {
 
   const exerciseInfos = (
     await client
-      .get<ExerciseInfoResponse>(exerciseInfosEndpoint, {
+      .get<WgerExerciseInfoResponse>(exerciseInfosEndpoint, {
       params: {
         ...baseQueryParams,
         limit,

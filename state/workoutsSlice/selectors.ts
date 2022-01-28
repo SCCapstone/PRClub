@@ -1,5 +1,5 @@
-import { SliceStatus } from '../../models/SliceStatus';
-import Workout from '../../models/Workout';
+import { SliceStatus } from '../../types/state/SliceStatus';
+import Workout from '../../types/shared/Workout';
 import { RootState } from '../store';
 import { workoutsAdapter } from './state';
 

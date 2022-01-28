@@ -1,6 +1,6 @@
 import { createEntityAdapter } from '@reduxjs/toolkit';
-import { SliceStatus } from '../../models/SliceStatus';
-import Workout from '../../models/Workout';
+import { SliceStatus } from '../../types/state/SliceStatus';
+import Workout from '../../types/shared/Workout';
 
 interface WorkoutsInitialState {
   status: SliceStatus

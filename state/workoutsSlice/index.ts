@@ -1,5 +1,5 @@
 import { createSlice, Dictionary, PayloadAction } from '@reduxjs/toolkit';
-import Workout from '../../models/Workout';
+import Workout from '../../types/shared/Workout';
 import { initialState, workoutsAdapter } from './state';
 import { getWorkoutsFromDb } from './thunks';
 
