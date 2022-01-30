@@ -51,7 +51,7 @@ export default function Workouts() {
             <View style={tw`flex flex-1`}>
               <CancelButton onPress={toggleEditingWorkout} />
             </View>
-            <View style={tw`flex flex-4`}>
+            <View style={tw`flex flex-3`}>
               <Text style={tw`text-xl text-center font-bold`}>{`Editing "${workoutToEdit.name}"`}</Text>
             </View>
             <View style={tw`flex flex-1`} />
