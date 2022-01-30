@@ -46,8 +46,8 @@ export default function Workouts() {
   if (workoutsStatus === 'loaded') {
     if (editingWorkout) {
       return (
-        <View style={tw`bg-gray-100 p-3`}>
-          <View style={tw`flex flex-row`}>
+        <View style={tw`bg-gray-100`}>
+          <View style={tw`flex flex-row p-3`}>
             <View style={tw`flex flex-1`}>
               <CancelButton onPress={toggleEditingWorkout} />
             </View>

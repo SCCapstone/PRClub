@@ -6,7 +6,7 @@ export default function BackButton({ onPress }: {onPress: () => void}) {
   return (
     <Button
       mode="contained"
-      color="blue"
+      color="orange"
       onPress={onPress}
     >
       <FontAwesome name="arrow-left" size={16} />
