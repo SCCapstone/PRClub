@@ -35,7 +35,7 @@ export default function WorkoutForm({
 
   const dispatch = useAppDispatch();
 
-  const initialFormValues: WorkoutInput = {
+  const initialValues: WorkoutInput = {
     name: workoutToEdit?.name || '',
     exercises: workoutToEdit?.exercises.map((e) => ({
       id: e.id,
@@ -50,7 +50,7 @@ export default function WorkoutForm({
 
   return (
     <Formik
-      initialValues={initialFormValues}
+      initialValues={initialValues}
       validationSchema={WorkoutInputSchema}
       onSubmit={(values) => {
         dispatch(
@@ -269,7 +269,7 @@ export default function WorkoutForm({
                   )
                 )
               )
-              || (workoutToEdit && _.isEqual(initialFormValues, formikProps.values))}
+              || (workoutToEdit && _.isEqual(initialValues, formikProps.values))}
           >
             {`${workoutToEdit ? 'save' : 'submit'} workout`}
           </Button>
