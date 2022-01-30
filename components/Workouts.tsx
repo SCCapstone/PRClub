@@ -57,12 +57,7 @@ export default function Workouts() {
             </View>
             <View style={tw`flex flex-1`} />
           </View>
-          <ErrorBoundary FallbackComponent={({ error }) => (
-            <Text>{error.message}</Text>
-          )}
-          >
-            <WorkoutForm workoutToEdit={workoutToEdit} onSave={toggleEditingWorkout} />
-          </ErrorBoundary>
+          <WorkoutForm workoutToEdit={workoutToEdit} onSave={toggleEditingWorkout} />
         </View>
       );
     }
