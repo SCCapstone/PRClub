@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { ErrorBoundary } from 'react-error-boundary';
 import {
   ActivityIndicator, View,
 } from 'react-native';
