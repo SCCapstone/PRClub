@@ -30,9 +30,10 @@ export default function WorkoutForm({
   workoutToEdit?: Workout,
   onSave?: () => void
 }) {
-  const dispatch = useAppDispatch();
   const exerciseInfos: WgerExerciseInfo[] = useAppSelector(selectExerciseInfos);
   const exerciseInfosStatus: SliceStatus = useAppSelector(selectExericseInfosStatus);
+
+  const dispatch = useAppDispatch();
 
   const initialFormValues: WorkoutInput = {
     name: workoutToEdit?.name || '',
