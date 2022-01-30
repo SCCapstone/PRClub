@@ -1,21 +1,26 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { Provider } from 'react-redux';
+import { Provider as ReduxProvider } from 'react-redux';
 import { SelectProvider } from '@mobile-reality/react-native-select-pro';
+import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import Navigator from './navigation/Navigator';
 import { store } from './state/store';
-import { getWorkoutsFromDb } from './state/workoutsSlice/thunks';
+import { fetchWorkoutsFromDb } from './state/workoutsSlice/thunks';
+import { fetchExerciseInfos } from './state/exerciseInfosSlice/thunks';
 
-store.dispatch(getWorkoutsFromDb('test-user'));
+store.dispatch(fetchWorkoutsFromDb('test-user'));
+store.dispatch(fetchExerciseInfos());
 
 export default function App() {
   return (
-    <Provider store={store}>
-      <SelectProvider>
-        <NavigationContainer>
-          <Navigator />
-        </NavigationContainer>
-      </SelectProvider>
-    </Provider>
+    <ReduxProvider store={store}>
+      <PaperProvider theme={{ ...DefaultTheme, dark: false }}>
+        <SelectProvider>
+          <NavigationContainer>
+            <Navigator />
+          </NavigationContainer>
+        </SelectProvider>
+      </PaperProvider>
+    </ReduxProvider>
   );
 }

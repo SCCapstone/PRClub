@@ -2,6 +2,7 @@
 import createSagaMiddleware from 'redux-saga';
 import { configureStore } from '@reduxjs/toolkit';
 import workoutsReducer from './workoutsSlice';
+import exerciseInfosReducer from './exerciseInfosSlice';
 import workoutsSaga from './workoutsSlice/saga';
 
 const sagaMiddleware = createSagaMiddleware();
@@ -9,8 +10,11 @@ const sagaMiddleware = createSagaMiddleware();
 export const store = configureStore({
   reducer: {
     workouts: workoutsReducer,
+    exerciseInfos: exerciseInfosReducer,
   },
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(sagaMiddleware),
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware({
+    serializableCheck: false,
+  }).concat(sagaMiddleware),
 });
 
 sagaMiddleware.run(workoutsSaga);

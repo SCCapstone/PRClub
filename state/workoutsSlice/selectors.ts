@@ -12,7 +12,8 @@ export const {
 } = workoutsAdapter.getSelectors((state: RootState) => state.workouts);
 
 export function selectWorkoutsSortedByMostRecent(state: RootState): Workout[] {
-  return selectWorkouts(state).sort((a, b) => (new Date(b.date) > new Date(a.date) ? 1 : -1));
+  return selectWorkouts(state)
+    .sort((a, b) => (new Date(b.createdDate) > new Date(a.createdDate) ? 1 : -1));
 }
 
 export function selectWorkoutsStatus(state: RootState): SliceStatus {
