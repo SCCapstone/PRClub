@@ -75,7 +75,7 @@ export default function Workouts() {
                 <View style={tw`flex flex-4`}>
                   {
                     workout.modifiedDate
-                      ? <Text style={tw`italic`}>{`Modified on ${new Date(workout.modifiedDate).toLocaleString()}`}</Text>
+                      ? <Text style={tw`italic`}>{`Edited ${new Date(workout.modifiedDate).toLocaleString()}`}</Text>
                       : <></>
                   }
                   <Text>{`On ${new Date(workout.createdDate).toLocaleString()}:`}</Text>
