@@ -19,13 +19,16 @@ import {
   WorkoutInput, WorkoutInputSchema,
 } from '../types/validation/WorkoutInput';
 import DeleteButton from './DeleteButton';
-import { StyleSheet } from 'react-native';
 import { Snackbar } from 'react-native-paper';
 
 
 export default function CreateWorkoutForm() {
   const [exerciseInfosAreFetching, setExerciseInfosAreFetching] = useState<boolean>(false);
   const [exerciseInfos, setExerciseInfos] = useState<WgerExerciseInfo[]>([]);
+
+  const [visible, setVisible] = React.useState(false);
+  const onToggleSnackBar = () => setVisible(!visible);
+  const onDismissSnackBar = () => setVisible(false);
 
   useEffect(() => {
     async function fetchExerciseInfos() {
@@ -39,11 +42,6 @@ export default function CreateWorkoutForm() {
   }, []);
 
   const dispatch = useAppDispatch();
-
-  const snackBarState = {
-    snackIsVisible: false,
-    distance: 0,
-  };
 
   return (
     <Formik
@@ -247,8 +245,8 @@ export default function CreateWorkoutForm() {
           <Button
             mode="contained"
             onPress={() => {
-              snackBarState.snackIsVisible = !snackBarState.snackIsVisible;
-              formikProps.handleSubmit()
+              {onToggleSnackBar};
+              formikProps.handleSubmit();
             }}
             disabled={!formikProps.values.name
               || !formikProps.values.exercises.length
@@ -269,10 +267,18 @@ export default function CreateWorkoutForm() {
           >
             submit
           </Button>
-          
-          
-          {/* <Snackbar
-        /> */}
+          <Snackbar
+            visible={visible}
+            onDismiss={onDismissSnackBar}
+            // Maybe another label/action here for undoing?
+            action={{
+              label: 'Done',
+              onPress: () => {
+                //
+              },
+            }}>
+            Workout Submitted.
+          </Snackbar>
         </View>
       )}
     </Formik>
