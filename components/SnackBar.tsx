@@ -15,10 +15,11 @@ const MyComponent = () => {
       <Snackbar
         visible={visible}
         onDismiss={onDismissSnackBar}
+        // Maybe another label/action here for undoing?
         action={{
           label: 'Done',
           onPress: () => {
-            // Do something
+            //
           },
         }}>
         Workout Submitted.
