@@ -1,7 +1,7 @@
 import { OptionType, Select } from '@mobile-reality/react-native-select-pro';
 import { Field, FieldArray, Formik } from 'formik';
 import _ from 'lodash';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { ActivityIndicator, View } from 'react-native';
 import 'react-native-get-random-values';
 import {
@@ -9,10 +9,13 @@ import {
 } from 'react-native-paper';
 import tw from 'twrnc';
 import { v4 as uuidv4 } from 'uuid';
-import { useAppDispatch } from '../hooks/redux';
-import WgerService from '../services/WgerService';
+import useAppDispatch from '../hooks/useAppDispatch';
+import useAppSelector from '../hooks/useAppSelector';
+import { selectExerciseInfos, selectExericseInfosStatus } from '../state/exerciseInfosSlice/selectors';
 import { upsertWorkout } from '../state/workoutsSlice';
 import WgerExerciseInfo from '../types/services/WgerExerciseInfo';
+import Workout from '../types/shared/Workout';
+import { SliceStatus } from '../types/state/SliceStatus';
 import { ExerciseInput } from '../types/validation/ExerciseInput';
 import { ExerciseSetInput } from '../types/validation/ExerciseSetInput';
 import {
@@ -22,40 +25,46 @@ import DeleteButton from './DeleteButton';
 import { Snackbar } from 'react-native-paper';
 
 
-export default function CreateWorkoutForm() {
-  const [exerciseInfosAreFetching, setExerciseInfosAreFetching] = useState<boolean>(false);
-  const [exerciseInfos, setExerciseInfos] = useState<WgerExerciseInfo[]>([]);
+export default function WorkoutForm({
+  workoutToEdit = undefined,
+  onSave = undefined,
+}: {
+  workoutToEdit?: Workout,
+  onSave?: () => void
+}) {
+  const exerciseInfos: WgerExerciseInfo[] = useAppSelector(selectExerciseInfos);
+  const exerciseInfosStatus: SliceStatus = useAppSelector(selectExericseInfosStatus);
 
   const [visible, setVisible] = React.useState(false);
   const onToggleSnackBar = () => setVisible(!visible);
   const onDismissSnackBar = () => setVisible(false);
 
-  useEffect(() => {
-    async function fetchExerciseInfos() {
-      setExerciseInfosAreFetching(true);
-      const fetchedExerciseInfos = await WgerService.getAllExerciseInfos();
-      setExerciseInfos(fetchedExerciseInfos);
-      setExerciseInfosAreFetching(false);
-    }
-
-    fetchExerciseInfos();
-  }, []);
-
   const dispatch = useAppDispatch();
+
+  const initialValues: WorkoutInput = {
+    name: workoutToEdit?.name || '',
+    exercises: workoutToEdit?.exercises.map((e) => ({
+      id: e.id,
+      name: e.name,
+      exerciseSets: e.exerciseSets.map((s) => ({
+        id: s.id,
+        weight: s.weight,
+        reps: s.reps,
+      })),
+    })) || [],
+  };
 
   return (
     <Formik
-      initialValues={{
-        name: '',
-        exercises: [] as ExerciseInput[],
-      } as WorkoutInput}
+      initialValues={initialValues}
       validationSchema={WorkoutInputSchema}
       onSubmit={(values) => {
         dispatch(
           upsertWorkout({
-            id: uuidv4(),
+            id: workoutToEdit ? workoutToEdit.id : uuidv4(),
             userId: 'test-user', // TODO replace this with current user's id
-            date: new Date().toString(),
+            createdDate: workoutToEdit?.createdDate || new Date().toString(),
+            modifiedDate: workoutToEdit ? new Date().toString() : null,
             name: values.name,
             exercises: values.exercises.map((e) => ({
               id: e.id,
@@ -88,7 +97,7 @@ export default function CreateWorkoutForm() {
                           <View style={tw`flex flex-row`}>
                             <View style={tw`flex flex-3 p-2`}>
                               {
-                                exerciseInfosAreFetching
+                                exerciseInfosStatus === 'fetching'
                                   ? (
                                     <View style={tw`flex flex-row`}>
                                       <View style={tw`flex flex-3`}>
@@ -245,8 +254,10 @@ export default function CreateWorkoutForm() {
           <Button
             mode="contained"
             onPress={() => {
-              {onToggleSnackBar};
               formikProps.handleSubmit();
+              if (workoutToEdit) {
+                if (onSave) { onSave(); }
+              }
             }}
             disabled={!formikProps.values.name
               || !formikProps.values.exercises.length
@@ -263,9 +274,10 @@ export default function CreateWorkoutForm() {
                     ),
                   )
                 )
-              )}
+              )
+              || (workoutToEdit && _.isEqual(initialValues, formikProps.values))}
           >
-            submit
+            {`${workoutToEdit ? 'save' : 'submit'} workout`}
           </Button>
           <Snackbar
             visible={visible}
