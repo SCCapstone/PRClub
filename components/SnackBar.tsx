@@ -1,56 +1,35 @@
-import React, { Component } from 'react';
-import { AppRegistry, StyleSheet, Text, View, Button } from 'react-native';
-import Snackbar from 'react-native-snackbar-component';
+import * as React from 'react';
+import { View, StyleSheet } from 'react-native';
+import { Button, Snackbar } from 'react-native-paper';
 
-export default class SnackBar extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      snackIsVisible: false,
-      distance: 0,
-    };
-  }
+const MyComponent = () => {
+  const [visible, setVisible] = React.useState(false);
 
-  render() {
-    return (
-      <View style={styles.container}>
-        <Button
-          onPress={() => {
-            this.setState({ 
-              snackIsVisible: !this.state.snackIsVisible
-            });
-          }}
+  const onToggleSnackBar = () => setVisible(!visible);
 
-          title="show snackbar"
-          color="#114455"
-          accessibilityLabel="toggle"
-        />
-    
-        <Snackbar
-          visible={this.state.snackIsVisible}
-          textMessage="Workout Submitted!"
-          actionHandler={() => {
-            alert("OK");
-            this.setState({ 
-              snackIsVisible: !this.state.snackIsVisible 
-            });
-          }}
-          actionText="OK"
-          distanceCallback={distance => {
-            this.setState({ distance: distance });
-          }}
-        />
-      </View>
-    );
-  }
-}
+  const onDismissSnackBar = () => setVisible(false);
 
+  return (
+    <View style={styles.container}>
+      <Button onPress={onToggleSnackBar}>{visible ? 'Hide' : 'Show'}</Button>
+      <Snackbar
+        visible={visible}
+        onDismiss={onDismissSnackBar}
+        action={{
+          label: 'Done',
+          onPress: () => {
+            // Do something
+          },
+        }}>
+        Workout Submitted.
+      </Snackbar>
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+    justifyContent: 'space-between',
   },
 });
