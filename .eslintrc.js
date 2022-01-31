@@ -45,6 +45,7 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 'error',
     indent: 'off',
     '@typescript-eslint/indent': ['error', 2],
+    'import/prefer-default-export': 'off',
   },
   ignorePatterns: ['cypress/**'], // temporary fix -- REMOVE LINE WHEN STARTING WRITING UI TESTS
 };

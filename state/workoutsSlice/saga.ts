@@ -1,7 +1,7 @@
 import { PayloadAction } from '@reduxjs/toolkit';
 import { all, call, takeLatest } from 'redux-saga/effects';
 import { removeWorkoutByEntity, upsertWorkout } from '.';
-import Workout from '../../models/Workout';
+import Workout from '../../types/shared/Workout';
 import WorkoutsService from '../../services/WorkoutsService';
 
 function* upsertWorkoutHandler(action: PayloadAction<Workout>) {
