@@ -279,15 +279,12 @@ export default function WorkoutForm({
           >
             {`${workoutToEdit ? 'save' : 'submit'} workout`}
           </Button>
+          <Button onPress={onToggleSnackBar}>{visible ? 'Hide SnackBar' : 'Show SnackBar'}</Button>
           <Snackbar
             visible={visible}
             onDismiss={onDismissSnackBar}
-            // Maybe another label/action here for undoing?
             action={{
               label: 'Done',
-              onPress: () => {
-                //
-              },
             }}>
             Workout Submitted.
           </Snackbar>
