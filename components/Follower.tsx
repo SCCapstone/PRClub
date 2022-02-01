@@ -6,9 +6,9 @@ import {
 import tw from 'twrnc';
 
 export default function Follower() {
-  const [followText, setFollowText] = useState('Follow');
-  const [following, setFollowing] = useState(false);
-  const [btnColor, setBtnColor] = useState('');
+  const [followText, setFollowText] = useState<string>('Follow');
+  const [following, setFollowing] = useState<boolean>(false);
+  const [btnColor, setBtnColor] = useState<string>('');
 
   function changeFollowStatus() {
     if (!following) {
