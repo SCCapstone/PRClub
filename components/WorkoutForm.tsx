@@ -1,3 +1,4 @@
+import { User } from '@firebase/auth';
 import { OptionType, Select } from '@mobile-reality/react-native-select-pro';
 import { Field, FieldArray, Formik } from 'formik';
 import _ from 'lodash';
@@ -12,6 +13,7 @@ import { v4 as uuidv4 } from 'uuid';
 import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
 import { selectExerciseInfos, selectExericseInfosStatus } from '../state/exerciseInfosSlice/selectors';
+import { selectUser } from '../state/userSlice/selectors';
 import { upsertWorkout } from '../state/workoutsSlice';
 import WgerExerciseInfo from '../types/services/WgerExerciseInfo';
 import Workout from '../types/shared/Workout';
@@ -33,6 +35,8 @@ export default function WorkoutForm({
   const exerciseInfos: WgerExerciseInfo[] = useAppSelector(selectExerciseInfos);
   const exerciseInfosStatus: SliceStatus = useAppSelector(selectExericseInfosStatus);
 
+  const currentUser: User | null = useAppSelector(selectUser);
+
   const dispatch = useAppDispatch();
 
   const initialValues: WorkoutInput = {
@@ -53,24 +57,28 @@ export default function WorkoutForm({
       initialValues={initialValues}
       validationSchema={WorkoutInputSchema}
       onSubmit={(values) => {
-        dispatch(
-          upsertWorkout({
-            id: workoutToEdit ? workoutToEdit.id : uuidv4(),
-            userId: 'test-user', // TODO replace this with current user's id
-            createdDate: workoutToEdit?.createdDate || new Date().toString(),
-            modifiedDate: workoutToEdit ? new Date().toString() : null,
-            name: values.name,
-            exercises: values.exercises.map((e) => ({
-              id: e.id,
-              name: e.name,
-              exerciseSets: e.exerciseSets.map((s) => ({
-                id: s.id,
-                weight: Number(s.weight),
-                reps: Number(s.reps),
+        if (currentUser && currentUser.email) {
+          dispatch(
+            upsertWorkout({
+              id: workoutToEdit ? workoutToEdit.id : uuidv4(),
+              userId: currentUser.email,
+              createdDate: workoutToEdit?.createdDate || new Date().toString(),
+              modifiedDate: workoutToEdit ? new Date().toString() : null,
+              name: values.name,
+              exercises: values.exercises.map((e) => ({
+                id: e.id,
+                name: e.name,
+                exerciseSets: e.exerciseSets.map((s) => ({
+                  id: s.id,
+                  weight: Number(s.weight),
+                  reps: Number(s.reps),
+                })),
               })),
-            })),
-          }),
-        );
+            }),
+          );
+        } else {
+          throw new Error('Something went terribly wrong -- you are here without being authenticated!');
+        }
       }}
     >
       {(formikProps) => (

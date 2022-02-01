@@ -14,11 +14,9 @@ Each slice is made up of the following five files. The first three are pretty st
 
 The last two are less trivial and keep track of all *asynchronous* interactions (usually database
 interactions) with the Redux store.
-- `saga.ts`: uses `redux-sagas` to handle syncing the database with the Redux store anytime an
-  action is dispatched **via user input** (i.e. whenever you call `dispatch(...)` **inside** a
-  React component). They listen to any time an action is dispatched so you don't need to call them
-  directly in components (making our lives way easier at the end of the day).
-- `thunks.ts`: uses `redux-thunk` to handle all {database <-> Redux store} interactions that occur
-  **outside** of React components (e.g. to fetch all of a user's workouts from the database on
-  startup). A good rule of thumb is to use a thunk any time you need to dispatch an action outside
-  of a React component using `store.dispatch(...)` (e.g. at the top-level of `App.tsx`).
+- `saga.ts`: uses `redux-sagas` to handle syncing the database with the Redux any time a
+  corresponding action is dispatched. They listen to any time an action is dispatched so you don't
+  need to call them directly in components (making our lives way easier at the end of the day).
+- `thunks.ts`: uses `redux-thunk` to handle all explicit {Firebase <-> Redux store} interactions.
+  The difference between `thunk`s and `saga`s is that `thunk`s are called explicity using a
+  `dispatch(...)`.
