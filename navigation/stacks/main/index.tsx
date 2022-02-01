@@ -1,12 +1,13 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import WorkoutsScreen from '../screens/WorkoutsScreen';
-import CreateWorkoutScreen from '../screens/CreateWorkoutScreen';
+import CreateWorkoutScreen from './screens/CreateWorkoutScreen';
+import WorkoutsScreen from './screens/WorkoutsScreen';
+import SettingsScreen from './screens/SettingsScreen';
 
 const Tab = createBottomTabNavigator();
 
-export default function Tabs() {
+export default function MainStack() {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -17,9 +18,9 @@ export default function Tabs() {
             iconName = focused ? 'barbell' : 'barbell-outline';
           } else if (route.name === 'Create Workout') {
             iconName = focused ? 'add-circle' : 'add-circle-outline';
-          } /* else if (route.name === 'Profile') {
-            iconName = focused ? 'person-circle' : 'person-circle-outline';
-          } */
+          } else if (route.name === 'Settings') {
+            iconName = focused ? 'settings' : 'settings-outline';
+          }
 
           return <Ionicons name={iconName} size={size} color={color} />;
         },
@@ -35,11 +36,10 @@ export default function Tabs() {
         name="Workouts"
         component={WorkoutsScreen}
       />
-      {/*
       <Tab.Screen
-        name="Profile"
-        component={ProfileScreen}
-      /> */}
+        name="Settings"
+        component={SettingsScreen}
+      />
     </Tab.Navigator>
   );
 }

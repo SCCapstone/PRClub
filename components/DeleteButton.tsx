@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from 'react-native-paper';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 export default function DeleteButton({ onPress }: {onPress: () => void}) {
   return (
@@ -9,7 +9,7 @@ export default function DeleteButton({ onPress }: {onPress: () => void}) {
       color="red"
       onPress={onPress}
     >
-      <FontAwesome name="trash" size={16} />
+      <Ionicons name="trash" size={16} />
     </Button>
   );
 }

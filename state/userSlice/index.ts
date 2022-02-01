@@ -1,12 +1,26 @@
-import { UserCredential } from '@firebase/auth';
+import { NextOrObserver, User, UserCredential } from '@firebase/auth';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import AuthService from '../../services/AuthService';
 import { initialState } from './state';
 import { userLogOut, userSignIn, userSignUp } from './thunks';
 
 const userSlice = createSlice({
   name: 'user',
   initialState,
-  reducers: {},
+  reducers: {
+    registerAuthStateListener(state, action: PayloadAction<NextOrObserver<User | null>>) {
+      state.unsubscribeAuthStateListener = AuthService.registerAuthStateListener(action.payload);
+    },
+    unsubscribeAuthStateListener(state) {
+      if (state.unsubscribeAuthStateListener) {
+        state.unsubscribeAuthStateListener();
+      }
+      state.unsubscribeAuthStateListener = null;
+    },
+    clearUserAuthError(state) {
+      state.authError = null;
+    },
+  },
   extraReducers(builder) {
     builder.addCase(userSignIn.pending, (state) => {
       state.status = 'signingIn';
@@ -14,7 +28,13 @@ const userSlice = createSlice({
 
     builder.addCase(userSignIn.fulfilled, (state, action: PayloadAction<UserCredential>) => {
       state.user = action.payload.user;
+      state.authError = null;
       state.status = 'loaded';
+    });
+
+    builder.addCase(userSignIn.rejected, (state, action) => {
+      state.authError = action.error;
+      state.status = 'idle';
     });
 
     builder.addCase(userSignUp.pending, (state) => {
@@ -24,6 +44,11 @@ const userSlice = createSlice({
     builder.addCase(userSignUp.fulfilled, (state, action: PayloadAction<UserCredential>) => {
       state.user = action.payload.user;
       state.status = 'loaded';
+    });
+
+    builder.addCase(userSignUp.rejected, (state, action) => {
+      state.authError = action.error;
+      state.status = 'idle';
     });
 
     builder.addCase(userLogOut.pending, (state) => {
@@ -36,5 +61,11 @@ const userSlice = createSlice({
     });
   },
 });
+
+export const {
+  registerAuthStateListener,
+  unsubscribeAuthStateListener,
+  clearUserAuthError,
+} = userSlice.actions;
 
 export default userSlice.reducer;

@@ -8,6 +8,7 @@ const workoutsSlice = createSlice({
   initialState,
   reducers: {
     upsertWorkout: workoutsAdapter.upsertOne,
+    flushWorkoutsFromStore: workoutsAdapter.removeAll,
     removeWorkoutByEntity(state, action: PayloadAction<Workout>) {
       state.ids = state.ids.filter((i) => i !== action.payload.id);
 
@@ -41,6 +42,7 @@ const workoutsSlice = createSlice({
 
 export const {
   upsertWorkout,
+  flushWorkoutsFromStore,
   removeWorkoutByEntity,
 } = workoutsSlice.actions;
 

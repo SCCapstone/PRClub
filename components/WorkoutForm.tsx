@@ -1,19 +1,18 @@
-import { User } from '@firebase/auth';
 import { OptionType, Select } from '@mobile-reality/react-native-select-pro';
 import { Field, FieldArray, Formik } from 'formik';
 import _ from 'lodash';
 import React from 'react';
-import { ActivityIndicator, View } from 'react-native';
+import { View } from 'react-native';
 import 'react-native-get-random-values';
 import {
-  Button, Text, TextInput,
+  Button, Text, TextInput, ActivityIndicator,
 } from 'react-native-paper';
 import tw from 'twrnc';
 import { v4 as uuidv4 } from 'uuid';
 import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
 import { selectExerciseInfos, selectExericseInfosStatus } from '../state/exerciseInfosSlice/selectors';
-import { selectUser } from '../state/userSlice/selectors';
+import { selectUserId } from '../state/userSlice/selectors';
 import { upsertWorkout } from '../state/workoutsSlice';
 import WgerExerciseInfo from '../types/services/WgerExerciseInfo';
 import Workout from '../types/shared/Workout';
@@ -35,7 +34,7 @@ export default function WorkoutForm({
   const exerciseInfos: WgerExerciseInfo[] = useAppSelector(selectExerciseInfos);
   const exerciseInfosStatus: SliceStatus = useAppSelector(selectExericseInfosStatus);
 
-  const currentUser: User | null = useAppSelector(selectUser);
+  const currentUserId: string | null = useAppSelector(selectUserId);
 
   const dispatch = useAppDispatch();
 
@@ -57,11 +56,11 @@ export default function WorkoutForm({
       initialValues={initialValues}
       validationSchema={WorkoutInputSchema}
       onSubmit={(values) => {
-        if (currentUser && currentUser.email) {
+        if (currentUserId) {
           dispatch(
             upsertWorkout({
               id: workoutToEdit ? workoutToEdit.id : uuidv4(),
-              userId: currentUser.email,
+              userId: currentUserId,
               createdDate: workoutToEdit?.createdDate || new Date().toString(),
               modifiedDate: workoutToEdit ? new Date().toString() : null,
               name: values.name,
@@ -78,7 +77,7 @@ export default function WorkoutForm({
           );
         } else {
           throw new Error('Something went terribly wrong.'
-            + ' You are here without being authenticated');
+            + ' You are here without being authenticated!');
         }
       }}
     >

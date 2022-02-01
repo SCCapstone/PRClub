@@ -1,11 +1,11 @@
 import React from 'react';
 import { ScrollView } from 'react-native';
-import Login from '../components/Login';
+import Workouts from '../../../../components/Workouts';
 
-export default function LoginScreen() {
+export default function WorkoutsScreen() {
   return (
     <ScrollView>
-      <Login />
+      <Workouts />
     </ScrollView>
   );
 }
