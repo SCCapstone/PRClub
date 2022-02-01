@@ -1,6 +1,6 @@
 import { User } from '@firebase/auth';
 import { createStackNavigator } from '@react-navigation/stack';
-import * as React from 'react';
+import React from 'react';
 import useAppSelector from '../hooks/useAppSelector';
 import { selectUser } from '../state/userSlice/selectors';
 import LoginStack from './stacks/login';
