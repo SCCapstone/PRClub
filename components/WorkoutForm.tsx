@@ -77,7 +77,8 @@ export default function WorkoutForm({
             }),
           );
         } else {
-          throw new Error('Something went terribly wrong -- you are here without being authenticated!');
+          throw new Error('Something went terribly wrong.'
+            + ' You are here without being authenticated');
         }
       }}
     >
