@@ -46,6 +46,7 @@ module.exports = {
     indent: 'off',
     '@typescript-eslint/indent': ['error', 2],
     'import/prefer-default-export': 'off',
+    'react/require-default-props': 'off',
   },
   ignorePatterns: ['cypress/**'], // temporary fix -- REMOVE LINE WHEN STARTING WRITING UI TESTS
 };
