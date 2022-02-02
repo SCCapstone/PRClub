@@ -5,7 +5,8 @@ import Follower from './Follower';
 export default function Followers() {
   return (
     <View>
-      <Follower />
+      <Follower tag="@yianniang" name="Yianni Angelidis" />
+      <Follower tag="@davidsmith" name="David Smith" />
     </View>
   );
 }
