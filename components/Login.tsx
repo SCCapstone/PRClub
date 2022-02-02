@@ -1,66 +1,102 @@
 /* eslint-disable no-alert */
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from '@firebase/auth';
+import { SerializedError } from '@reduxjs/toolkit';
 import React, { useState } from 'react';
-import { TouchableHighlight, Text, View } from 'react-native';
+import { View } from 'react-native';
+import {
+  Button, Snackbar, Text, TextInput,
+} from 'react-native-paper';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { Input, Button } from 'react-native-elements';
 import tw from 'twrnc';
-import { auth } from '../firebase';
+import useAppDispatch from '../hooks/useAppDispatch';
+import useAppSelector from '../hooks/useAppSelector';
+import { clearUserAuthError } from '../state/userSlice';
+import { selectUserAuthError } from '../state/userSlice/selectors';
+import { userSignIn, userSignUp } from '../state/userSlice/thunks';
 
 export default function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState<string | null>(null);
+  const [password, setPassword] = useState<string | null>(null);
 
-  // const navigation = useNavigation();
+  const [showSignIn, setShowSignIn] = useState<boolean>(true);
 
-  // useEffect(() => {
-  //   const unsubscribe = auth.onAuthStateChanged((user) => {
-  //     if (user) { navigation.navigate(); }
-  //   });
+  const dispatch = useAppDispatch();
 
-  //   return unsubscribe;
-  // }, []);
+  const userAuthError: SerializedError | null = useAppSelector(selectUserAuthError);
 
-  const handleSignup = () => {
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredentials) => {
-        const { user } = userCredentials;
-        console.log(user);
-      })
-      .catch(console.error);
-  };
-
-  const handleSignin = () => {
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredentials) => {
-        const { user } = userCredentials;
-        console.log(user);
-      })
-      .catch(console.error);
-  };
   return (
     <View>
       <View style={tw` items-center`}>
         <Ionicons name="person-circle" size={100} color="gray" />
-        <Text style={tw`text-xl`}>Sign in</Text>
+        <Text style={tw`text-xl`}>Welcome to PR Club!</Text>
       </View>
-      <Input
+      <TextInput
         placeholder="Email"
-        value={email}
-        onChangeText={(text) => setEmail(text)}
+        onChangeText={(input: string) => setEmail(input)}
+        value={email || ''}
       />
-      <Input
+      <TextInput
         placeholder="Password"
-        value={password}
-        onChangeText={(text) => setPassword(text)}
+        onChangeText={(input: string) => setPassword(input)}
+        value={password || ''}
         secureTextEntry
       />
       <View style={tw`items-center`}>
-        <Button
-          title="Sign in"
-          buttonStyle={tw`bg-green-500 w-96`}
-          onPress={handleSignin}
-        />
+        {showSignIn ? (
+          <>
+            <Button
+              mode="contained"
+              color="green"
+              onPress={() => {
+                if (email && password) {
+                  dispatch(userSignIn({ email, password }));
+                }
+              }}
+              disabled={!email || !password}
+            >
+              Sign In
+            </Button>
+            <View style={tw`p-5`} />
+            <Button
+              color="purple"
+              onPress={() => setShowSignIn(false)}
+            >
+              Don&apos;t have an account?
+            </Button>
+
+          </>
+        )
+          : (
+            <>
+              <Button
+                mode="contained"
+                color="blue"
+                onPress={() => {
+                  if (email && password) {
+                    dispatch(userSignUp({ email, password }));
+                  }
+                }}
+                disabled={!email || !password}
+              >
+                Sign Up
+              </Button>
+              <View style={tw`p-5`} />
+              <Button
+                color="purple"
+                onPress={() => setShowSignIn(true)}
+              >
+                Already have an account?
+              </Button>
+            </>
+          )}
+        <Snackbar
+          visible={!!userAuthError}
+          duration={2000}
+          onDismiss={() => dispatch(clearUserAuthError())}
+          style={tw`bg-red-500`}
+        >
+          {`Authentication error: ${userAuthError?.message}`}
+        </Snackbar>
+        {/*
         <View style={tw`w-92`}>
           <TouchableHighlight onPress={() => { alert('Forgot password'); }}>
             <Text style={tw`text-right text-gray-600`}>Forgot your password?</Text>
@@ -84,12 +120,7 @@ export default function Login() {
               <Ionicons name="logo-facebook" size={25} color="white" />
             }
           />
-        </View>
-        <View style={tw`w-35 items-center`}>
-          <TouchableHighlight style={tw`m-1`} onPress={handleSignup}>
-            <Text style={tw`text-gray-600`}>Register</Text>
-          </TouchableHighlight>
-        </View>
+          </View> */}
       </View>
     </View>
   );

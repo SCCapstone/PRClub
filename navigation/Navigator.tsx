@@ -1,45 +1,33 @@
+import { User } from '@firebase/auth';
+import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import WorkoutsScreen from '../screens/WorkoutsScreen';
-import CreateWorkoutScreen from '../screens/CreateWorkoutScreen';
-import ProfileScreen from '../screens/ProfileScreen';
+import useAppSelector from '../hooks/useAppSelector';
+import { selectUser } from '../state/userSlice/selectors';
+import LoginStack from './stacks/login';
+import MainStack from './stacks/main';
 
-const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
 
 export default function Navigator() {
+  const user: User | null = useAppSelector(selectUser);
+
   return (
-    <Tab.Navigator
-      screenOptions={({ route }) => ({
-        tabBarIcon: ({ focused, color, size }) => {
-          let iconName = '';
-
-          if (route.name === 'Workouts') {
-            iconName = focused ? 'barbell' : 'barbell-outline';
-          } else if (route.name === 'Create Workout') {
-            iconName = focused ? 'add-circle' : 'add-circle-outline';
-          } else if (route.name === 'Profile') {
-            iconName = focused ? 'person-circle' : 'person-circle-outline';
-          }
-
-          return <Ionicons name={iconName} size={size} color={color} />;
-        },
-        tabBarActiveTintColor: 'tomato',
-        tabBarInactiveTintColor: 'gray',
-      })}
+    <Stack.Navigator
+      screenOptions={{ headerShown: false }}
     >
-      <Tab.Screen
-        name="Create Workout"
-        component={CreateWorkoutScreen}
-      />
-      <Tab.Screen
-        name="Workouts"
-        component={WorkoutsScreen}
-      />
-      <Tab.Screen
-        name="Profile"
-        component={ProfileScreen}
-      />
-    </Tab.Navigator>
+      {user
+        ? (
+          <Stack.Screen
+            name="Main"
+            component={MainStack}
+          />
+        )
+        : (
+          <Stack.Screen
+            name="Login"
+            component={LoginStack}
+          />
+        )}
+    </Stack.Navigator>
   );
 }

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import {
-  ActivityIndicator, View,
+  View,
 } from 'react-native';
-import { Text } from 'react-native-paper';
+import { ActivityIndicator, Text } from 'react-native-paper';
 import tw from 'twrnc';
 import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
