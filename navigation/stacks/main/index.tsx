@@ -4,6 +4,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import CreateWorkoutScreen from './screens/CreateWorkoutScreen';
 import WorkoutsScreen from './screens/WorkoutsScreen';
 import SettingsScreen from './screens/SettingsScreen';
+import SearchScreen from './screens/SearchScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -20,6 +21,8 @@ export default function MainStack() {
             iconName = focused ? 'add-circle' : 'add-circle-outline';
           } else if (route.name === 'Settings') {
             iconName = focused ? 'settings' : 'settings-outline';
+          } else if (route.name === 'Search') {
+            iconName = focused ? 'search' : 'search-outline';
           }
 
           return <Ionicons name={iconName} size={size} color={color} />;
@@ -28,6 +31,10 @@ export default function MainStack() {
         tabBarInactiveTintColor: 'gray',
       })}
     >
+      <Tab.Screen
+        name="Search"
+        component={SearchScreen}
+      />
       <Tab.Screen
         name="Create Workout"
         component={CreateWorkoutScreen}
