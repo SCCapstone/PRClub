@@ -6,7 +6,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "eject": "expo eject",
-    "test": "jest",
+    "test": "jest --runInBand --detectOpenHandles --forceExit",
     "cypress": "concurrently -k -s first \"npm run web\" \"npx cypress run --headless\"",
     "cypress:gui": "concurrently -k -s first \"npm run web\" \"npx cypress open\""
   },

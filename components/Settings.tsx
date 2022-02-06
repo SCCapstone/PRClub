@@ -2,7 +2,7 @@ import React from 'react';
 import { List } from 'react-native-paper';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import useAppDispatch from '../hooks/useAppDispatch';
-import { userLogOut } from '../state/userSlice/thunks';
+import { userLogOut } from '../state/currentUserSlice/thunks';
 
 export default function Settings() {
   const dispatch = useAppDispatch();

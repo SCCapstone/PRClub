@@ -4,8 +4,9 @@ import { configureStore } from '@reduxjs/toolkit';
 import createSagaMiddleware from 'redux-saga';
 import exerciseInfosReducer from './exerciseInfosSlice';
 import { fetchExerciseInfos } from './exerciseInfosSlice/thunks';
-import userReducer, { registerAuthStateListener } from './userSlice';
+import currentUserReducer, { registerAuthStateListener } from './currentUserSlice';
 import workoutsReducer, { flushWorkoutsFromStore } from './workoutsSlice';
+import usersReducer from './usersSlice';
 import workoutsSaga from './workoutsSlice/saga';
 import { fetchWorkoutsFromDb } from './workoutsSlice/thunks';
 
@@ -15,7 +16,8 @@ export const store = configureStore({
   reducer: {
     workouts: workoutsReducer,
     exerciseInfos: exerciseInfosReducer,
-    user: userReducer,
+    currentUser: currentUserReducer,
+    users: usersReducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware({
     serializableCheck: false,
