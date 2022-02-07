@@ -1,12 +1,12 @@
 import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import useAppSelector from '../../../hooks/useAppSelector';
-import { selectUserStatus } from '../../../state/userSlice/selectors';
+import { selectCurrentUserStatus } from '../../../state/currentUserSlice/selectors';
 import LoginActivityScreen from './screens/LoginActivityScreen';
 import LoginScreen from './screens/LoginScreen';
 
 export default function LoginStack() {
-  const userStatus = useAppSelector(selectUserStatus);
+  const userStatus = useAppSelector(selectCurrentUserStatus);
 
   return (
     <SafeAreaView>

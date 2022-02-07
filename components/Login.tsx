@@ -9,9 +9,9 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import tw from 'twrnc';
 import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
-import { clearUserAuthError } from '../state/userSlice';
-import { selectUserAuthError } from '../state/userSlice/selectors';
-import { userSignIn, userSignUp } from '../state/userSlice/thunks';
+import { clearUserAuthError } from '../state/currentUserSlice';
+import { selectUserAuthError } from '../state/currentUserSlice/selectors';
+import { userSignIn, userSignUp } from '../state/currentUserSlice/thunks';
 
 export default function Login() {
   const [email, setEmail] = useState<string | null>(null);
