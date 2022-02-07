@@ -15,3 +15,8 @@ const firebaseConfig = {
 export const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 export const auth = getAuth(app);
+
+export const COLLECTIONS = {
+  WORKOUTS: 'workouts',
+  USERS: 'users',
+};
