@@ -4,8 +4,8 @@ import AuthService from '../../services/AuthService';
 import { initialState } from './state';
 import { userLogOut, userSignIn, userSignUp } from './thunks';
 
-const userSlice = createSlice({
-  name: 'user',
+const currentUserSlice = createSlice({
+  name: 'currentUser',
   initialState,
   reducers: {
     registerAuthStateListener(state, action: PayloadAction<NextOrObserver<User | null>>) {
@@ -27,7 +27,7 @@ const userSlice = createSlice({
     });
 
     builder.addCase(userSignIn.fulfilled, (state, action: PayloadAction<UserCredential>) => {
-      state.user = action.payload.user;
+      state.currentUser = action.payload.user;
       state.authError = null;
       state.status = 'loaded';
     });
@@ -42,7 +42,7 @@ const userSlice = createSlice({
     });
 
     builder.addCase(userSignUp.fulfilled, (state, action: PayloadAction<UserCredential>) => {
-      state.user = action.payload.user;
+      state.currentUser = action.payload.user;
       state.status = 'loaded';
     });
 
@@ -56,7 +56,7 @@ const userSlice = createSlice({
     });
 
     builder.addCase(userLogOut.fulfilled, (state) => {
-      state.user = null;
+      state.currentUser = null;
       state.status = 'idle';
     });
   },
@@ -66,6 +66,6 @@ export const {
   registerAuthStateListener,
   unsubscribeAuthStateListener,
   clearUserAuthError,
-} = userSlice.actions;
+} = currentUserSlice.actions;
 
-export default userSlice.reducer;
+export default currentUserSlice.reducer;

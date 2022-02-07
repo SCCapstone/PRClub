@@ -12,7 +12,7 @@ import { v4 as uuidv4 } from 'uuid';
 import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
 import { selectExerciseInfos, selectExericseInfosStatus } from '../state/exerciseInfosSlice/selectors';
-import { selectUserId } from '../state/userSlice/selectors';
+import { selectCurrentUserId } from '../state/currentUserSlice/selectors';
 import { upsertWorkout } from '../state/workoutsSlice';
 import WgerExerciseInfo from '../types/services/WgerExerciseInfo';
 import Workout from '../types/shared/Workout';
@@ -34,7 +34,7 @@ export default function WorkoutForm({
   const exerciseInfos: WgerExerciseInfo[] = useAppSelector(selectExerciseInfos);
   const exerciseInfosStatus: SliceStatus = useAppSelector(selectExericseInfosStatus);
 
-  const currentUserId: string | null = useAppSelector(selectUserId);
+  const currentUserId: string | null = useAppSelector(selectCurrentUserId);
 
   const dispatch = useAppDispatch();
 
