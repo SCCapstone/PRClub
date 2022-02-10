@@ -1,13 +1,16 @@
+import _ from 'lodash';
 import React, { useState } from 'react';
 import {
-  View, Text, TouchableHighlight, Image,
+  Image, Text, TouchableHighlight, View,
 } from 'react-native';
-import tw from 'twrnc';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import tw from 'twrnc';
+import useAppSelector from '../hooks/useAppSelector';
+import { selectCurrentUser } from '../state/currentUserSlice/selectors';
 import Followers from './Followers';
 import Posts from './Posts';
-import Workouts from './Workouts';
 import PRs from './PRs';
+import Workouts from './Workouts';
 
 enum TabType {
   FollowersTab,
@@ -33,8 +36,14 @@ function CurrentTab({ tab }: { tab: TabType }) {
 
 export default function Profile() {
   const [currTab, setCurrTab] = useState<TabType>(TabType.WorkoutsTab);
+  const currentUser = useAppSelector(selectCurrentUser);
+
+  if (_.isNull(currentUser)) {
+    throw new Error('User that is currently logged in cannot be null!');
+  }
+
   return (
-    <View>
+    <>
       <View style={tw`bg-gray-800`}>
         <View style={tw`flex-row m-auto p-10`}>
           <TouchableHighlight onPress={() => setCurrTab(TabType.PostsTab)}>
@@ -55,8 +64,11 @@ export default function Profile() {
           </TouchableHighlight>
         </View>
         <View style={tw`mx-auto`}>
-          <Text style={tw`text-xl text-white`}> Full Name</Text>
-          <Text style={tw`text-base text-white`}> @FullName </Text>
+          <Text style={tw`text-xl text-white`}>{currentUser.name}</Text>
+          <Text style={tw`text-base text-white`}>
+            @
+            {currentUser.username}
+          </Text>
         </View>
         <View style={tw`flex-row items-center justify-center`}>
           <TouchableHighlight onPress={() => setCurrTab(TabType.FollowersTab)}>
@@ -70,7 +82,8 @@ export default function Profile() {
           </TouchableHighlight>
         </View>
       </View>
+
       <CurrentTab tab={currTab} />
-    </View>
+    </>
   );
 }

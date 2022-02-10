@@ -5,7 +5,7 @@ import tw from 'twrnc';
 import useAppSelector from '../../../../hooks/useAppSelector';
 import { selectCurrentUserStatus } from '../../../../state/currentUserSlice/selectors';
 
-export default function LoginActivityScreen() {
+export default function AuthActivityScreen() {
   const userStatus = useAppSelector(selectCurrentUserStatus);
 
   return (
