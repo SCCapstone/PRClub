@@ -1,3 +1,4 @@
+/* eslint-disable react/destructuring-assignment */
 module.exports = (api) => {
   api.cache(true);
   return {
@@ -5,6 +6,15 @@ module.exports = (api) => {
       'babel-preset-expo',
       '@babel/preset-typescript',
     ],
-    plugins: ['inline-dotenv'],
+    plugins: [
+      ['module:react-native-dotenv', {
+        moduleName: '@env',
+        path: '.env',
+        blacklist: null,
+        whitelist: null,
+        safe: false,
+        allowUndefined: true,
+      }],
+    ],
   };
 };

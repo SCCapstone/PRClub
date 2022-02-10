@@ -31,7 +31,10 @@ We are creating a social networking application where users will be able to crea
 2. Run `npm install`.
 
 ## Running
-Run `expo start` from the root directory of this repository.
+1. Acquire a copy of this project's `.env` file from a maintainer of this repository. **This is
+important as it contains the credentials needed to connect to Firebase.** Place this at the root
+of your local copy of this repository.
+2. Run `expo start` from the root directory of your local copy of this repository.
 
 ## Deployment
 TODO
