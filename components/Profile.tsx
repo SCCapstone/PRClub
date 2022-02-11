@@ -1,5 +1,4 @@
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import _ from 'lodash';
 import React from 'react';
 import { Image, View } from 'react-native';
 import { Text } from 'react-native-paper';
