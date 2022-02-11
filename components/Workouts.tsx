@@ -46,17 +46,21 @@ export default function Workouts() {
   if (workoutsStatus === 'loaded') {
     if (editingWorkout) {
       return (
-        <View style={tw`bg-gray-100`}>
-          <View style={tw`flex flex-row p-3`}>
-            <View style={tw`flex flex-1`}>
-              <CancelButton onPress={toggleEditingWorkout} />
+        <View style={tw`flex-1`}>
+          <ScrollView style={tw`h-130 w-full`}>
+            <View style={tw`bg-gray-100`}>
+              <View style={tw`flex flex-row p-3`}>
+                <View style={tw`flex flex-1`}>
+                  <CancelButton onPress={toggleEditingWorkout} />
+                </View>
+                <View style={tw`flex flex-3`}>
+                  <Text style={tw`text-xl text-center font-bold`}>{`Editing "${workoutToEdit.name}"`}</Text>
+                </View>
+                <View style={tw`flex flex-1`} />
+              </View>
+              <WorkoutForm workoutToEdit={workoutToEdit} onSave={toggleEditingWorkout} />
             </View>
-            <View style={tw`flex flex-3`}>
-              <Text style={tw`text-xl text-center font-bold`}>{`Editing "${workoutToEdit.name}"`}</Text>
-            </View>
-            <View style={tw`flex flex-1`} />
-          </View>
-          <WorkoutForm workoutToEdit={workoutToEdit} onSave={toggleEditingWorkout} />
+          </ScrollView>
         </View>
       );
     }
