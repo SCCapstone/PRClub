@@ -4,4 +4,5 @@ export default interface User {
   username: string;
   email: string;
   workoutIds: string[];
+  postIds: string[];
 }
