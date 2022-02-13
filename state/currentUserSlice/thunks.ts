@@ -26,9 +26,11 @@ interface SignInThunkArgs {
 
 export const userSignIn = createAsyncThunk(
   'user/signIn',
-  async ({ email, password }: SignInThunkArgs): Promise<User> => AuthService.signIn(
-    email, password,
-  ),
+  async ({ email, password }: SignInThunkArgs): Promise<User> => {
+    const user = await AuthService.signIn(email, password);
+    await AsyncStorage.setItem('current_user', JSON.stringify(user));
+    return user;
+  },
 );
 
 interface SignUpThunkArgs {
@@ -42,12 +44,17 @@ export const userSignUp = createAsyncThunk(
   'user/signUp',
   async ({
     name, username, email, password,
-  }: SignUpThunkArgs): Promise<User> => AuthService.signUp(
-    name, username, email, password,
-  ),
+  }: SignUpThunkArgs): Promise<User> => {
+    const user = await AuthService.signUp(name, username, email, password);
+    await AsyncStorage.setItem('current_user', JSON.stringify(user));
+    return user;
+  },
 );
 
 export const userLogOut = createAsyncThunk(
   'user/logOut',
-  async (): Promise<void> => AuthService.logOut(),
+  async (): Promise<void> => {
+    await AsyncStorage.removeItem('current_user');
+    AuthService.logOut();
+  },
 );

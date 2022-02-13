@@ -1,12 +1,12 @@
 import React from 'react';
 import { View } from 'react-native';
 import tw from 'twrnc';
-import Post from './Post';
+import PostItem from './PostItem';
 
 export default function Posts() {
   return (
     <View>
-      <Post />
+      <PostItem />
     </View>
   );
 }
