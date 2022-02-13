@@ -47,8 +47,8 @@ async function removeWorkout(workout: Workout): Promise<void> {
   await deleteDoc(doc(db, COLLECTIONS.WORKOUTS, workout.id));
 
   // remove postId from user's postIds
-  await updateDoc(doc(db, COLLECTIONS.WORKOUTS, workout.userId), {
-    postIds: arrayRemove(workout.id),
+  await updateDoc(doc(db, COLLECTIONS.USERS, workout.userId), {
+    workoutIds: arrayRemove(workout.id),
   });
 }
 
