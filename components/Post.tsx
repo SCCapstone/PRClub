@@ -4,6 +4,7 @@ import {
 } from 'react-native';
 import tw from 'twrnc';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import User from '../types/shared/User';
 
 export default function Post() {
   const [likeStatus, setLikeStatus] = useState<boolean>(false);
@@ -17,7 +18,7 @@ export default function Post() {
   }
   return (
     <View style={tw`p-2`}>
-      <View style={tw`border-solid border-gray-500 border-b w-93`}>
+      <View style={tw`border-solid border-gray-500 border-b w-100`}>
         <View style={tw`flex-row`}>
           <View>
             {/* eslint-disable-next-line global-require */}

@@ -1,6 +1,23 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import _ from 'lodash';
 import AuthService from '../../services/AuthService';
 import User from '../../types/shared/User';
+
+export const tryLoadUserFromAsyncStorage = createAsyncThunk(
+  'user/tryLoadUserFromAsyncStorage',
+  async (): Promise<User | null> => {
+    try {
+      const userJson = await AsyncStorage.getItem('current_user');
+      if (_.isNull(userJson)) {
+        return null;
+      }
+      return JSON.parse(userJson) as User;
+    } catch (e) {
+      return null;
+    }
+  },
+);
 
 interface SignInThunkArgs {
   email: string;

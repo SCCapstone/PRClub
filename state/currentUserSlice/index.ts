@@ -3,7 +3,9 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import AuthService from '../../services/AuthService';
 import User from '../../types/shared/User';
 import { initialState } from './state';
-import { userLogOut, userSignIn, userSignUp } from './thunks';
+import {
+  tryLoadUserFromAsyncStorage, userLogOut, userSignIn, userSignUp,
+} from './thunks';
 
 const currentUserSlice = createSlice({
   name: 'currentUser',
@@ -23,6 +25,22 @@ const currentUserSlice = createSlice({
     },
   },
   extraReducers(builder) {
+    builder.addCase(tryLoadUserFromAsyncStorage.pending, (state) => {
+      state.status = 'fetching';
+    });
+
+    builder.addCase(
+      tryLoadUserFromAsyncStorage.fulfilled,
+      (state, action: PayloadAction<User | null>) => {
+        state.currentUser = action.payload;
+        state.status = 'loaded';
+      },
+    );
+
+    builder.addCase(tryLoadUserFromAsyncStorage.rejected, (state) => {
+      state.status = 'idle';
+    });
+
     builder.addCase(userSignIn.pending, (state) => {
       state.status = 'signingIn';
     });

@@ -11,7 +11,10 @@ export default function LoginStack() {
   return (
     <SafeAreaView>
       {
-        (userStatus === 'signingIn' || userStatus === 'signingUp' || userStatus === 'loggingOut')
+        (userStatus === 'signingIn'
+          || userStatus === 'signingUp'
+          || userStatus === 'loggingOut'
+          || userStatus === 'fetching')
           ? <AuthActivityScreen />
           : <LoginScreen />
       }
