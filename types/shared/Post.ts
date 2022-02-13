@@ -3,5 +3,5 @@ export default interface Post {
   userId: string;
   workoutId: string;
   createdDate: string;
-  text: string;
+  caption: string;
 }

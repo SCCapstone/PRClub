@@ -1,22 +1,20 @@
 import React, { useState } from 'react';
 import { View } from 'react-native';
 import { Button, Menu, Text } from 'react-native-paper';
-import tw from 'twrnc';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import tw from 'twrnc';
 import Workout from '../types/shared/Workout';
-import DeleteButton from './DeleteButton';
-import EditButton from './EditButton';
 
 export default function WorkoutItem({
   workout,
   onEdit = undefined,
   onDelete = undefined,
-  onShare = undefined,
+  onPost = undefined,
 }: {
   workout: Workout,
   onEdit?: () => void,
   onDelete?: () => void,
-  onShare?: () => void,
+  onPost?: () => void,
 }) {
   const [menuIsVisible, setMenuIsVisible] = useState<boolean>(false);
 
@@ -33,7 +31,7 @@ export default function WorkoutItem({
           <Text style={tw`font-bold text-base`}>{workout.name}</Text>
         </View>
         <View style={tw`flex flex-1 p-2`}>
-          {(!!onEdit && !!onDelete && !!onShare)
+          {(!!onEdit && !!onDelete && !!onPost)
             && (
               <Menu
                 visible={menuIsVisible}
@@ -58,7 +56,7 @@ export default function WorkoutItem({
                 />
                 <Menu.Item
                   key={2}
-                  onPress={onShare}
+                  onPress={onPost}
                   title="Share as Post"
                   icon={() => <Ionicons name="add" size={24} style={tw`text-black`} />}
                 />

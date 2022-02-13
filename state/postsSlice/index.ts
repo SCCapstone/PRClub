@@ -1,5 +1,4 @@
 import { createSlice, Dictionary, PayloadAction } from '@reduxjs/toolkit';
-import _ from 'lodash';
 import Post from '../../types/shared/Post';
 import { initialState, postsAdapter } from './state';
 import { getPosts } from './thunks';

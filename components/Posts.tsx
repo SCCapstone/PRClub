@@ -1,12 +1,12 @@
 import React from 'react';
-import { View } from 'react-native';
-import tw from 'twrnc';
+import { ScrollView } from 'react-native-gesture-handler';
+import Post from '../types/shared/Post';
 import PostItem from './PostItem';
 
-export default function Posts() {
+export default function Posts({ posts }: { posts: Post[] }) {
   return (
-    <View>
-      <PostItem />
-    </View>
+    <ScrollView>
+      {posts.map((p) => <PostItem post={p} key={p.id} />)}
+    </ScrollView>
   );
 }

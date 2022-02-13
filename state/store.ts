@@ -3,7 +3,6 @@ import { User as FirebaseUser } from '@firebase/auth';
 import { configureStore } from '@reduxjs/toolkit';
 import createSagaMiddleware from 'redux-saga';
 import currentUserReducer, { registerAuthStateListener } from './currentUserSlice';
-import { tryLoadUserFromAsyncStorage } from './currentUserSlice/thunks';
 import exerciseInfosReducer from './exerciseInfosSlice';
 import { fetchExerciseInfos } from './exerciseInfosSlice/thunks';
 import postsReducer, { flushPostsFromStore } from './postsSlice';
@@ -29,7 +28,6 @@ export const store = configureStore({
   }).concat(sagaMiddleware),
 });
 
-store.dispatch(tryLoadUserFromAsyncStorage());
 store.dispatch(fetchExerciseInfos());
 store.dispatch(registerAuthStateListener(async (user: FirebaseUser | null) => {
   if (user && user.uid) {

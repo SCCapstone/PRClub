@@ -4,7 +4,9 @@ import { Image, View } from 'react-native';
 import { Text } from 'react-native-paper';
 import tw from 'twrnc';
 import useAppSelector from '../hooks/useAppSelector';
-import { selectCurrentUser } from '../state/currentUserSlice/selectors';
+import { selectCurrentUser, selectCurrentUserId } from '../state/currentUserSlice/selectors';
+import { selectPostsSortedByMostRecentByUserId } from '../state/postsSlice/selectors';
+import { selectWorkoutsSortedByMostRecentByUserId } from '../state/workoutsSlice/selectors';
 import Followers from './Followers';
 import Posts from './Posts';
 import PRs from './PRs';
@@ -14,6 +16,15 @@ const Tab = createMaterialTopTabNavigator();
 
 export default function Profile() {
   const currentUser = useAppSelector(selectCurrentUser);
+  const currentUserId = useAppSelector(selectCurrentUserId);
+
+  const currentUserWorkouts = useAppSelector(
+    (state) => selectWorkoutsSortedByMostRecentByUserId(state, currentUserId || ''),
+  );
+
+  const currentUserPosts = useAppSelector(
+    (state) => selectPostsSortedByMostRecentByUserId(state, currentUserId || ''),
+  );
 
   return (
     <>
@@ -32,8 +43,12 @@ export default function Profile() {
         <View style={tw`flex flex-1`} />
       </View>
       <Tab.Navigator>
-        <Tab.Screen name="Workouts" component={Workouts} />
-        <Tab.Screen name="Posts" component={Posts} />
+        <Tab.Screen name="Workouts">
+          {() => <Workouts workouts={currentUserWorkouts} />}
+        </Tab.Screen>
+        <Tab.Screen name="Posts">
+          {() => <Posts posts={currentUserPosts} />}
+        </Tab.Screen>
         <Tab.Screen name="PRs" component={PRs} />
         <Tab.Screen name="Followers" component={Followers} />
       </Tab.Navigator>
