@@ -1,7 +1,7 @@
 import { createSlice, Dictionary, PayloadAction } from '@reduxjs/toolkit';
 import Workout from '../../types/shared/Workout';
 import { initialState, workoutsAdapter } from './state';
-import { fetchWorkoutsFromDb } from './thunks';
+import { getWorkouts } from './thunks';
 
 const workoutsSlice = createSlice({
   name: 'workouts',
@@ -22,11 +22,11 @@ const workoutsSlice = createSlice({
     },
   },
   extraReducers(builder) {
-    builder.addCase(fetchWorkoutsFromDb.pending, (state) => {
+    builder.addCase(getWorkouts.pending, (state) => {
       state.status = 'fetching';
     });
 
-    builder.addCase(fetchWorkoutsFromDb.fulfilled, (state, action: PayloadAction<Workout[]>) => {
+    builder.addCase(getWorkouts.fulfilled, (state, action: PayloadAction<Workout[]>) => {
       state.ids = action.payload.map((w) => w.id);
 
       const entities: Dictionary<Workout> = {};

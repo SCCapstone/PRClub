@@ -24,7 +24,7 @@ async function signUp(
   );
   const querySnapshot = await getDocs(q);
   if (!querySnapshot.empty) {
-    throw new Error('Username exists!');
+    throw new Error('Username already exists!');
   }
 
   // if username doesn't exist, proceed with registration
@@ -41,6 +41,7 @@ async function signUp(
     username,
     email: userCredential.user.email,
     workoutIds: [],
+    postIds: [],
   };
   await setDoc(doc(db, COLLECTIONS.USERS, user.id), user);
 
