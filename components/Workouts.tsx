@@ -1,20 +1,22 @@
 import React, { useState } from 'react';
 import { ScrollView, View } from 'react-native';
 import {
-  ActivityIndicator, Button, Text, TextInput,
+  ActivityIndicator, Button, Snackbar, Text, TextInput,
 } from 'react-native-paper';
 import tw from 'twrnc';
 import { v4 as uuidv4 } from 'uuid';
 import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
-import { upsertPostToStore } from '../state/postsSlice';
-import { postsServiceUpsert } from '../state/postsSlice/thunks';
+import {
+  clearPostsServiceUpsertResult, removePostFromStore, upsertPostToStore,
+} from '../state/postsSlice';
+import { selectPostsServiceUpsertResult, selectPostsStatus } from '../state/postsSlice/selectors';
+import { postsServiceRemove, postsServiceUpsert } from '../state/postsSlice/thunks';
 import { removeWorkoutFromStore } from '../state/workoutsSlice';
 import { selectWorkoutsStatus } from '../state/workoutsSlice/selectors';
 import { workoutsServiceRemove } from '../state/workoutsSlice/thunks';
 import Post from '../types/shared/Post';
 import Workout from '../types/shared/Workout';
-import { SliceStatus } from '../types/state/SliceStatus';
 import BackButton from './BackButton';
 import WorkoutForm from './WorkoutForm';
 import WorkoutItem from './WorkoutItem';
@@ -24,7 +26,9 @@ const POST_CHARACTER_LIMIT = 100;
 export default function Workouts({ workouts }: {workouts: Workout[]}) {
   const dispatch = useAppDispatch();
 
-  const workoutsStatus: SliceStatus = useAppSelector(selectWorkoutsStatus);
+  const workoutsStatus = useAppSelector(selectWorkoutsStatus);
+  const postsStatus = useAppSelector(selectPostsStatus);
+  const postsServiceUpsertResult = useAppSelector(selectPostsServiceUpsertResult);
 
   const [workoutsState, setWorkoutsState] = useState<'default' | 'editing' | 'sharing'>('default');
 
@@ -32,6 +36,8 @@ export default function Workouts({ workouts }: {workouts: Workout[]}) {
 
   const [workoutToPost, setWorkoutToPost] = useState<Workout | null>(null);
   const [postCaption, setPostCaption] = useState<string>('');
+
+  const [submittedPost, setSubmittedPost] = useState<Post | null>(null);
 
   if (workoutsStatus === 'idle') {
     return (
@@ -74,53 +80,82 @@ export default function Workouts({ workouts }: {workouts: Workout[]}) {
 
     if (workoutsState === 'sharing' && workoutToPost) {
       return (
-        <View style={tw`flex-1`}>
-          <ScrollView style={tw`h-130 w-full`}>
-            <View style={tw`bg-gray-100`}>
-              <View style={tw`flex flex-row p-3`}>
-                <View style={tw`flex flex-1`}>
-                  <BackButton onPress={() => setWorkoutsState('default')} />
+        <>
+          <View style={tw`flex-1`}>
+            <ScrollView style={tw`h-130 w-full`}>
+              <View style={tw`bg-gray-100`}>
+                <View style={tw`flex flex-row p-3`}>
+                  <View style={tw`flex flex-1`}>
+                    <BackButton onPress={() => setWorkoutsState('default')} />
+                  </View>
+                  <View style={tw`flex flex-3`}>
+                    <Text style={tw`text-xl text-center font-bold`}>{`Sharing "${workoutToPost.name}" as a post`}</Text>
+                  </View>
+                  <View style={tw`flex flex-1`} />
                 </View>
-                <View style={tw`flex flex-3`}>
-                  <Text style={tw`text-xl text-center font-bold`}>{`Sharing "${workoutToPost.name}" as a post`}</Text>
-                </View>
-                <View style={tw`flex flex-1`} />
               </View>
-            </View>
-            <TextInput
-              onChangeText={setPostCaption}
-              placeholder="add a caption..."
-              multiline
-            />
-            <View style={tw`p-1`}>
-              <Text style={postCaption.length > POST_CHARACTER_LIMIT ? tw`text-right text-red-500` : tw`text-right`}>
-                {postCaption.length}
-                /
-                {POST_CHARACTER_LIMIT}
-              </Text>
-            </View>
-            <Button
-              mode="contained"
-              onPress={() => {
-                const post: Post = {
-                  id: uuidv4(),
-                  userId: workoutToPost.userId,
-                  workoutId: workoutToPost.id,
-                  createdDate: new Date().toString(),
-                  caption: postCaption,
-                };
+              <TextInput
+                onChangeText={setPostCaption}
+                placeholder="add a caption..."
+                multiline
+              />
+              <View style={tw`p-1`}>
+                <Text style={postCaption.length > POST_CHARACTER_LIMIT ? tw`text-right text-red-500` : tw`text-right`}>
+                  {postCaption.length}
+                  /
+                  {POST_CHARACTER_LIMIT}
+                </Text>
+              </View>
+              <Button
+                mode="contained"
+                onPress={() => {
+                  const post: Post = {
+                    id: uuidv4(),
+                    userId: workoutToPost.userId,
+                    workoutId: workoutToPost.id,
+                    createdDate: new Date().toString(),
+                    caption: postCaption,
+                  };
 
-                dispatch(upsertPostToStore(post));
-                dispatch(postsServiceUpsert(post));
+                  dispatch(upsertPostToStore(post));
+                  dispatch(postsServiceUpsert(post));
 
-                setPostCaption('');
-              }}
-              disabled={postCaption.length < 1 || postCaption.length > POST_CHARACTER_LIMIT}
-            >
-              Post
-            </Button>
-          </ScrollView>
-        </View>
+                  setSubmittedPost(post);
+
+                  setPostCaption('');
+                }}
+                disabled={
+                  postCaption.length < 1
+                || postCaption.length > POST_CHARACTER_LIMIT
+                || postsStatus === 'callingService'
+                }
+              >
+                {postsStatus === 'callingService' ? <ActivityIndicator /> : 'Post'}
+              </Button>
+            </ScrollView>
+          </View>
+          <Snackbar
+            visible={!!postsServiceUpsertResult}
+            duration={3000}
+            onDismiss={() => dispatch(clearPostsServiceUpsertResult())}
+            action={postsServiceUpsertResult && postsServiceUpsertResult.success ? {
+              label: 'Undo',
+              onPress: () => {
+                if (submittedPost) {
+                  dispatch(removePostFromStore(submittedPost));
+                  dispatch(postsServiceRemove(submittedPost));
+                  setSubmittedPost(null);
+                }
+              },
+            } : undefined}
+          >
+            {postsServiceUpsertResult && (
+              postsServiceUpsertResult.success
+                ? 'Post Submitted!'
+                : `Error submitting post: ${postsServiceUpsertResult.error}`
+            )}
+          </Snackbar>
+        </>
       );
     }
 

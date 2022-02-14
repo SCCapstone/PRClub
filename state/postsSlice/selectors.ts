@@ -1,5 +1,4 @@
 import Post from '../../types/shared/Post';
-import { SliceStatus } from '../../types/state/SliceStatus';
 import { RootState } from '../store';
 import { postsAdapter } from './state';
 
@@ -17,6 +16,14 @@ export function selectPostsSortedByMostRecentByUserId(state: RootState, userId: 
     .sort((a, b) => (new Date(b.createdDate) > new Date(a.createdDate) ? 1 : -1));
 }
 
-export function selectPostsStatus(state: RootState): SliceStatus {
+export function selectPostsStatus(state: RootState) {
   return state.posts.status;
+}
+
+export function selectPostsServiceUpsertResult(state: RootState) {
+  return state.posts.postsServiceUpsertResult;
+}
+
+export function selectPostsServicRemoveResult(state: RootState) {
+  return state.posts.postsServiceRemoveResult;
 }
