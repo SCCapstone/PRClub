@@ -108,10 +108,10 @@ export default function Workouts({ workouts }: {workouts: Workout[]}) {
                   workoutId: workoutToPost.id,
                   createdDate: new Date().toString(),
                   caption: postCaption,
-                }
+                };
 
                 dispatch(upsertPost(post));
-                dispatch(postsServiceUpsert(post))
+                dispatch(postsServiceUpsert(post));
 
                 setPostCaption('');
               }}
@@ -143,8 +143,8 @@ export default function Workouts({ workouts }: {workouts: Workout[]}) {
                     setWorkoutsState('editing');
                   }}
                   onDelete={() => {
-                    dispatch(removeWorkoutByEntity(workout))
-                    dispatch(workoutsServiceRemove(workout))
+                    dispatch(removeWorkoutByEntity(workout));
+                    dispatch(workoutsServiceRemove(workout));
                   }}
                   onPost={() => {
                     setWorkoutToPost(workout);
