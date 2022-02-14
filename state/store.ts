@@ -5,10 +5,10 @@ import currentUserReducer, { registerAuthStateListener } from './currentUserSlic
 import exerciseInfosReducer from './exerciseInfosSlice';
 import { fetchExerciseInfos } from './exerciseInfosSlice/thunks';
 import postsReducer, { flushPostsFromStore } from './postsSlice';
-import { getPosts } from './postsSlice/thunks';
+import { postsServiceGet } from './postsSlice/thunks';
 import usersReducer from './usersSlice';
 import workoutsReducer, { flushWorkoutsFromStore } from './workoutsSlice';
-import { getWorkouts } from './workoutsSlice/thunks';
+import { workoutsServiceGet } from './workoutsSlice/thunks';
 
 export const store = configureStore({
   reducer: {
@@ -25,8 +25,8 @@ export const store = configureStore({
 
 store.dispatch(registerAuthStateListener(async (user: FirebaseUser | null) => {
   if (user && user.uid) {
-    store.dispatch(getWorkouts(user.uid));
-    store.dispatch(getPosts(user.uid));
+    store.dispatch(workoutsServiceGet(user.uid));
+    store.dispatch(postsServiceGet(user.uid));
   } else {
     store.dispatch(flushWorkoutsFromStore());
     store.dispatch(flushPostsFromStore());

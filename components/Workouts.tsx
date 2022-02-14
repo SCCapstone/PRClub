@@ -7,9 +7,9 @@ import tw from 'twrnc';
 import { v4 as uuidv4 } from 'uuid';
 import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
-import { upsertPost } from '../state/postsSlice';
+import { upsertPostToStore } from '../state/postsSlice';
 import { postsServiceUpsert } from '../state/postsSlice/thunks';
-import { removeWorkoutByEntity } from '../state/workoutsSlice';
+import { removeWorkoutFromStore } from '../state/workoutsSlice';
 import { selectWorkoutsStatus } from '../state/workoutsSlice/selectors';
 import { workoutsServiceRemove } from '../state/workoutsSlice/thunks';
 import Post from '../types/shared/Post';
@@ -110,7 +110,7 @@ export default function Workouts({ workouts }: {workouts: Workout[]}) {
                   caption: postCaption,
                 };
 
-                dispatch(upsertPost(post));
+                dispatch(upsertPostToStore(post));
                 dispatch(postsServiceUpsert(post));
 
                 setPostCaption('');
@@ -143,7 +143,7 @@ export default function Workouts({ workouts }: {workouts: Workout[]}) {
                     setWorkoutsState('editing');
                   }}
                   onDelete={() => {
-                    dispatch(removeWorkoutByEntity(workout));
+                    dispatch(removeWorkoutFromStore(workout));
                     dispatch(workoutsServiceRemove(workout));
                   }}
                   onPost={() => {

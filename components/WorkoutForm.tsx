@@ -13,7 +13,7 @@ import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
 import { selectCurrentUserId } from '../state/currentUserSlice/selectors';
 import { selectExerciseInfos, selectExericseInfosStatus } from '../state/exerciseInfosSlice/selectors';
-import { upsertWorkout } from '../state/workoutsSlice';
+import { upsertWorkoutToStore } from '../state/workoutsSlice';
 import { workoutsServiceUpsert } from '../state/workoutsSlice/thunks';
 import WgerExerciseInfo from '../types/services/WgerExerciseInfo';
 import Workout from '../types/shared/Workout';
@@ -75,7 +75,7 @@ export default function WorkoutForm({
             })),
           };
 
-          dispatch(upsertWorkout(workout));
+          dispatch(upsertWorkoutToStore(workout));
           dispatch(workoutsServiceUpsert(workout));
         } else {
           throw new Error('Something went terribly wrong.'

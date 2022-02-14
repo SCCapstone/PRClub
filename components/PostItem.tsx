@@ -6,7 +6,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import tw from 'twrnc';
 import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
-import { removePostByEntity } from '../state/postsSlice';
+import { removePostFromStore } from '../state/postsSlice';
 import { postsServiceRemove } from '../state/postsSlice/thunks';
 import { selectWorkoutById } from '../state/workoutsSlice/selectors';
 import Post from '../types/shared/Post';
@@ -54,7 +54,7 @@ export default function PostItem({ post }: { post: Post }) {
         <View style={tw`flex flex-1`}>
           <Button
             onPress={() => {
-              dispatch(removePostByEntity(post));
+              dispatch(removePostFromStore(post));
               dispatch(postsServiceRemove(post));
             }}
           >
