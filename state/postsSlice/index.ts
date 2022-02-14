@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { delay } from 'lodash';
 import Post from '../../types/shared/Post';
 import { initialState, postsAdapter } from './state';
 import { postsServiceGet, postsServiceRemove, postsServiceUpsert } from './thunks';
