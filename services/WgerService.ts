@@ -28,15 +28,14 @@ const baseQueryParams = {
 };
 
 async function getExerciseInfosCount() {
-  return (
-    await client
-      .get<WgerExerciseInfoResponse>(exerciseInfosEndpoint, {
-      params: {
-        ...baseQueryParams,
-        limit: 1,
-      },
-    })
-  ).data.count;
+  const response = await client.get<WgerExerciseInfoResponse>(exerciseInfosEndpoint, {
+    params: {
+      ...baseQueryParams,
+      limit: 1,
+    },
+  });
+
+  return response.data.count;
 }
 
 /**
@@ -44,15 +43,15 @@ async function getExerciseInfosCount() {
  * @returns a list of ExerciseInfo objects
  */
 async function getAllExerciseInfos(): Promise<WgerExerciseInfo[]> {
-  const exerciseInfos = (
-    await client
-      .get<WgerExerciseInfoResponse>(exerciseInfosEndpoint, {
-      params: {
-        ...baseQueryParams,
-        limit: await getExerciseInfosCount(),
-      },
-    })
-  ).data.results.sort((a, b) => a.category.name.localeCompare(b.category.name));
+  const response = await client.get<WgerExerciseInfoResponse>(exerciseInfosEndpoint, {
+    params: {
+      ...baseQueryParams,
+      limit: await getExerciseInfosCount(),
+    },
+  });
+
+  const exerciseInfos = response.data.results
+    .sort((a, b) => a.category.name.localeCompare(b.category.name));
 
   return _.uniqBy(_.uniqBy(exerciseInfos, (i) => i.id), (i) => i.name);
 }
@@ -69,15 +68,15 @@ async function takeExerciseInfos(limit: number): Promise<WgerExerciseInfo[]> {
     throw new Error(`Number of exercises to query (${limit}) exceeds exercise count on server (${count}).`);
   }
 
-  const exerciseInfos = (
-    await client
-      .get<WgerExerciseInfoResponse>(exerciseInfosEndpoint, {
-      params: {
-        ...baseQueryParams,
-        limit,
-      },
-    })
-  ).data.results.sort((a, b) => a.category.name.localeCompare(b.category.name));
+  const response = await client.get<WgerExerciseInfoResponse>(exerciseInfosEndpoint, {
+    params: {
+      ...baseQueryParams,
+      limit,
+    },
+  });
+
+  const exerciseInfos = response.data.results
+    .sort((a, b) => a.category.name.localeCompare(b.category.name));
 
   return _.uniqBy(_.uniqBy(exerciseInfos, (i) => i.id), (i) => i.name);
 }

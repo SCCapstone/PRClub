@@ -6,7 +6,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import tw from 'twrnc';
 import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
-import { removePostByEntity } from '../state/postsSlice';
+import { handleRemovePost } from '../state/postsSlice/dbSync';
 import { selectWorkoutById } from '../state/workoutsSlice/selectors';
 import Post from '../types/shared/Post';
 import BackButton from './BackButton';
@@ -52,7 +52,7 @@ export default function PostItem({ post }: { post: Post }) {
         </View>
         <View style={tw`flex flex-1`}>
           <Button
-            onPress={() => dispatch(removePostByEntity(post))}
+            onPress={() => handleRemovePost(post)}
           >
             <Ionicons name="trash" size={24} style={tw`text-black`} />
           </Button>

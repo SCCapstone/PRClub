@@ -1,5 +1,4 @@
 import { createStackNavigator } from '@react-navigation/stack';
-import _ from 'lodash';
 import React from 'react';
 import useAppSelector from '../hooks/useAppSelector';
 import { selectCurrentUser } from '../state/currentUserSlice/selectors';
@@ -16,7 +15,7 @@ export default function Navigator() {
     <Stack.Navigator
       screenOptions={{ headerShown: false }}
     >
-      {!_.isNull(user)
+      {user
         ? (
           <Stack.Screen
             name="Main"

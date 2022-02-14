@@ -5,15 +5,14 @@ import React from 'react';
 import { View } from 'react-native';
 import 'react-native-get-random-values';
 import {
-  Button, Text, TextInput, ActivityIndicator,
+  ActivityIndicator, Button, Text, TextInput,
 } from 'react-native-paper';
 import tw from 'twrnc';
 import { v4 as uuidv4 } from 'uuid';
-import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
-import { selectExerciseInfos, selectExericseInfosStatus } from '../state/exerciseInfosSlice/selectors';
 import { selectCurrentUserId } from '../state/currentUserSlice/selectors';
-import { upsertWorkout } from '../state/workoutsSlice';
+import { selectExerciseInfos, selectExericseInfosStatus } from '../state/exerciseInfosSlice/selectors';
+import { handleUpsertWorkout } from '../state/workoutsSlice/dbSync';
 import WgerExerciseInfo from '../types/services/WgerExerciseInfo';
 import Workout from '../types/shared/Workout';
 import { SliceStatus } from '../types/state/SliceStatus';
@@ -36,8 +35,6 @@ export default function WorkoutForm({
 
   const currentUserId: string | null = useAppSelector(selectCurrentUserId);
 
-  const dispatch = useAppDispatch();
-
   const initialValues: WorkoutInput = {
     name: workoutToEdit?.name || '',
     exercises: workoutToEdit?.exercises.map((e) => ({
@@ -57,24 +54,22 @@ export default function WorkoutForm({
       validationSchema={WorkoutInputSchema}
       onSubmit={(values) => {
         if (currentUserId) {
-          dispatch(
-            upsertWorkout({
-              id: workoutToEdit ? workoutToEdit.id : uuidv4(),
-              userId: currentUserId,
-              createdDate: workoutToEdit?.createdDate || new Date().toString(),
-              modifiedDate: workoutToEdit ? new Date().toString() : null,
-              name: values.name,
-              exercises: values.exercises.map((e) => ({
-                id: e.id,
-                name: e.name,
-                exerciseSets: e.exerciseSets.map((s) => ({
-                  id: s.id,
-                  weight: Number(s.weight),
-                  reps: Number(s.reps),
-                })),
+          handleUpsertWorkout({
+            id: workoutToEdit ? workoutToEdit.id : uuidv4(),
+            userId: currentUserId,
+            createdDate: workoutToEdit?.createdDate || new Date().toString(),
+            modifiedDate: workoutToEdit ? new Date().toString() : null,
+            name: values.name,
+            exercises: values.exercises.map((e) => ({
+              id: e.id,
+              name: e.name,
+              exerciseSets: e.exerciseSets.map((s) => ({
+                id: s.id,
+                weight: Number(s.weight),
+                reps: Number(s.reps),
               })),
-            }),
-          );
+            })),
+          });
         } else {
           throw new Error('Something went terribly wrong.'
             + ' You are here without being authenticated!');

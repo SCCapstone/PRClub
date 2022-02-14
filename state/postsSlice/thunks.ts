@@ -6,3 +6,13 @@ export const getPosts = createAsyncThunk(
   'posts/getPosts',
   async (userId: string): Promise<Post[]> => PostsService.getPosts(userId),
 );
+
+export const postsServiceUpsert = createAsyncThunk(
+  'posts/postsServiceUpsert',
+  async (post: Post): Promise<void> => PostsService.upsertPost(post),
+);
+
+export const postsServiceRemove = createAsyncThunk(
+  'posts/postsServiceRemove',
+  async (post: Post): Promise<void> => PostsService.removePost(post),
+);

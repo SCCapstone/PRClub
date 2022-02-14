@@ -1,6 +1,4 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import _ from 'lodash';
 import AuthService from '../../services/AuthService';
 import User from '../../types/shared/User';
 
@@ -13,7 +11,6 @@ export const userSignIn = createAsyncThunk(
   'user/signIn',
   async ({ email, password }: SignInThunkArgs): Promise<User> => {
     const user = await AuthService.signIn(email, password);
-    await AsyncStorage.setItem('current_user', JSON.stringify(user));
     return user;
   },
 );
@@ -31,7 +28,6 @@ export const userSignUp = createAsyncThunk(
     name, username, email, password,
   }: SignUpThunkArgs): Promise<User> => {
     const user = await AuthService.signUp(name, username, email, password);
-    await AsyncStorage.setItem('current_user', JSON.stringify(user));
     return user;
   },
 );
@@ -39,7 +35,6 @@ export const userSignUp = createAsyncThunk(
 export const userLogOut = createAsyncThunk(
   'user/logOut',
   async (): Promise<void> => {
-    await AsyncStorage.removeItem('current_user');
     AuthService.logOut();
   },
 );

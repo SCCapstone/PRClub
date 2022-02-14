@@ -7,8 +7,8 @@ import tw from 'twrnc';
 import { v4 as uuidv4 } from 'uuid';
 import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
-import { upsertPost } from '../state/postsSlice';
-import { removeWorkoutByEntity } from '../state/workoutsSlice';
+import { handleUpsertPost } from '../state/postsSlice/dbSync';
+import { handleRemoveWorkout } from '../state/workoutsSlice/dbSync';
 import { selectWorkoutsStatus } from '../state/workoutsSlice/selectors';
 import Workout from '../types/shared/Workout';
 import { SliceStatus } from '../types/state/SliceStatus';
@@ -99,13 +99,13 @@ export default function Workouts({ workouts }: {workouts: Workout[]}) {
             <Button
               mode="contained"
               onPress={() => {
-                dispatch(upsertPost({
+                handleUpsertPost({
                   id: uuidv4(),
                   userId: workoutToPost.userId,
                   workoutId: workoutToPost.id,
                   createdDate: new Date().toString(),
                   caption: postCaption,
-                }));
+                });
                 setPostCaption('');
               }}
               disabled={postCaption.length < 1 || postCaption.length > POST_CHARACTER_LIMIT}
@@ -135,7 +135,7 @@ export default function Workouts({ workouts }: {workouts: Workout[]}) {
                     setWorkoutToEdit(workout);
                     setWorkoutsState('editing');
                   }}
-                  onDelete={() => dispatch(removeWorkoutByEntity(workout))}
+                  onDelete={() => handleRemoveWorkout(workout)}
                   onPost={() => {
                     setWorkoutToPost(workout);
                     setWorkoutsState('sharing');

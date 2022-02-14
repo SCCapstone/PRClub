@@ -6,3 +6,13 @@ export const getWorkouts = createAsyncThunk(
   'workouts/getWorkouts',
   async (userId: string): Promise<Workout[]> => WorkoutsService.getWorkouts(userId),
 );
+
+export const workoutsServiceUpsert = createAsyncThunk(
+  'workouts/workoutsServiceUpsert',
+  async (workout: Workout): Promise<void> => WorkoutsService.upsertWorkout(workout),
+);
+
+export const workoutsServiceRemove = createAsyncThunk(
+  'workouts/workoutsServiceRemove',
+  async (workout: Workout): Promise<void> => WorkoutsService.removeWorkout(workout),
+);
