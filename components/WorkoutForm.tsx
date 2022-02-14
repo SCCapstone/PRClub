@@ -9,10 +9,12 @@ import {
 } from 'react-native-paper';
 import tw from 'twrnc';
 import { v4 as uuidv4 } from 'uuid';
+import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
 import { selectCurrentUserId } from '../state/currentUserSlice/selectors';
 import { selectExerciseInfos, selectExericseInfosStatus } from '../state/exerciseInfosSlice/selectors';
-import { handleUpsertWorkout } from '../state/workoutsSlice/dbSync';
+import { upsertWorkout } from '../state/workoutsSlice';
+import { workoutsServiceUpsert } from '../state/workoutsSlice/thunks';
 import WgerExerciseInfo from '../types/services/WgerExerciseInfo';
 import Workout from '../types/shared/Workout';
 import { SliceStatus } from '../types/state/SliceStatus';
@@ -30,6 +32,8 @@ export default function WorkoutForm({
   workoutToEdit?: Workout,
   onSave?: () => void
 }) {
+  const dispatch = useAppDispatch();
+
   const exerciseInfos: WgerExerciseInfo[] = useAppSelector(selectExerciseInfos);
   const exerciseInfosStatus: SliceStatus = useAppSelector(selectExericseInfosStatus);
 
@@ -54,7 +58,7 @@ export default function WorkoutForm({
       validationSchema={WorkoutInputSchema}
       onSubmit={(values) => {
         if (currentUserId) {
-          handleUpsertWorkout({
+          const workout: Workout = {
             id: workoutToEdit ? workoutToEdit.id : uuidv4(),
             userId: currentUserId,
             createdDate: workoutToEdit?.createdDate || new Date().toString(),
@@ -69,7 +73,10 @@ export default function WorkoutForm({
                 reps: Number(s.reps),
               })),
             })),
-          });
+          };
+
+          dispatch(upsertWorkout(workout));
+          dispatch(workoutsServiceUpsert(workout));
         } else {
           throw new Error('Something went terribly wrong.'
             + ' You are here without being authenticated!');

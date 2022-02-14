@@ -7,9 +7,12 @@ import tw from 'twrnc';
 import { v4 as uuidv4 } from 'uuid';
 import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
-import { handleUpsertPost } from '../state/postsSlice/dbSync';
-import { handleRemoveWorkout } from '../state/workoutsSlice/dbSync';
+import { upsertPost } from '../state/postsSlice';
+import { postsServiceUpsert } from '../state/postsSlice/thunks';
+import { removeWorkoutByEntity } from '../state/workoutsSlice';
 import { selectWorkoutsStatus } from '../state/workoutsSlice/selectors';
+import { workoutsServiceRemove } from '../state/workoutsSlice/thunks';
+import Post from '../types/shared/Post';
 import Workout from '../types/shared/Workout';
 import { SliceStatus } from '../types/state/SliceStatus';
 import BackButton from './BackButton';
@@ -19,9 +22,9 @@ import WorkoutItem from './WorkoutItem';
 const POST_CHARACTER_LIMIT = 100;
 
 export default function Workouts({ workouts }: {workouts: Workout[]}) {
-  const workoutsStatus: SliceStatus = useAppSelector(selectWorkoutsStatus);
-
   const dispatch = useAppDispatch();
+
+  const workoutsStatus: SliceStatus = useAppSelector(selectWorkoutsStatus);
 
   const [workoutsState, setWorkoutsState] = useState<'default' | 'editing' | 'sharing'>('default');
 
@@ -99,13 +102,17 @@ export default function Workouts({ workouts }: {workouts: Workout[]}) {
             <Button
               mode="contained"
               onPress={() => {
-                handleUpsertPost({
+                const post: Post = {
                   id: uuidv4(),
                   userId: workoutToPost.userId,
                   workoutId: workoutToPost.id,
                   createdDate: new Date().toString(),
                   caption: postCaption,
-                });
+                }
+
+                dispatch(upsertPost(post));
+                dispatch(postsServiceUpsert(post))
+
                 setPostCaption('');
               }}
               disabled={postCaption.length < 1 || postCaption.length > POST_CHARACTER_LIMIT}
@@ -135,7 +142,10 @@ export default function Workouts({ workouts }: {workouts: Workout[]}) {
                     setWorkoutToEdit(workout);
                     setWorkoutsState('editing');
                   }}
-                  onDelete={() => handleRemoveWorkout(workout)}
+                  onDelete={() => {
+                    dispatch(removeWorkoutByEntity(workout))
+                    dispatch(workoutsServiceRemove(workout))
+                  }}
                   onPost={() => {
                     setWorkoutToPost(workout);
                     setWorkoutsState('sharing');

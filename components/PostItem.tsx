@@ -6,19 +6,20 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import tw from 'twrnc';
 import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
-import { handleRemovePost } from '../state/postsSlice/dbSync';
+import { removePostByEntity } from '../state/postsSlice';
+import { postsServiceRemove } from '../state/postsSlice/thunks';
 import { selectWorkoutById } from '../state/workoutsSlice/selectors';
 import Post from '../types/shared/Post';
 import BackButton from './BackButton';
 import WorkoutItem from './WorkoutItem';
 
 export default function PostItem({ post }: { post: Post }) {
+  const dispatch = useAppDispatch();
+
   const workout = useAppSelector((state) => selectWorkoutById(state, post.workoutId));
   if (!workout) {
     throw new Error('Workout cannot be undefined!');
   }
-
-  const dispatch = useAppDispatch();
 
   const [viewingDetails, setViewingDetails] = useState<boolean>(false);
 
@@ -52,7 +53,10 @@ export default function PostItem({ post }: { post: Post }) {
         </View>
         <View style={tw`flex flex-1`}>
           <Button
-            onPress={() => handleRemovePost(post)}
+            onPress={() => {
+              dispatch(removePostByEntity(post));
+              dispatch(postsServiceRemove(post));
+            }}
           >
             <Ionicons name="trash" size={24} style={tw`text-black`} />
           </Button>
