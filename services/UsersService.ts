@@ -1,5 +1,5 @@
 import {
-  collection, getDocs, query, where,
+  collection, getDocs, query, where, updateDoc, doc, getDoc,
 } from '@firebase/firestore';
 import { USERS_COLLECTION } from '../constants/firestore';
 import { db } from '../firebase';
@@ -31,6 +31,27 @@ async function getUsersByEmailSubstring(emailSubstring: string): Promise<User[]>
   return users;
 }
 
+async function updateFullName(id: string, newName: string) {
+  const docRef = doc(db, 'users', id);
+  const docSnap = await getDoc(docRef);
+  if (docSnap.exists()) {
+    updateDoc(docRef, {
+      name: newName,
+    });
+  }
+}
+async function updateUsername(id: string, newUsername:string) {
+  const docRef = doc(db, 'users', id);
+  const docSnap = await getDoc(docRef);
+  if (docSnap.exists()) {
+    updateDoc(docRef, {
+      username: newUsername,
+    });
+  }
+}
+
 export default {
   getUsersByEmailSubstring,
+  updateFullName,
+  updateUsername,
 };
