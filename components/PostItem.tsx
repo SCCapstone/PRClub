@@ -17,13 +17,10 @@ export default function PostItem({ post }: { post: Post }) {
   const dispatch = useAppDispatch();
 
   const workout = useAppSelector((state) => selectWorkoutById(state, post.workoutId));
-  if (!workout) {
-    throw new Error('Workout cannot be undefined!');
-  }
 
   const [viewingDetails, setViewingDetails] = useState<boolean>(false);
 
-  if (viewingDetails) {
+  if (workout && viewingDetails) {
     return (
       <View style={tw`flex-1`}>
         <ScrollView style={tw`h-auto w-full`}>
@@ -64,18 +61,25 @@ export default function PostItem({ post }: { post: Post }) {
       </View>
       <View style={tw`bg-gray-300 p-3 flex flex-row`}>
         <View style={tw`flex flex-3`}>
-          <Text style={tw`font-bold text-lg text-center`}>{workout.name}</Text>
+          {workout
+            ? <Text style={tw`font-bold text-lg text-center`}>{workout.name}</Text>
+            : <Text style={tw`italic text-lg text-center`}>deleted workout</Text>}
         </View>
-        <View style={tw`flex flex-1`}>
-          <Button
-            mode="contained"
-            onPress={() => {
-              setViewingDetails(true);
-            }}
-          >
-            <Ionicons name="chevron-forward" size={16} style={tw`text-white`} />
-          </Button>
-        </View>
+        {
+          workout
+            && (
+              <View style={tw`flex flex-1`}>
+                <Button
+                  mode="contained"
+                  onPress={() => {
+                    setViewingDetails(true);
+                  }}
+                >
+                  <Ionicons name="chevron-forward" size={16} style={tw`text-white`} />
+                </Button>
+              </View>
+            )
+        }
       </View>
       <Text>
         <Text style={tw`font-bold`}>
