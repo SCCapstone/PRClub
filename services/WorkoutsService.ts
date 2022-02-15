@@ -11,17 +11,17 @@ import Workout from '../types/shared/Workout';
 
 async function fetchWorkoutsForUser(userId: string): Promise<Workout[]> {
   // fetch user document
-  const documentSnapshot = await getDoc(doc(db, USERS_COLLECTION, userId));
-  const user = documentSnapshot.data() as User;
+  const docSnap = await getDoc(doc(db, USERS_COLLECTION, userId));
+  const user = docSnap.data() as User;
 
   // if the user has workouts, query their workouts and return them
   if (user.workoutIds.length > 0) {
     const q = query(collection(db, WORKOUTS_COLLECTION), where('id', 'in', user.workoutIds));
-    const querySnapshot = await getDocs(q);
+    const querySnap = await getDocs(q);
 
     // extract workouts from querySnapshot
     const workouts: Workout[] = [];
-    querySnapshot.forEach((d: QueryDocumentSnapshot<DocumentData>) => {
+    querySnap.forEach((d: QueryDocumentSnapshot<DocumentData>) => {
       const workout = d.data() as Workout;
       workouts.push(workout);
     });

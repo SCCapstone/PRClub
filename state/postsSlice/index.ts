@@ -7,11 +7,11 @@ const postsSlice = createSlice({
   name: 'posts',
   initialState,
   reducers: {
-    clearPostsServiceUpsertResult(state) {
-      state.postsServiceUpsertResult = null;
+    clearUpsertPostResult(state) {
+      state.upsertPostResult = null;
     },
-    clearPostsServiceRemoveResult(state) {
-      state.postsServiceRemoveResult = null;
+    clearRemovePostResult(state) {
+      state.removePostResult = null;
     },
     flushPostsFromStore: postsAdapter.removeAll,
   },
@@ -29,11 +29,11 @@ const postsSlice = createSlice({
       })
       .addCase(upsertPost.fulfilled, (state, action: PayloadAction<Post>) => {
         postsAdapter.upsertOne(state, action.payload);
-        state.postsServiceUpsertResult = { success: true };
+        state.upsertPostResult = { success: true };
         state.status = 'loaded';
       })
       .addCase(upsertPost.rejected, (state, action) => {
-        state.postsServiceUpsertResult = { success: false, error: action.error };
+        state.upsertPostResult = { success: false, error: action.error };
         state.status = 'loaded';
       })
       .addCase(removePost.pending, (state) => {
@@ -41,19 +41,19 @@ const postsSlice = createSlice({
       })
       .addCase(removePost.fulfilled, (state, action: PayloadAction<Post>) => {
         postsAdapter.removeOne(state, action.payload.id);
-        state.postsServiceRemoveResult = { success: true };
+        state.removePostResult = { success: true };
         state.status = 'loaded';
       })
       .addCase(removePost.rejected, (state, action) => {
-        state.postsServiceRemoveResult = { success: false, error: action.error };
+        state.removePostResult = { success: false, error: action.error };
         state.status = 'loaded';
       });
   },
 });
 
 export const {
-  clearPostsServiceUpsertResult,
-  clearPostsServiceRemoveResult,
+  clearUpsertPostResult,
+  clearRemovePostResult,
   flushPostsFromStore,
 } = postsSlice.actions;
 

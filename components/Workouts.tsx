@@ -7,8 +7,8 @@ import tw from 'twrnc';
 import { v4 as uuidv4 } from 'uuid';
 import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
-import { clearPostsServiceUpsertResult } from '../state/postsSlice';
-import { selectPostsServiceUpsertResult, selectPostsStatus } from '../state/postsSlice/selectors';
+import { clearUpsertPostResult } from '../state/postsSlice';
+import { selectUpsertPostResult, selectPostsStatus } from '../state/postsSlice/selectors';
 import { removePost, upsertPost } from '../state/postsSlice/thunks';
 import { selectWorkoutsStatus } from '../state/workoutsSlice/selectors';
 import { removeWorkout } from '../state/workoutsSlice/thunks';
@@ -25,7 +25,7 @@ export default function Workouts({ workouts }: {workouts: Workout[]}) {
 
   const workoutsStatus = useAppSelector(selectWorkoutsStatus);
   const postsStatus = useAppSelector(selectPostsStatus);
-  const postsServiceUpsertResult = useAppSelector(selectPostsServiceUpsertResult);
+  const postsServiceUpsertResult = useAppSelector(selectUpsertPostResult);
 
   const [workoutsState, setWorkoutsState] = useState<'default' | 'editing' | 'sharing'>('default');
 
@@ -83,7 +83,12 @@ export default function Workouts({ workouts }: {workouts: Workout[]}) {
               <View style={tw`bg-gray-100`}>
                 <View style={tw`flex flex-row p-3`}>
                   <View style={tw`flex flex-1`}>
-                    <BackButton onPress={() => setWorkoutsState('default')} />
+                    <BackButton
+                      onPress={() => {
+                        dispatch(clearUpsertPostResult());
+                        setWorkoutsState('default');
+                      }}
+                    />
                   </View>
                   <View style={tw`flex flex-3`}>
                     <Text style={tw`text-xl text-center font-bold`}>{`Sharing "${workoutToPost.name}" as a post`}</Text>
@@ -134,7 +139,7 @@ export default function Workouts({ workouts }: {workouts: Workout[]}) {
           <Snackbar
             visible={!!postsServiceUpsertResult}
             duration={3000}
-            onDismiss={() => dispatch(clearPostsServiceUpsertResult())}
+            onDismiss={() => dispatch(clearUpsertPostResult())}
             action={postsServiceUpsertResult && postsServiceUpsertResult.success ? {
               label: 'Undo',
               onPress: () => {

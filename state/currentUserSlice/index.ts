@@ -4,7 +4,7 @@ import AuthService from '../../services/AuthService';
 import User from '../../types/shared/User';
 import { initialState } from './state';
 import {
-  fetchCurrentUserFromAsyncStorage, userLogOut, userSignIn, userSignUp,
+  fetchCurrentUserFromAsyncStorage, updateName, updateUsername, userLogOut, userSignIn, userSignUp,
 } from './thunks';
 
 const currentUserSlice = createSlice({
@@ -22,6 +22,9 @@ const currentUserSlice = createSlice({
     },
     clearUserAuthError(state) {
       state.authError = null;
+    },
+    clearUpdateProfileResult(state) {
+      state.updateProfileResult = null;
     },
   },
   extraReducers(builder) {
@@ -65,6 +68,34 @@ const currentUserSlice = createSlice({
       .addCase(userLogOut.fulfilled, (state) => {
         state.currentUser = null;
         state.status = 'idle';
+      })
+      .addCase(updateName.pending, (state) => {
+        state.status = 'updatingProfile';
+      })
+      .addCase(updateName.fulfilled, (state, action: PayloadAction<string>) => {
+        if (state.currentUser) {
+          state.currentUser.name = action.payload;
+        }
+        state.updateProfileResult = { success: true };
+        state.status = 'loaded';
+      })
+      .addCase(updateName.rejected, (state, action) => {
+        state.updateProfileResult = { success: false, error: action.error };
+        state.status = 'loaded';
+      })
+      .addCase(updateUsername.pending, (state) => {
+        state.status = 'updatingProfile';
+      })
+      .addCase(updateUsername.fulfilled, (state, action: PayloadAction<string>) => {
+        if (state.currentUser) {
+          state.currentUser.username = action.payload;
+        }
+        state.updateProfileResult = { success: true };
+        state.status = 'loaded';
+      })
+      .addCase(updateUsername.rejected, (state, action) => {
+        state.updateProfileResult = { success: false, error: action.error };
+        state.status = 'loaded';
       });
   },
 });
@@ -73,6 +104,7 @@ export const {
   registerAuthStateListener,
   unsubscribeAuthStateListener,
   clearUserAuthError,
+  clearUpdateProfileResult,
 } = currentUserSlice.actions;
 
 export default currentUserSlice.reducer;

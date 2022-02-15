@@ -10,17 +10,17 @@ import { USERS_COLLECTION, POSTS_COLLECTION } from '../constants/firestore';
 
 async function fetchPostsForUser(userId: string): Promise<Post[]> {
   // fetch user document
-  const documentSnapshot = await getDoc(doc(db, USERS_COLLECTION, userId));
-  const user = documentSnapshot.data() as User;
+  const docSnap = await getDoc(doc(db, USERS_COLLECTION, userId));
+  const user = docSnap.data() as User;
 
   // if the user has posts, query their posts and return them
   if (user.postIds.length > 0) {
     const q = query(collection(db, POSTS_COLLECTION), where('id', 'in', user.postIds));
-    const querySnapshot = await getDocs(q);
+    const querySnap = await getDocs(q);
 
     // extract posts from querySnapshot
     const posts: Post[] = [];
-    querySnapshot.forEach((d: QueryDocumentSnapshot<DocumentData>) => {
+    querySnap.forEach((d: QueryDocumentSnapshot<DocumentData>) => {
       const post = d.data() as Post;
       posts.push(post);
     });

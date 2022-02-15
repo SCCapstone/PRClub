@@ -4,6 +4,7 @@ import { CURRENT_USER_KEY } from '../../constants/async-storage';
 import AuthService from '../../services/AuthService';
 import User from '../../types/shared/User';
 import { fetchPostsForUser } from '../postsSlice/thunks';
+import type { RootState } from '../store';
 import { fetchWorkoutsForUser } from '../workoutsSlice/thunks';
 
 export const fetchCurrentUserFromAsyncStorage = createAsyncThunk<User | null, void>(
@@ -59,5 +60,41 @@ export const userLogOut = createAsyncThunk<void, void>(
   async (): Promise<void> => {
     await AsyncStorage.removeItem(CURRENT_USER_KEY);
     await AuthService.logOut();
+  },
+);
+
+export const updateName = createAsyncThunk<string, string, { state: RootState }>(
+  'users/updateName',
+  async (newName: string, { getState }): Promise<string> => {
+    await AuthService.updateName(getState().currentUser.currentUser?.id || '', newName);
+
+    const currentUserJson = await AsyncStorage.getItem(CURRENT_USER_KEY);
+    if (!currentUserJson) {
+      throw new Error('Could not cache profile update.');
+    } else {
+      const currentUser = JSON.parse(currentUserJson) as User;
+      currentUser.name = newName;
+      await AsyncStorage.setItem(CURRENT_USER_KEY, JSON.stringify(currentUser));
+    }
+
+    return newName;
+  },
+);
+
+export const updateUsername = createAsyncThunk<string, string, { state: RootState }>(
+  'users/updateUsername',
+  async (newUsername, { getState }): Promise<string> => {
+    await AuthService.updateUsername(getState().currentUser.currentUser?.id || '', newUsername);
+
+    const currentUserJson = await AsyncStorage.getItem(CURRENT_USER_KEY);
+    if (!currentUserJson) {
+      throw new Error('Could not cache profile update.');
+    } else {
+      const currentUser = JSON.parse(currentUserJson) as User;
+      currentUser.username = newUsername;
+      await AsyncStorage.setItem(CURRENT_USER_KEY, JSON.stringify(currentUser));
+    }
+
+    return newUsername;
   },
 );
