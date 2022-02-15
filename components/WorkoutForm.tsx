@@ -24,6 +24,7 @@ import {
 } from '../types/validation/WorkoutInput';
 import DeleteButton from './DeleteButton';
 import { Snackbar } from 'react-native-paper';
+import { workoutsServiceUpsert } from '../state/workoutsSlice/thunks';
 
 
 export default function WorkoutForm({
@@ -294,19 +295,23 @@ export default function WorkoutForm({
       <Snackbar
         visible={visible}
         duration={3000}
-        onDismiss={onDismissSnackBar}
-        action={{
+        onDismiss={() => dispatch(clearWorkoutServiceUpsertResult())}
+        action={workoutsServiceUpsertResult && workoutsServiceUpsertResult.success ? {
           label: 'Done',
           onPress: () => {
             if(submittedWorkout) {
               dispatch(removeWorkoutByEntity(submittedWorkout));
-              dispatch(workoutRemove(submittedWorkout));
+              dispatch(workoutsServiceRemove(submittedWorkout));
               setSubmittedWorkout(null);
             }
           },
         } : undefined}
       >
-        Workout Submitted.
+        {workoutsServiceUpsertResult && (
+          workoutsServiceUpsertResult.success
+            ? 'Workout Submitted!'
+            : `Error submitting workout: ${workoutsServiceUpsertResult.error}`
+        )}
       </Snackbar>
     </>
   );
