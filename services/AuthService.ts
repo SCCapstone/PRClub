@@ -8,7 +8,8 @@ import {
 import {
   collection, doc, getDoc, getDocs, query, setDoc, where,
 } from '@firebase/firestore';
-import { auth, COLLECTIONS, db } from '../firebase';
+import { USERS_COLLECTION } from '../constants/firestore';
+import { auth, db } from '../firebase';
 import User from '../types/shared/User';
 
 async function signUp(
@@ -19,7 +20,7 @@ async function signUp(
 ): Promise<User> {
   // first, check if username exists
   const q = query(
-    collection(db, COLLECTIONS.USERS),
+    collection(db, USERS_COLLECTION),
     where('username', '==', username),
   );
   const querySnapshot = await getDocs(q);
@@ -28,29 +29,29 @@ async function signUp(
   }
 
   // if username doesn't exist, proceed with registration
-  const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+  const userCred = await createUserWithEmailAndPassword(auth, email, password);
 
-  if (!userCredential.user.email) {
+  if (!userCred.user.email) {
     throw new Error('Something went wrong, user must have an email address.');
   }
 
   // create document for user
   const user: User = {
-    id: userCredential.user.uid,
+    id: userCred.user.uid,
     name,
     username,
-    email: userCredential.user.email,
+    email: userCred.user.email,
     workoutIds: [],
     postIds: [],
   };
-  await setDoc(doc(db, COLLECTIONS.USERS, user.id), user);
+  await setDoc(doc(db, USERS_COLLECTION, user.id), user);
 
   return user;
 }
 
 async function signIn(email: string, password: string): Promise<User> {
   const userCred = await signInWithEmailAndPassword(auth, email, password);
-  const documentSnapshot = await getDoc(doc(db, COLLECTIONS.USERS, userCred.user.uid));
+  const documentSnapshot = await getDoc(doc(db, USERS_COLLECTION, userCred.user.uid));
   return documentSnapshot.data() as User;
 }
 

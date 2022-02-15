@@ -11,11 +11,11 @@ import tw from 'twrnc';
 import { v4 as uuidv4 } from 'uuid';
 import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
-import { selectCurrentUserId } from '../state/currentUserSlice/selectors';
+import { selectCurrentUser } from '../state/currentUserSlice/selectors';
 import { selectExerciseInfos, selectExericseInfosStatus } from '../state/exerciseInfosSlice/selectors';
-import { upsertWorkoutToStore } from '../state/workoutsSlice';
-import { workoutsServiceUpsert } from '../state/workoutsSlice/thunks';
+import { upsertWorkout } from '../state/workoutsSlice/thunks';
 import WgerExerciseInfo from '../types/services/WgerExerciseInfo';
+import User from '../types/shared/User';
 import Workout from '../types/shared/Workout';
 import { SliceStatus } from '../types/state/SliceStatus';
 import { ExerciseInput } from '../types/validation/ExerciseInput';
@@ -37,7 +37,7 @@ export default function WorkoutForm({
   const exerciseInfos: WgerExerciseInfo[] = useAppSelector(selectExerciseInfos);
   const exerciseInfosStatus: SliceStatus = useAppSelector(selectExericseInfosStatus);
 
-  const currentUserId: string | null = useAppSelector(selectCurrentUserId);
+  const currentUser: User | null = useAppSelector(selectCurrentUser);
 
   const initialValues: WorkoutInput = {
     name: workoutToEdit?.name || '',
@@ -57,10 +57,11 @@ export default function WorkoutForm({
       initialValues={initialValues}
       validationSchema={WorkoutInputSchema}
       onSubmit={(values) => {
-        if (currentUserId) {
+        if (currentUser) {
           const workout: Workout = {
             id: workoutToEdit ? workoutToEdit.id : uuidv4(),
-            userId: currentUserId,
+            userId: currentUser.id,
+            username: currentUser.username,
             createdDate: workoutToEdit?.createdDate || new Date().toString(),
             modifiedDate: workoutToEdit ? new Date().toString() : null,
             name: values.name,
@@ -75,8 +76,7 @@ export default function WorkoutForm({
             })),
           };
 
-          dispatch(upsertWorkoutToStore(workout));
-          dispatch(workoutsServiceUpsert(workout));
+          dispatch(upsertWorkout(workout));
         } else {
           throw new Error('Something went terribly wrong.'
             + ' You are here without being authenticated!');

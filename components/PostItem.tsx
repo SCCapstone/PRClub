@@ -6,8 +6,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import tw from 'twrnc';
 import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
-import { removePostFromStore } from '../state/postsSlice';
-import { postsServiceRemove } from '../state/postsSlice/thunks';
+import { removePost } from '../state/postsSlice/thunks';
 import { selectWorkoutById } from '../state/workoutsSlice/selectors';
 import Post from '../types/shared/Post';
 import BackButton from './BackButton';
@@ -49,12 +48,7 @@ export default function PostItem({ post }: { post: Post }) {
           <Text>Posted workout:</Text>
         </View>
         <View style={tw`flex flex-1`}>
-          <Button
-            onPress={() => {
-              dispatch(removePostFromStore(post));
-              dispatch(postsServiceRemove(post));
-            }}
-          >
+          <Button onPress={() => dispatch(removePost(post))}>
             <Ionicons name="trash" size={24} style={tw`text-black`} />
           </Button>
         </View>
@@ -84,7 +78,7 @@ export default function PostItem({ post }: { post: Post }) {
       <Text>
         <Text style={tw`font-bold`}>
           @
-          {post.userId}
+          {post.username}
           :
         </Text>
         <Text>
