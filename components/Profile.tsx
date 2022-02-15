@@ -69,10 +69,10 @@ export default function Profile() {
           <Image source={{ uri: 'https://picsum.photos/id/1005/300/300' }} style={tw`w-25 h-25 rounded-full`} />
         </View>
         <View style={tw`flex flex-2`}>
-          <Text style={tw`text-xl font-bold text-white text-left`}>{currentUser && currentUser.name}</Text>
+          <Text style={tw`text-xl font-bold text-white text-left`}>{currentUser && fullName}</Text>
           <Text style={tw`text-lg text-white text-left`}>
             @
-            {currentUser && currentUser.username}
+            {currentUser && username}
           </Text>
         </View>
         <View style={tw`flex flex-1`} />
