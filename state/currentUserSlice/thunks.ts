@@ -1,6 +1,6 @@
-import { UserCredential } from '@firebase/auth';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import AuthService from '../../services/AuthService';
+import User from '../../types/shared/User';
 
 interface SignInThunkArgs {
   email: string;
@@ -9,22 +9,32 @@ interface SignInThunkArgs {
 
 export const userSignIn = createAsyncThunk(
   'user/signIn',
-  // eslint-disable-next-line max-len
-  async ({ email, password }: SignInThunkArgs): Promise<UserCredential> => AuthService.signIn(email, password),
+  async ({ email, password }: SignInThunkArgs): Promise<User> => {
+    const user = await AuthService.signIn(email, password);
+    return user;
+  },
 );
 
 interface SignUpThunkArgs {
+  name: string;
+  username: string;
   email: string;
   password: string;
 }
 
 export const userSignUp = createAsyncThunk(
   'user/signUp',
-  // eslint-disable-next-line max-len
-  async ({ email, password }: SignUpThunkArgs): Promise<UserCredential> => AuthService.signUp(email, password),
+  async ({
+    name, username, email, password,
+  }: SignUpThunkArgs): Promise<User> => {
+    const user = await AuthService.signUp(name, username, email, password);
+    return user;
+  },
 );
 
 export const userLogOut = createAsyncThunk(
   'user/logOut',
-  async (): Promise<void> => AuthService.logOut(),
+  async (): Promise<void> => {
+    AuthService.logOut();
+  },
 );

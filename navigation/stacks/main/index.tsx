@@ -18,7 +18,7 @@ export default function MainStack() {
           if (route.name === 'Profile') {
             iconName = focused ? 'person-circle' : 'person-circle-outline';
           } else if (route.name === 'Create Workout') {
-            iconName = focused ? 'add-circle' : 'add-circle-outline';
+            iconName = focused ? 'barbell' : 'barbell-outline';
           } else if (route.name === 'Settings') {
             iconName = focused ? 'settings' : 'settings-outline';
           } else if (route.name === 'Search') {
@@ -34,18 +34,22 @@ export default function MainStack() {
       <Tab.Screen
         name="Search"
         component={SearchScreen}
+        options={{ tabBarShowLabel: false }}
       />
       <Tab.Screen
         name="Create Workout"
         component={CreateWorkoutScreen}
+        options={{ tabBarShowLabel: false }}
       />
       <Tab.Screen
         name="Profile"
         component={ProfileScreen}
+        options={{ tabBarShowLabel: false }}
       />
       <Tab.Screen
         name="Settings"
         component={SettingsScreen}
+        options={{ tabBarShowLabel: false }}
       />
     </Tab.Navigator>
   );

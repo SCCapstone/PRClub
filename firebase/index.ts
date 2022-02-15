@@ -29,4 +29,5 @@ export const auth = getAuth(app);
 export const COLLECTIONS = {
   WORKOUTS: 'workouts',
   USERS: 'users',
+  POSTS: 'posts',
 };

@@ -1,9 +1,9 @@
-import { User } from '@firebase/auth';
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 import useAppSelector from '../hooks/useAppSelector';
 import { selectCurrentUser } from '../state/currentUserSlice/selectors';
-import LoginStack from './stacks/login';
+import User from '../types/shared/User';
+import LoginStack from './stacks/auth';
 import MainStack from './stacks/main';
 
 const Stack = createStackNavigator();

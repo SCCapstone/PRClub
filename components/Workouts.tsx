@@ -1,30 +1,43 @@
 import React, { useState } from 'react';
+import { ScrollView, View } from 'react-native';
 import {
-  View, ScrollView,
-} from 'react-native';
-import { ActivityIndicator, Text } from 'react-native-paper';
+  ActivityIndicator, Button, Snackbar, Text, TextInput,
+} from 'react-native-paper';
 import tw from 'twrnc';
+import { v4 as uuidv4 } from 'uuid';
 import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
-import { removeWorkoutByEntity } from '../state/workoutsSlice';
-import { selectWorkoutsSortedByMostRecent, selectWorkoutsStatus } from '../state/workoutsSlice/selectors';
+import {
+  clearPostsServiceUpsertResult, removePostFromStore, upsertPostToStore,
+} from '../state/postsSlice';
+import { selectPostsServiceUpsertResult, selectPostsStatus } from '../state/postsSlice/selectors';
+import { postsServiceRemove, postsServiceUpsert } from '../state/postsSlice/thunks';
+import { removeWorkoutFromStore } from '../state/workoutsSlice';
+import { selectWorkoutsStatus } from '../state/workoutsSlice/selectors';
+import { workoutsServiceRemove } from '../state/workoutsSlice/thunks';
+import Post from '../types/shared/Post';
 import Workout from '../types/shared/Workout';
-import { SliceStatus } from '../types/state/SliceStatus';
-import CancelButton from './BackButton';
-import DeleteButton from './DeleteButton';
-import EditButton from './EditButton';
+import BackButton from './BackButton';
 import WorkoutForm from './WorkoutForm';
+import WorkoutItem from './WorkoutItem';
 
-export default function Workouts() {
-  const workouts: Workout[] = useAppSelector(selectWorkoutsSortedByMostRecent);
-  const workoutsStatus: SliceStatus = useAppSelector(selectWorkoutsStatus);
+const POST_CHARACTER_LIMIT = 100;
 
+export default function Workouts({ workouts }: {workouts: Workout[]}) {
   const dispatch = useAppDispatch();
 
-  const [editingWorkout, setEditingWorkout] = useState<boolean>(false);
-  const toggleEditingWorkout = () => setEditingWorkout(!editingWorkout);
+  const workoutsStatus = useAppSelector(selectWorkoutsStatus);
+  const postsStatus = useAppSelector(selectPostsStatus);
+  const postsServiceUpsertResult = useAppSelector(selectPostsServiceUpsertResult);
 
-  const [workoutToEdit, setWorkoutToEdit] = useState<Workout>({} as Workout);
+  const [workoutsState, setWorkoutsState] = useState<'default' | 'editing' | 'sharing'>('default');
+
+  const [workoutToEdit, setWorkoutToEdit] = useState<Workout | null>(null);
+
+  const [workoutToPost, setWorkoutToPost] = useState<Workout | null>(null);
+  const [postCaption, setPostCaption] = useState<string>('');
+
+  const [submittedPost, setSubmittedPost] = useState<Post | null>(null);
 
   if (workoutsStatus === 'idle') {
     return (
@@ -44,90 +57,140 @@ export default function Workouts() {
   }
 
   if (workoutsStatus === 'loaded') {
-    if (editingWorkout) {
+    if (workoutsState === 'editing' && workoutToEdit) {
       return (
-        <View style={tw`bg-gray-100`}>
-          <View style={tw`flex flex-row p-3`}>
-            <View style={tw`flex flex-1`}>
-              <CancelButton onPress={toggleEditingWorkout} />
+        <View style={tw`flex-1`}>
+          <ScrollView style={tw`h-130 w-full`}>
+            <View style={tw`bg-gray-100`}>
+              <View style={tw`flex flex-row p-3`}>
+                <View style={tw`flex flex-1`}>
+                  <BackButton onPress={() => setWorkoutsState('default')} />
+                </View>
+                <View style={tw`flex flex-3`}>
+                  <Text style={tw`text-xl text-center font-bold`}>{`Editing "${workoutToEdit.name}"`}</Text>
+                </View>
+                <View style={tw`flex flex-1`} />
+              </View>
+              <WorkoutForm workoutToEdit={workoutToEdit} onSave={() => setWorkoutsState('default')} />
             </View>
-            <View style={tw`flex flex-3`}>
-              <Text style={tw`text-xl text-center font-bold`}>{`Editing "${workoutToEdit.name}"`}</Text>
-            </View>
-            <View style={tw`flex flex-1`} />
-          </View>
-          <WorkoutForm workoutToEdit={workoutToEdit} onSave={toggleEditingWorkout} />
+          </ScrollView>
         </View>
       );
     }
 
-    return (
-      <View style={tw`flex-1`}>
-        <ScrollView style={tw`h-130 w-full`}>
-          {!workouts.length
-            ? (
-              <View style={tw`flex h-100 justify-center items-center`}>
-                <Text style={tw`text-center text-xl`}>No workouts!</Text>
-              </View>
-            )
-            : workouts.map((workout) => (
-              <View key={workout.id} style={tw`rounded overflow-hidden shadow-lg m-2 p-2`}>
-                <View style={tw`flex flex-row`}>
-                  <View style={tw`flex flex-4`}>
-                    {
-                      workout.modifiedDate
-                        ? <Text style={tw`italic`}>{`Edited ${new Date(workout.modifiedDate).toLocaleString()}`}</Text>
-                        : <></>
-                    }
-                    <Text>{`On ${new Date(workout.createdDate).toLocaleString()}:`}</Text>
-                    <Text style={tw`font-bold text-base`}>{workout.name}</Text>
+    if (workoutsState === 'sharing' && workoutToPost) {
+      return (
+        <>
+          <View style={tw`flex-1`}>
+            <ScrollView style={tw`h-130 w-full`}>
+              <View style={tw`bg-gray-100`}>
+                <View style={tw`flex flex-row p-3`}>
+                  <View style={tw`flex flex-1`}>
+                    <BackButton onPress={() => setWorkoutsState('default')} />
                   </View>
-                  <View style={tw`flex flex-1 p-2`}>
-                    <EditButton onPress={() => {
-                      setWorkoutToEdit(workout);
-                      toggleEditingWorkout();
-                    }}
-                    />
+                  <View style={tw`flex flex-3`}>
+                    <Text style={tw`text-xl text-center font-bold`}>{`Sharing "${workoutToPost.name}" as a post`}</Text>
                   </View>
-                  <View style={tw`flex flex-1 p-2`}>
-                    <DeleteButton onPress={() => dispatch(removeWorkoutByEntity(workout))} />
-                  </View>
+                  <View style={tw`flex flex-1`} />
                 </View>
-                <View>
-                  {workout.exercises.map((exercise) => (
-                    <View key={exercise.id} style={tw`bg-gray-300 p-3`}>
-                      <Text style={tw`font-bold text-base text-center`}>
-                        {exercise.name}
-                      </Text>
-                      <View style={tw`bg-gray-400 p-3`}>
-                        <View style={tw`flex flex-row`}>
-                          <View style={tw`flex flex-1`}>
-                            <Text style={tw`text-center font-bold`}>Weight</Text>
-                          </View>
-                          <View style={tw`flex flex-1`}>
-                            <Text style={tw`text-center font-bold`}>Reps</Text>
-                          </View>
-                        </View>
-                        {exercise.exerciseSets.map((set) => (
-                          <View key={set.id} style={tw`flex flex-row`}>
-                            <View style={tw`flex flex-1`}>
-                              <Text style={tw`text-center font-bold`}>{set.weight}</Text>
-                            </View>
-                            <View style={tw`flex flex-1`}>
-                              <Text style={tw`text-center font-bold`}>{set.reps}</Text>
-                            </View>
-                          </View>
-                        ))}
-                      </View>
+              </View>
+              <TextInput
+                onChangeText={setPostCaption}
+                placeholder="add a caption..."
+                multiline
+              />
+              <View style={tw`p-1`}>
+                <Text style={postCaption.length > POST_CHARACTER_LIMIT ? tw`text-right text-red-500` : tw`text-right`}>
+                  {postCaption.length}
+                  /
+                  {POST_CHARACTER_LIMIT}
+                </Text>
+              </View>
+              <Button
+                mode="contained"
+                onPress={() => {
+                  const post: Post = {
+                    id: uuidv4(),
+                    userId: workoutToPost.userId,
+                    workoutId: workoutToPost.id,
+                    createdDate: new Date().toString(),
+                    caption: postCaption,
+                  };
 
-                    </View>
-                  ))}
+                  dispatch(upsertPostToStore(post));
+                  dispatch(postsServiceUpsert(post));
+
+                  setSubmittedPost(post);
+
+                  setPostCaption('');
+                }}
+                disabled={
+                  postCaption.length < 1
+                || postCaption.length > POST_CHARACTER_LIMIT
+                || postsStatus === 'callingService'
+                }
+              >
+                {postsStatus === 'callingService' ? <ActivityIndicator /> : 'Post'}
+              </Button>
+            </ScrollView>
+          </View>
+          <Snackbar
+            visible={!!postsServiceUpsertResult}
+            duration={3000}
+            onDismiss={() => dispatch(clearPostsServiceUpsertResult())}
+            action={postsServiceUpsertResult && postsServiceUpsertResult.success ? {
+              label: 'Undo',
+              onPress: () => {
+                if (submittedPost) {
+                  dispatch(removePostFromStore(submittedPost));
+                  dispatch(postsServiceRemove(submittedPost));
+                  setSubmittedPost(null);
+                }
+              },
+            } : undefined}
+          >
+            {postsServiceUpsertResult && (
+              postsServiceUpsertResult.success
+                ? 'Post Submitted!'
+                : `Error submitting post: ${postsServiceUpsertResult.error}`
+            )}
+          </Snackbar>
+        </>
+      );
+    }
+
+    if (workoutsState === 'default') {
+      return (
+        <View style={tw`flex-1`}>
+          <ScrollView style={tw`h-130 w-full`}>
+            {!workouts.length
+              ? (
+                <View style={tw`flex h-100 justify-center items-center`}>
+                  <Text style={tw`text-center text-xl`}>No workouts!</Text>
                 </View>
-              </View>
-            ))}
-        </ScrollView>
-      </View>
-    );
+              )
+              : workouts.map((workout) => (
+                <WorkoutItem
+                  key={workout.id}
+                  workout={workout}
+                  onEdit={() => {
+                    setWorkoutToEdit(workout);
+                    setWorkoutsState('editing');
+                  }}
+                  onDelete={() => {
+                    dispatch(removeWorkoutFromStore(workout));
+                    dispatch(workoutsServiceRemove(workout));
+                  }}
+                  onPost={() => {
+                    setWorkoutToPost(workout);
+                    setWorkoutsState('sharing');
+                  }}
+                />
+              ))}
+          </ScrollView>
+        </View>
+      );
+    }
   }
 
   return <></>;
