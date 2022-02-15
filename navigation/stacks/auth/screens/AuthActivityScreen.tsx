@@ -3,10 +3,10 @@ import { View } from 'react-native';
 import { ActivityIndicator, Text } from 'react-native-paper';
 import tw from 'twrnc';
 import useAppSelector from '../../../../hooks/useAppSelector';
-import { selectUserStatus } from '../../../../state/userSlice/selectors';
+import { selectCurrentUserStatus } from '../../../../state/currentUserSlice/selectors';
 
-export default function LoginActivityScreen() {
-  const userStatus = useAppSelector(selectUserStatus);
+export default function AuthActivityScreen() {
+  const userStatus = useAppSelector(selectCurrentUserStatus);
 
   return (
     <View style={tw`flex h-100 justify-center items-center`}>

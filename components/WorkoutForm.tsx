@@ -5,15 +5,16 @@ import React from 'react';
 import { View } from 'react-native';
 import 'react-native-get-random-values';
 import {
-  Button, Text, TextInput, ActivityIndicator,
+  ActivityIndicator, Button, Text, TextInput,
 } from 'react-native-paper';
 import tw from 'twrnc';
 import { v4 as uuidv4 } from 'uuid';
 import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
+import { selectCurrentUserId } from '../state/currentUserSlice/selectors';
 import { selectExerciseInfos, selectExericseInfosStatus } from '../state/exerciseInfosSlice/selectors';
-import { selectUserId } from '../state/userSlice/selectors';
-import { upsertWorkout } from '../state/workoutsSlice';
+import { upsertWorkoutToStore } from '../state/workoutsSlice';
+import { workoutsServiceUpsert } from '../state/workoutsSlice/thunks';
 import WgerExerciseInfo from '../types/services/WgerExerciseInfo';
 import Workout from '../types/shared/Workout';
 import { SliceStatus } from '../types/state/SliceStatus';
@@ -23,8 +24,6 @@ import {
   WorkoutInput, WorkoutInputSchema,
 } from '../types/validation/WorkoutInput';
 import DeleteButton from './DeleteButton';
-import { Snackbar } from 'react-native-paper';
-
 
 export default function WorkoutForm({
   workoutToEdit = undefined,
@@ -33,15 +32,12 @@ export default function WorkoutForm({
   workoutToEdit?: Workout,
   onSave?: () => void
 }) {
+  const dispatch = useAppDispatch();
+
   const exerciseInfos: WgerExerciseInfo[] = useAppSelector(selectExerciseInfos);
   const exerciseInfosStatus: SliceStatus = useAppSelector(selectExericseInfosStatus);
 
-  const [visible, setVisible] = React.useState(false);
-  const onToggleSnackBar = () => setVisible(!visible);
-  const onDismissSnackBar = () => setVisible(false);
-  const currentUserId: string | null = useAppSelector(selectUserId);
-
-  const dispatch = useAppDispatch();
+  const currentUserId: string | null = useAppSelector(selectCurrentUserId);
 
   const initialValues: WorkoutInput = {
     name: workoutToEdit?.name || '',
@@ -57,48 +53,48 @@ export default function WorkoutForm({
   };
 
   return (
-    <>
-      <Formik
-        initialValues={initialValues}
-        validationSchema={WorkoutInputSchema}
-        onSubmit={(values) => {
-          if (currentUserId) {
-            dispatch(
-              upsertWorkout({
-                id: workoutToEdit ? workoutToEdit.id : uuidv4(),
-                userId: currentUserId,
-                createdDate: workoutToEdit?.createdDate || new Date().toString(),
-                modifiedDate: workoutToEdit ? new Date().toString() : null,
-                name: values.name,
-                exercises: values.exercises.map((e) => ({
-                  id: e.id,
-                  name: e.name,
-                  exerciseSets: e.exerciseSets.map((s) => ({
-                    id: s.id,
-                    weight: Number(s.weight),
-                    reps: Number(s.reps),
-                  })),
-                })),
-              }),
-            );
-          } else {
-            throw new Error('Something went terribly wrong.'
-              + ' You are here without being authenticated!');
-          }
-        }}
-      >
-        {(formikProps) => (
-          <View>
-            <TextInput
-              placeholder="workout name"
-              onChangeText={formikProps.handleChange('name')}
-              value={formikProps.values.name}
-            />
-            <FieldArray name="exercises">
-              {(exercisesHelpers) => (
+    <Formik
+      initialValues={initialValues}
+      validationSchema={WorkoutInputSchema}
+      onSubmit={(values) => {
+        if (currentUserId) {
+          const workout: Workout = {
+            id: workoutToEdit ? workoutToEdit.id : uuidv4(),
+            userId: currentUserId,
+            createdDate: workoutToEdit?.createdDate || new Date().toString(),
+            modifiedDate: workoutToEdit ? new Date().toString() : null,
+            name: values.name,
+            exercises: values.exercises.map((e) => ({
+              id: e.id,
+              name: e.name,
+              exerciseSets: e.exerciseSets.map((s) => ({
+                id: s.id,
+                weight: Number(s.weight),
+                reps: Number(s.reps),
+              })),
+            })),
+          };
+
+          dispatch(upsertWorkoutToStore(workout));
+          dispatch(workoutsServiceUpsert(workout));
+        } else {
+          throw new Error('Something went terribly wrong.'
+            + ' You are here without being authenticated!');
+        }
+      }}
+    >
+      {(formikProps) => (
+        <View>
+          <TextInput
+            placeholder="workout name"
+            onChangeText={formikProps.handleChange('name')}
+            value={formikProps.values.name}
+          />
+          <FieldArray name="exercises">
+            {(exercisesHelpers) => (
+              <>
                 <>
-                  <>
-                    {formikProps.values.exercises
+                  {formikProps.values.exercises
                       && formikProps.values.exercises.length > 0 ? (
                       formikProps.values.exercises.map((exercise, i) => (
                         <View key={exercise.id} style={tw`bg-gray-300 p-3`}>
@@ -162,65 +158,65 @@ export default function WorkoutForm({
                                 {formikProps.values.exercises[i]
                                   && formikProps.values.exercises[i].exerciseSets
                                   && formikProps.values.exercises[i].exerciseSets.length > 0 ? (
-                                  formikProps.values.exercises[i].exerciseSets.map(
-                                    (exerciseSet, j) => (
-                                      <View key={exerciseSet.id} style={tw`flex flex-row justify-center items-center`}>
-                                        <View style={tw`flex flex-1`}>
-                                          <Text style={tw`text-center text-xl`}>{j + 1}</Text>
+                                    formikProps.values.exercises[i].exerciseSets.map(
+                                      (exerciseSet, j) => (
+                                        <View key={exerciseSet.id} style={tw`flex flex-row justify-center items-center`}>
+                                          <View style={tw`flex flex-1`}>
+                                            <Text style={tw`text-center text-xl`}>{j + 1}</Text>
+                                          </View>
+                                          <View style={tw`flex flex-2 p-1`}>
+                                            <Field name={`exercises.${i}.exerciseSets.${j}.weight`}>
+                                              {() => (
+                                                <TextInput
+                                                  mode="outlined"
+                                                  placeholder="weight (lbs)"
+                                                  onChangeText={(input) => {
+                                                    formikProps.setFieldValue(
+                                                      `exercises.${i}.exerciseSets.${j}.weight`,
+                                                      Number(input),
+                                                    );
+                                                  }}
+                                                  value={String(formikProps
+                                                    .values
+                                                    .exercises[i]
+                                                    .exerciseSets[j]
+                                                    .weight)}
+                                                  keyboardType="decimal-pad"
+                                                />
+                                              )}
+                                            </Field>
+                                          </View>
+                                          <View style={tw`flex flex-2 p-1`}>
+                                            <Field name={`exercises.${i}.exerciseSets.${j}.reps`}>
+                                              {() => (
+                                                <TextInput
+                                                  mode="outlined"
+                                                  placeholder="reps"
+                                                  onChangeText={(input) => {
+                                                    formikProps.setFieldValue(
+                                                      `exercises.${i}.exerciseSets.${j}.reps`,
+                                                      Number(input),
+                                                    );
+                                                  }}
+                                                  value={String(formikProps
+                                                    .values
+                                                    .exercises[i]
+                                                    .exerciseSets[j]
+                                                    .reps)}
+                                                  keyboardType="numeric"
+                                                />
+                                              )}
+                                            </Field>
+                                          </View>
+                                          <View style={tw`flex flex-1 p-1`}>
+                                            <DeleteButton
+                                              onPress={() => exerciseSetsHelpers.remove(j)}
+                                            />
+                                          </View>
                                         </View>
-                                        <View style={tw`flex flex-2 p-1`}>
-                                          <Field name={`exercises.${i}.exerciseSets.${j}.weight`}>
-                                            {() => (
-                                              <TextInput
-                                                mode="outlined"
-                                                placeholder="weight (lbs)"
-                                                onChangeText={(input) => {
-                                                  formikProps.setFieldValue(
-                                                    `exercises.${i}.exerciseSets.${j}.weight`,
-                                                    Number(input),
-                                                  );
-                                                }}
-                                                value={String(formikProps
-                                                  .values
-                                                  .exercises[i]
-                                                  .exerciseSets[j]
-                                                  .weight)}
-                                                keyboardType="decimal-pad"
-                                              />
-                                            )}
-                                          </Field>
-                                        </View>
-                                        <View style={tw`flex flex-2 p-1`}>
-                                          <Field name={`exercises.${i}.exerciseSets.${j}.reps`}>
-                                            {() => (
-                                              <TextInput
-                                                mode="outlined"
-                                                placeholder="reps"
-                                                onChangeText={(input) => {
-                                                  formikProps.setFieldValue(
-                                                    `exercises.${i}.exerciseSets.${j}.reps`,
-                                                    Number(input),
-                                                  );
-                                                }}
-                                                value={String(formikProps
-                                                  .values
-                                                  .exercises[i]
-                                                  .exerciseSets[j]
-                                                  .reps)}
-                                                keyboardType="numeric"
-                                              />
-                                            )}
-                                          </Field>
-                                        </View>
-                                        <View style={tw`flex flex-1 p-1`}>
-                                          <DeleteButton
-                                            onPress={() => exerciseSetsHelpers.remove(j)}
-                                          />
-                                        </View>
-                                      </View>
-                                    ),
-                                  )
-                                ) : <></>}
+                                      ),
+                                    )
+                                  ) : <></>}
                                 <View style={tw`pt-3`}>
                                   <Button
                                     mode="contained"
@@ -241,65 +237,54 @@ export default function WorkoutForm({
                         </View>
                       ))
                     ) : <></>}
-                  </>
-                  <View style={tw`p-3`}>
-                    <Button
-                      mode="contained"
-                      icon="plus"
-                      color="green"
-                      onPress={() => exercisesHelpers.push({
-                        id: uuidv4(),
-                        name: '',
-                        exerciseSets: [],
-                      } as ExerciseInput)}
-                    >
-                      add exercise
-                    </Button>
-                  </View>
                 </>
-              )}
-            </FieldArray>
-            <Button
-              mode="contained"
-              onPress={() => {
-                onToggleSnackBar();
-                formikProps.handleSubmit();
-                if (workoutToEdit) {
-                  if (onSave) { onSave(); }
-                }
-              }}
-              disabled={!formikProps.values.name
-                || !formikProps.values.exercises.length
-                || (
-                  formikProps.values.exercises.length > 0
-                  && (
-                    _.some(formikProps.values.exercises, (e) => !e.exerciseSets.length)
-                    || _.some(formikProps.values.exercises, (e) => e.name === '')
-                    || _.some(
-                      formikProps.values.exercises,
-                      (e) => _.some(
-                        e.exerciseSets,
-                        (s) => s.weight === '' || s.reps === '' || !s.weight || !s.reps,
-                      ),
-                    )
+                <View style={tw`p-3`}>
+                  <Button
+                    mode="contained"
+                    icon="plus"
+                    color="green"
+                    onPress={() => exercisesHelpers.push({
+                      id: uuidv4(),
+                      name: '',
+                      exerciseSets: [],
+                    } as ExerciseInput)}
+                  >
+                    add exercise
+                  </Button>
+                </View>
+              </>
+            )}
+          </FieldArray>
+          <Button
+            mode="contained"
+            onPress={() => {
+              formikProps.handleSubmit();
+              if (workoutToEdit) {
+                if (onSave) { onSave(); }
+              }
+            }}
+            disabled={!formikProps.values.name
+              || !formikProps.values.exercises.length
+              || (
+                formikProps.values.exercises.length > 0
+                && (
+                  _.some(formikProps.values.exercises, (e) => !e.exerciseSets.length)
+                  || _.some(formikProps.values.exercises, (e) => e.name === '')
+                  || _.some(
+                    formikProps.values.exercises,
+                    (e) => _.some(
+                      e.exerciseSets,
+                      (s) => s.weight === '' || s.reps === '' || !s.weight || !s.reps,
+                    ),
                   )
                 )
-                || (workoutToEdit && _.isEqual(initialValues, formikProps.values))}
-            >
-              {`${workoutToEdit ? 'save' : 'submit'} workout`}
-            </Button>
-          </View>
-        )}
-      </Formik>
-      <Snackbar
-        visible={visible}
-        duration={2000}
-        onDismiss={onDismissSnackBar}
-        action={{
-          label: 'Done',
-        }}>
-        Workout Submitted.
-      </Snackbar>
-    </>
+              )
+              || (workoutToEdit && _.isEqual(initialValues, formikProps.values))}
+          >
+            {`${workoutToEdit ? 'save' : 'submit'} workout`}
+          </Button>
+        </View>
+      )}
+    </Formik>
   );
 }

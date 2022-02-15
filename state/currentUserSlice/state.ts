@@ -1,21 +1,22 @@
-import { Unsubscribe, User } from '@firebase/auth';
+import { Unsubscribe } from '@firebase/auth';
 import { SerializedError } from '@reduxjs/toolkit';
+import User from '../../types/shared/User';
 import { SliceStatus } from '../../types/state/SliceStatus';
 
-export type UserStatus = SliceStatus
+export type CurrentUserStatus = SliceStatus
 | 'signingIn'
 | 'signingUp'
 | 'loggingOut';
 
-interface UserInitialState {
-  user: User | null;
-  status: UserStatus;
+interface CurrentUserInitialState {
+  currentUser: User | null;
+  status: CurrentUserStatus;
   unsubscribeAuthStateListener: Unsubscribe | null;
   authError: SerializedError | null;
 }
 
-export const initialState: UserInitialState = {
-  user: null,
+export const initialState: CurrentUserInitialState = {
+  currentUser: null,
   status: 'idle',
   unsubscribeAuthStateListener: null,
   authError: null,

@@ -11,8 +11,11 @@ export const {
   selectById: selectWorkoutById,
 } = workoutsAdapter.getSelectors((state: RootState) => state.workouts);
 
-export function selectWorkoutsSortedByMostRecent(state: RootState): Workout[] {
+export function selectWorkoutsSortedByMostRecentByUserId(
+  state: RootState, userId: string,
+): Workout[] {
   return selectWorkouts(state)
+    .filter((w) => w.userId === userId)
     .sort((a, b) => (new Date(b.createdDate) > new Date(a.createdDate) ? 1 : -1));
 }
 

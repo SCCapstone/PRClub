@@ -1,76 +1,94 @@
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import React, { useState } from 'react';
 import {
-  View, Text, TouchableHighlight, Image,
+  Button, Image, TextInput, View,
 } from 'react-native';
+import { Text } from 'react-native-paper';
 import tw from 'twrnc';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import useAppSelector from '../hooks/useAppSelector';
+import { selectCurrentUser, selectCurrentUserId } from '../state/currentUserSlice/selectors';
+import { selectPostsSortedByMostRecentByUserId } from '../state/postsSlice/selectors';
+import { selectWorkoutsSortedByMostRecentByUserId } from '../state/workoutsSlice/selectors';
 import Followers from './Followers';
 import Posts from './Posts';
-import Workouts from './Workouts';
 import PRs from './PRs';
+import Workouts from './Workouts';
+import EditButton from './EditButton';
+import UsersService from '../services/UsersService';
 
-enum TabType {
-  FollowersTab,
-  WorkoutsTab,
-  PRsTab,
-  PostsTab,
-}
-
-function CurrentTab({ tab }: { tab: TabType }) {
-  switch (tab) {
-    case TabType.WorkoutsTab:
-      return <Workouts />;
-    case TabType.PRsTab:
-      return <PRs />;
-    case TabType.PostsTab:
-      return <Posts />;
-    case TabType.FollowersTab:
-      return <Followers />;
-    default:
-      return <></>;
-  }
-}
+const Tab = createMaterialTopTabNavigator();
 
 export default function Profile() {
-  const [currTab, setCurrTab] = useState<TabType>(TabType.WorkoutsTab);
-  return (
-    <View>
-      <View style={tw`bg-gray-800`}>
-        <View style={tw`flex-row m-auto p-10`}>
-          <TouchableHighlight onPress={() => setCurrTab(TabType.PostsTab)}>
-            <View style={tw``}>
-              <Text style={tw`text-3xl text-center text-white`}>90</Text>
-              <Text style={tw`text-xl text-center text-white`}>Posts</Text>
-            </View>
-          </TouchableHighlight>
-          <View>
-            {/* eslint-disable-next-line global-require */}
-            <Image source={require('../assets/profile.jfif')} style={tw`m-auto h-32 w-32 ml-8 mr-8 rounded-full border-black border-4`} />
-          </View>
-          <TouchableHighlight onPress={() => setCurrTab(TabType.PRsTab)}>
-            <View style={tw``}>
-              <Text style={tw`text-3xl text-center text-white`}>23</Text>
-              <Text style={tw`text-xl text-center text-white`}>PRs</Text>
-            </View>
-          </TouchableHighlight>
-        </View>
-        <View style={tw`mx-auto`}>
-          <Text style={tw`text-xl text-white`}> Full Name</Text>
-          <Text style={tw`text-base text-white`}> @FullName </Text>
-        </View>
-        <View style={tw`flex-row items-center justify-center`}>
-          <TouchableHighlight onPress={() => setCurrTab(TabType.FollowersTab)}>
-            <Ionicons name="people" size={35} color="white" />
-          </TouchableHighlight>
-          <TouchableHighlight onPress={() => setCurrTab(TabType.PostsTab)} style={tw`ml-5 mr-5`}>
-            <Ionicons name="images" size={35} color="white" />
-          </TouchableHighlight>
-          <TouchableHighlight onPress={() => setCurrTab(TabType.WorkoutsTab)}>
-            <Ionicons name="barbell" size={35} color="white" />
-          </TouchableHighlight>
-        </View>
+  const currentUser = useAppSelector(selectCurrentUser);
+  const currentUserId = useAppSelector(selectCurrentUserId);
+
+  const currentUserWorkouts = useAppSelector(
+    (state) => selectWorkoutsSortedByMostRecentByUserId(state, currentUserId || ''),
+  );
+
+  const currentUserPosts = useAppSelector(
+    (state) => selectPostsSortedByMostRecentByUserId(state, currentUserId || ''),
+  );
+
+  const [fullName, setFullName] = useState<string>(currentUser.name);
+  const [username, setUsername] = useState<string>(currentUser.username);
+  const [editProfile, setEditProfile] = useState<boolean>(false);
+
+  const toggleEditProfile = () => setEditProfile(!editProfile);
+
+  const saveChanges = () => {
+    UsersService.updateFullName(currentUserId, fullName);
+    UsersService.updateUsername(currentUserId, username);
+    toggleEditProfile();
+  };
+  if (editProfile) {
+    return (
+      <View style={tw`p-2`}>
+        <Text style={tw`text-base`}>Name</Text>
+        <TextInput
+          style={tw`text-lg border-solid border-gray-500 border-b`}
+          defaultValue={fullName}
+          onChangeText={(newName) => setFullName(newName)}
+        />
+        <Text style={tw`text-base`}>Handle</Text>
+        <TextInput
+          style={tw`mb-2 text-lg border-solid border-gray-500 border-b`}
+          defaultValue={username}
+          onChangeText={(newUsername) => setUsername(newUsername)}
+        />
+
+        <Button title="Save" onPress={saveChanges} />
       </View>
-      <CurrentTab tab={currTab} />
-    </View>
+    );
+  }
+  return (
+    <>
+      <View style={tw`flex flex-row h-35 bg-gray-800 items-center justify-center`}>
+        <View style={tw`flex flex-1`} />
+        <View style={tw`flex flex-2`}>
+          <Image source={{ uri: 'https://picsum.photos/id/1005/300/300' }} style={tw`w-25 h-25 rounded-full`} />
+        </View>
+        <View style={tw`flex flex-2`}>
+          <Text style={tw`text-xl font-bold text-white text-left`}>{currentUser && currentUser.name}</Text>
+          <Text style={tw`text-lg text-white text-left`}>
+            @
+            {currentUser && currentUser.username}
+          </Text>
+        </View>
+        <View style={tw`flex flex-1`} />
+      </View>
+      <EditButton onPress={toggleEditProfile} />
+      <Tab.Navigator>
+        <Tab.Screen name="Workouts">
+          {() => <Workouts workouts={currentUserWorkouts} />}
+        </Tab.Screen>
+        <Tab.Screen name="Posts">
+          {() => <Posts posts={currentUserPosts} />}
+        </Tab.Screen>
+        <Tab.Screen name="PRs" component={PRs} />
+        <Tab.Screen name="Followers" component={Followers} />
+      </Tab.Navigator>
+
+    </>
   );
 }

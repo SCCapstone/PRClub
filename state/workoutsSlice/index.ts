@@ -1,49 +1,34 @@
-import { createSlice, Dictionary, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import Workout from '../../types/shared/Workout';
 import { initialState, workoutsAdapter } from './state';
-import { fetchWorkoutsFromDb } from './thunks';
+import { workoutsServiceGet } from './thunks';
 
 const workoutsSlice = createSlice({
   name: 'workouts',
   initialState,
   reducers: {
-    upsertWorkout: workoutsAdapter.upsertOne,
-    flushWorkoutsFromStore: workoutsAdapter.removeAll,
-    removeWorkoutByEntity(state, action: PayloadAction<Workout>) {
-      state.ids = state.ids.filter((i) => i !== action.payload.id);
-
-      const entities: Dictionary<Workout> = {};
-      Object.values(state.entities).forEach((w) => {
-        if (w && w.id !== action.payload.id) {
-          entities[w.id] = w;
-        }
-      });
-      state.entities = entities;
+    upsertWorkoutToStore: workoutsAdapter.upsertOne,
+    removeWorkoutFromStore(state, action: PayloadAction<Workout>) {
+      workoutsAdapter.removeOne(state, action.payload.id);
     },
+    flushWorkoutsFromStore: workoutsAdapter.removeAll,
   },
   extraReducers(builder) {
-    builder.addCase(fetchWorkoutsFromDb.pending, (state) => {
-      state.status = 'fetching';
-    });
-
-    builder.addCase(fetchWorkoutsFromDb.fulfilled, (state, action: PayloadAction<Workout[]>) => {
-      state.ids = action.payload.map((w) => w.id);
-
-      const entities: Dictionary<Workout> = {};
-      action.payload.forEach((w) => {
-        entities[w.id] = w;
+    builder
+      .addCase(workoutsServiceGet.pending, (state) => {
+        state.status = 'fetching';
+      })
+      .addCase(workoutsServiceGet.fulfilled, (state, action: PayloadAction<Workout[]>) => {
+        workoutsAdapter.upsertMany(state, action.payload);
+        state.status = 'loaded';
       });
-      state.entities = entities;
-
-      state.status = 'loaded';
-    });
   },
 });
 
 export const {
-  upsertWorkout,
+  upsertWorkoutToStore,
+  removeWorkoutFromStore,
   flushWorkoutsFromStore,
-  removeWorkoutByEntity,
 } = workoutsSlice.actions;
 
 export default workoutsSlice.reducer;

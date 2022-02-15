@@ -1,37 +1,39 @@
 /* eslint-disable import/no-cycle */
-import { User } from '@firebase/auth';
+import { User as FirebaseUser } from '@firebase/auth';
 import { configureStore } from '@reduxjs/toolkit';
-import createSagaMiddleware from 'redux-saga';
+import currentUserReducer, { registerAuthStateListener } from './currentUserSlice';
 import exerciseInfosReducer from './exerciseInfosSlice';
 import { fetchExerciseInfos } from './exerciseInfosSlice/thunks';
-import userReducer, { registerAuthStateListener } from './userSlice';
+import postsReducer, { flushPostsFromStore } from './postsSlice';
+import { postsServiceGet } from './postsSlice/thunks';
+import usersReducer from './usersSlice';
 import workoutsReducer, { flushWorkoutsFromStore } from './workoutsSlice';
-import workoutsSaga from './workoutsSlice/saga';
-import { fetchWorkoutsFromDb } from './workoutsSlice/thunks';
-
-const sagaMiddleware = createSagaMiddleware();
+import { workoutsServiceGet } from './workoutsSlice/thunks';
 
 export const store = configureStore({
   reducer: {
     workouts: workoutsReducer,
     exerciseInfos: exerciseInfosReducer,
-    user: userReducer,
+    currentUser: currentUserReducer,
+    users: usersReducer,
+    posts: postsReducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware({
     serializableCheck: false,
-  }).concat(sagaMiddleware),
+  }),
 });
 
-store.dispatch(fetchExerciseInfos());
-store.dispatch(registerAuthStateListener((user: User | null) => {
+store.dispatch(registerAuthStateListener(async (user: FirebaseUser | null) => {
   if (user && user.uid) {
-    store.dispatch(fetchWorkoutsFromDb(user.uid));
+    store.dispatch(workoutsServiceGet(user.uid));
+    store.dispatch(postsServiceGet(user.uid));
   } else {
     store.dispatch(flushWorkoutsFromStore());
+    store.dispatch(flushPostsFromStore());
   }
 }));
 
-sagaMiddleware.run(workoutsSaga);
+store.dispatch(fetchExerciseInfos());
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
