@@ -8,3 +8,7 @@ export const {
 export function selectExericseInfosStatus(state: RootState) {
   return state.exerciseInfos.status;
 }
+
+export function selectExerciseInfosAreSyncing(state: RootState) {
+  return state.exerciseInfos.isSyncing;
+}

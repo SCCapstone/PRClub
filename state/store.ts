@@ -3,7 +3,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import currentUserReducer, { registerAuthStateListener } from './currentUserSlice';
 import { fetchCurrentUserFromAsyncStorage } from './currentUserSlice/thunks';
 import exerciseInfosReducer from './exerciseInfosSlice';
-import { fetchExerciseInfos } from './exerciseInfosSlice/thunks';
+import { fetchExerciseInfos, syncExerciseInfos } from './exerciseInfosSlice/thunks';
 import postsReducer, { flushPostsFromStore } from './postsSlice';
 import { fetchPostsForUser } from './postsSlice/thunks';
 import usersReducer from './usersSlice';
@@ -25,6 +25,9 @@ export const store = configureStore({
 
 store.dispatch(fetchCurrentUserFromAsyncStorage());
 
+store.dispatch(fetchExerciseInfos());
+store.dispatch(syncExerciseInfos());
+
 store.dispatch(registerAuthStateListener(async (user: FirebaseUser | null) => {
   if (user && user.uid) {
     store.dispatch(fetchWorkoutsForUser(user.uid));
@@ -34,8 +37,6 @@ store.dispatch(registerAuthStateListener(async (user: FirebaseUser | null) => {
     store.dispatch(flushPostsFromStore());
   }
 }));
-
-store.dispatch(fetchExerciseInfos());
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
