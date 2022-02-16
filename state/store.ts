@@ -1,14 +1,14 @@
-/* eslint-disable import/no-cycle */
 import { User as FirebaseUser } from '@firebase/auth';
 import { configureStore } from '@reduxjs/toolkit';
 import currentUserReducer, { registerAuthStateListener } from './currentUserSlice';
+import { fetchCurrentUserFromAsyncStorage } from './currentUserSlice/thunks';
 import exerciseInfosReducer from './exerciseInfosSlice';
 import { fetchExerciseInfos } from './exerciseInfosSlice/thunks';
 import postsReducer, { flushPostsFromStore } from './postsSlice';
-import { postsServiceGet } from './postsSlice/thunks';
+import { fetchPostsForUser } from './postsSlice/thunks';
 import usersReducer from './usersSlice';
 import workoutsReducer, { flushWorkoutsFromStore } from './workoutsSlice';
-import { workoutsServiceGet } from './workoutsSlice/thunks';
+import { fetchWorkoutsForUser } from './workoutsSlice/thunks';
 
 export const store = configureStore({
   reducer: {
@@ -23,10 +23,12 @@ export const store = configureStore({
   }),
 });
 
+store.dispatch(fetchCurrentUserFromAsyncStorage());
+
 store.dispatch(registerAuthStateListener(async (user: FirebaseUser | null) => {
   if (user && user.uid) {
-    store.dispatch(workoutsServiceGet(user.uid));
-    store.dispatch(postsServiceGet(user.uid));
+    store.dispatch(fetchWorkoutsForUser(user.uid));
+    store.dispatch(fetchPostsForUser(user.uid));
   } else {
     store.dispatch(flushWorkoutsFromStore());
     store.dispatch(flushPostsFromStore());

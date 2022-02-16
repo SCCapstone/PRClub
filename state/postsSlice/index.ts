@@ -1,64 +1,60 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import Post from '../../types/shared/Post';
 import { initialState, postsAdapter } from './state';
-import { postsServiceGet, postsServiceRemove, postsServiceUpsert } from './thunks';
+import { fetchPostsForUser, removePost, upsertPost } from './thunks';
 
 const postsSlice = createSlice({
   name: 'posts',
   initialState,
   reducers: {
-    upsertPostToStore: postsAdapter.upsertOne,
-    removePostFromStore(state, action: PayloadAction<Post>) {
-      postsAdapter.removeOne(state, action.payload.id);
+    clearUpsertPostResult(state) {
+      state.upsertPostResult = null;
+    },
+    clearRemovePostResult(state) {
+      state.removePostResult = null;
     },
     flushPostsFromStore: postsAdapter.removeAll,
-    clearPostsServiceUpsertResult(state) {
-      state.postsServiceUpsertResult = null;
-    },
-    clearPostsServiceRemoveResult(state) {
-      state.postsServiceRemoveResult = null;
-    },
   },
   extraReducers(builder) {
     builder
-      .addCase(postsServiceGet.pending, (state) => {
+      .addCase(fetchPostsForUser.pending, (state) => {
         state.status = 'fetching';
       })
-      .addCase(postsServiceGet.fulfilled, (state, action: PayloadAction<Post[]>) => {
+      .addCase(fetchPostsForUser.fulfilled, (state, action: PayloadAction<Post[]>) => {
         postsAdapter.upsertMany(state, action.payload);
         state.status = 'loaded';
       })
-      .addCase(postsServiceUpsert.pending, (state) => {
+      .addCase(upsertPost.pending, (state) => {
         state.status = 'callingService';
       })
-      .addCase(postsServiceUpsert.fulfilled, (state) => {
-        state.postsServiceUpsertResult = { success: true };
+      .addCase(upsertPost.fulfilled, (state, action: PayloadAction<Post>) => {
+        postsAdapter.upsertOne(state, action.payload);
+        state.upsertPostResult = { success: true };
         state.status = 'loaded';
       })
-      .addCase(postsServiceUpsert.rejected, (state, action) => {
-        state.postsServiceUpsertResult = { success: false, error: action.error };
+      .addCase(upsertPost.rejected, (state, action) => {
+        state.upsertPostResult = { success: false, error: action.error };
         state.status = 'loaded';
       })
-      .addCase(postsServiceRemove.pending, (state) => {
+      .addCase(removePost.pending, (state) => {
         state.status = 'callingService';
       })
-      .addCase(postsServiceRemove.fulfilled, (state) => {
-        state.postsServiceRemoveResult = { success: true };
+      .addCase(removePost.fulfilled, (state, action: PayloadAction<Post>) => {
+        postsAdapter.removeOne(state, action.payload.id);
+        state.removePostResult = { success: true };
         state.status = 'loaded';
       })
-      .addCase(postsServiceRemove.rejected, (state, action) => {
-        state.postsServiceRemoveResult = { success: false, error: action.error };
+      .addCase(removePost.rejected, (state, action) => {
+        state.removePostResult = { success: false, error: action.error };
         state.status = 'loaded';
       });
   },
 });
 
 export const {
-  upsertPostToStore,
-  removePostFromStore,
+  clearUpsertPostResult,
+  clearRemovePostResult,
   flushPostsFromStore,
-  clearPostsServiceUpsertResult,
-  clearPostsServiceRemoveResult,
 } = postsSlice.actions;
 
 export default postsSlice.reducer;

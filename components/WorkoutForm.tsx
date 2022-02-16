@@ -11,10 +11,11 @@ import tw from 'twrnc';
 import { v4 as uuidv4 } from 'uuid';
 import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
+import { selectCurrentUser } from '../state/currentUserSlice/selectors';
 import { selectExerciseInfos, selectExericseInfosStatus } from '../state/exerciseInfosSlice/selectors';
-import { selectCurrentUserId } from '../state/currentUserSlice/selectors';
-import { removeWorkoutByEntity, upsertWorkout } from '../state/workoutsSlice';
+import { upsertWorkout } from '../state/workoutsSlice/thunks';
 import WgerExerciseInfo from '../types/services/WgerExerciseInfo';
+import User from '../types/shared/User';
 import Workout from '../types/shared/Workout';
 import { SliceStatus } from '../types/state/SliceStatus';
 import { ExerciseInput } from '../types/validation/ExerciseInput';
@@ -24,11 +25,9 @@ import {
 } from '../types/validation/WorkoutInput';
 import DeleteButton from './DeleteButton';
 import { Snackbar } from 'react-native-paper';
-import { clearWorkoutsServiceUpsertResult, removeWorkoutFromStore, upsertWorkoutToStore } from '../state/workoutsSlice'; 
+import { clearWorkoutsServiceUpsertResult, removeWorkoutFromStore, upsertWorkoutToStore } from '../state/workoutsSlice';
 import { selectWorkoutsServiceUpsertResult, selectWorkoutsStatus } from '../state/workoutsSlice/selectors';
-import { workoutsServiceRemove , workoutsServiceUpsert } from '../state/workoutsSlice/thunks';
-
-
+import { workoutsServiceRemove, workoutsServiceUpsert } from '../state/workoutsSlice/thunks';
 
 export default function WorkoutForm({
   workoutToEdit = undefined,
@@ -40,7 +39,7 @@ export default function WorkoutForm({
   const exerciseInfos: WgerExerciseInfo[] = useAppSelector(selectExerciseInfos);
   const exerciseInfosStatus: SliceStatus = useAppSelector(selectExericseInfosStatus);
 
-  const currentUserId: string | null = useAppSelector(selectCurrentUserId);
+  const currentUser: User | null = useAppSelector(selectCurrentUser);
 
   const dispatch = useAppDispatch();
   const workoutsStatus = useAppSelector(selectWorkoutsStatus);
@@ -66,26 +65,26 @@ export default function WorkoutForm({
         initialValues={initialValues}
         validationSchema={WorkoutInputSchema}
         onSubmit={(values) => {
-          if (currentUserId) {
+          if (currentUser) {
             const workout: Workout = {
-                id: workoutToEdit ? workoutToEdit.id : uuidv4(),
-                userId: currentUserId,
-                createdDate: workoutToEdit?.createdDate || new Date().toString(),
-                modifiedDate: workoutToEdit ? new Date().toString() : null,
-                name: values.name,
-                exercises: values.exercises.map((e) => ({
-                  id: e.id,
-                  name: e.name,
-                  exerciseSets: e.exerciseSets.map((s) => ({
-                    id: s.id,
-                    weight: Number(s.weight),
-                    reps: Number(s.reps),
-                  })),
+              id: workoutToEdit ? workoutToEdit.id : uuidv4(),
+              userId: currentUser.id,
+              username: currentUser.username,
+              createdDate: workoutToEdit?.createdDate || new Date().toString(),
+              modifiedDate: workoutToEdit ? new Date().toString() : null,
+              name: values.name,
+              exercises: values.exercises.map((e) => ({
+                id: e.id,
+                name: e.name,
+                exerciseSets: e.exerciseSets.map((s) => ({
+                  id: s.id,
+                  weight: Number(s.weight),
+                  reps: Number(s.reps),
                 })),
-              };
+              })),
+            };
 
-              dispatch(upsertWorkoutToStore(workout));
-              dispatch(workoutsServiceUpsert(workout));
+            dispatch(upsertWorkout(workout));
           } else {
             throw new Error('Something went terribly wrong.'
               + ' You are here without being authenticated!');
@@ -302,7 +301,7 @@ export default function WorkoutForm({
         action={workoutsServiceUpsertResult && workoutsServiceUpsertResult.success ? {
           label: 'Undo',
           onPress: () => {
-            if(submittedWorkout) {
+            if (submittedWorkout) {
               dispatch(removeWorkoutFromStore(submittedWorkout));
               dispatch(workoutsServiceRemove(submittedWorkout));
               setSubmittedWorkout(null);

@@ -20,10 +20,10 @@ export function selectPostsStatus(state: RootState) {
   return state.posts.status;
 }
 
-export function selectPostsServiceUpsertResult(state: RootState) {
-  return state.posts.postsServiceUpsertResult;
+export function selectUpsertPostResult(state: RootState) {
+  return state.posts.upsertPostResult;
 }
 
-export function selectPostsServicRemoveResult(state: RootState) {
-  return state.posts.postsServiceRemoveResult;
+export function selectRemovePostResult(state: RootState) {
+  return state.posts.removePostResult;
 }

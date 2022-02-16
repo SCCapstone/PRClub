@@ -44,7 +44,9 @@ module.exports = {
     '@typescript-eslint/no-shadow': ['error'],
     '@typescript-eslint/no-explicit-any': 'error',
     indent: 'off',
-    '@typescript-eslint/indent': ['error', 2],
+    '@typescript-eslint/indent': ['error', 2, {
+      ignoredNodes: ['TSTypeParameterInstantiation'],
+    }],
     'import/prefer-default-export': 'off',
     'react/require-default-props': 'off',
   },

@@ -3,7 +3,7 @@ import User from '../../types/shared/User';
 import { SliceStatus } from '../../types/state/SliceStatus';
 
 interface UsersInitialState {
-  status: SliceStatus
+  status: SliceStatus,
 }
 
 export const usersAdapter = createEntityAdapter<User>();
