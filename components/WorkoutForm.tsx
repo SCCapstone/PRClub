@@ -13,21 +13,19 @@ import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
 import { selectCurrentUser } from '../state/currentUserSlice/selectors';
 import { selectExerciseInfos, selectExericseInfosStatus } from '../state/exerciseInfosSlice/selectors';
-import { upsertWorkout } from '../state/workoutsSlice/thunks';
+import { removeWorkout, upsertWorkout } from '../state/workoutsSlice/thunks';
 import WgerExerciseInfo from '../types/services/WgerExerciseInfo';
 import User from '../types/shared/User';
 import Workout from '../types/shared/Workout';
 import { SliceStatus } from '../types/state/SliceStatus';
 import { ExerciseInput } from '../types/validation/ExerciseInput';
 import { ExerciseSetInput } from '../types/validation/ExerciseSetInput';
-import {
-  WorkoutInput, WorkoutInputSchema,
-} from '../types/validation/WorkoutInput';
+import { WorkoutInput, WorkoutInputSchema} from '../types/validation/WorkoutInput';
 import DeleteButton from './DeleteButton';
 import { Snackbar } from 'react-native-paper';
-import { clearWorkoutsServiceUpsertResult, removeWorkoutFromStore, upsertWorkoutToStore } from '../state/workoutsSlice';
+import { clearWorkoutsServiceUpsertResult} from '../state/workoutsSlice';
 import { selectWorkoutsServiceUpsertResult, selectWorkoutsStatus } from '../state/workoutsSlice/selectors';
-import { workoutsServiceRemove, workoutsServiceUpsert } from '../state/workoutsSlice/thunks';
+
 
 export default function WorkoutForm({
   workoutToEdit = undefined,
@@ -302,8 +300,7 @@ export default function WorkoutForm({
           label: 'Undo',
           onPress: () => {
             if (submittedWorkout) {
-              dispatch(removeWorkoutFromStore(submittedWorkout));
-              dispatch(workoutsServiceRemove(submittedWorkout));
+              dispatch(removeWorkout(submittedWorkout));
               setSubmittedWorkout(null);
             }
           },
