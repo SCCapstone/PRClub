@@ -6,10 +6,22 @@ import {
   User as FirebaseUser,
 } from '@firebase/auth';
 import {
-  collection, doc, getDoc, getDocs, query, setDoc, where,
+  collection, doc, getDoc, getDocs, query, setDoc, updateDoc, where,
 } from '@firebase/firestore';
-import { auth, COLLECTIONS, db } from '../firebase';
+import { USERS_COLLECTION } from '../constants/firestore';
+import { auth, db } from '../firebase';
 import User from '../types/shared/User';
+
+async function checkUsernameIsAvailable(username: string): Promise<void> {
+  const q = query(
+    collection(db, USERS_COLLECTION),
+    where('username', '==', username),
+  );
+  const querySnap = await getDocs(q);
+  if (!querySnap.empty) {
+    throw new Error('Username already exists!');
+  }
+}
 
 async function signUp(
   name: string,
@@ -17,40 +29,32 @@ async function signUp(
   email: string,
   password: string,
 ): Promise<User> {
-  // first, check if username exists
-  const q = query(
-    collection(db, COLLECTIONS.USERS),
-    where('username', '==', username),
-  );
-  const querySnapshot = await getDocs(q);
-  if (!querySnapshot.empty) {
-    throw new Error('Username already exists!');
-  }
+  await checkUsernameIsAvailable(username);
 
   // if username doesn't exist, proceed with registration
-  const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+  const userCred = await createUserWithEmailAndPassword(auth, email, password);
 
-  if (!userCredential.user.email) {
+  if (!userCred.user.email) {
     throw new Error('Something went wrong, user must have an email address.');
   }
 
   // create document for user
   const user: User = {
-    id: userCredential.user.uid,
+    id: userCred.user.uid,
     name,
     username,
-    email: userCredential.user.email,
+    email: userCred.user.email,
     workoutIds: [],
     postIds: [],
   };
-  await setDoc(doc(db, COLLECTIONS.USERS, user.id), user);
+  await setDoc(doc(db, USERS_COLLECTION, user.id), user);
 
   return user;
 }
 
 async function signIn(email: string, password: string): Promise<User> {
   const userCred = await signInWithEmailAndPassword(auth, email, password);
-  const documentSnapshot = await getDoc(doc(db, COLLECTIONS.USERS, userCred.user.uid));
+  const documentSnapshot = await getDoc(doc(db, USERS_COLLECTION, userCred.user.uid));
   return documentSnapshot.data() as User;
 }
 
@@ -62,9 +66,44 @@ function registerAuthStateListener(l: NextOrObserver<FirebaseUser | null>): Unsu
   return auth.onAuthStateChanged(l);
 }
 
+async function updateName(userId: string, newName: string): Promise<void> {
+  const docRef = doc(db, USERS_COLLECTION, userId);
+
+  const docSnap = await getDoc(docRef);
+  if (docSnap.exists()) {
+    await updateDoc(docRef, {
+      name: newName,
+    });
+  } else {
+    throw new Error('User does not exist!');
+  }
+}
+
+async function updateUsername(userId: string, newUsername: string): Promise<void> {
+  const docRef = doc(db, USERS_COLLECTION, userId);
+
+  const docSnap = await getDoc(docRef);
+  if (docSnap.exists()) {
+    const user = docSnap.data() as User;
+    if (user.username === newUsername) {
+      return;
+    }
+
+    await checkUsernameIsAvailable(newUsername);
+
+    await updateDoc(docRef, {
+      username: newUsername,
+    });
+  } else {
+    throw new Error('User does not exist!');
+  }
+}
+
 export default {
   signUp,
   signIn,
   logOut,
   registerAuthStateListener,
+  updateName,
+  updateUsername,
 };

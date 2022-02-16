@@ -1,5 +1,4 @@
 import User from '../../types/shared/User';
-import { SliceStatus } from '../../types/state/SliceStatus';
 import { RootState } from '../store';
 
 export function selectQueriedUsers(state: RootState): User[] {
@@ -11,6 +10,6 @@ export function selectQueriedUsers(state: RootState): User[] {
   return [];
 }
 
-export function selectUsersStatus(state: RootState): SliceStatus {
+export function selectUsersStatus(state: RootState) {
   return state.users.status;
 }

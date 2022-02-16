@@ -1,5 +1,6 @@
 import { SerializedError } from '@reduxjs/toolkit';
 import User from '../../types/shared/User';
+import { ServiceCallResult } from '../../types/state/ServiceCallResult';
 import { RootState } from '../store';
 import { CurrentUserStatus } from './state';
 
@@ -17,4 +18,8 @@ export function selectCurrentUserStatus(state: RootState): CurrentUserStatus {
 
 export function selectUserAuthError(state: RootState): SerializedError | null {
   return state.currentUser.authError;
+}
+
+export function selectUpdateProfileResult(state: RootState): ServiceCallResult | null {
+  return state.currentUser.updateProfileResult;
 }

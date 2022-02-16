@@ -8,22 +8,22 @@ const exerciseInfosSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers(builder) {
-    builder.addCase(fetchExerciseInfos.pending, (state) => {
-      state.status = 'fetching';
-    });
+    builder
+      .addCase(fetchExerciseInfos.pending, (state) => {
+        state.status = 'fetching';
+      })
+      .addCase(fetchExerciseInfos.fulfilled,
+        (state, action: PayloadAction<WgerExerciseInfo[]>) => {
+          state.ids = action.payload.map((e) => e.id);
 
-    builder.addCase(fetchExerciseInfos.fulfilled,
-      (state, action: PayloadAction<WgerExerciseInfo[]>) => {
-        state.ids = action.payload.map((e) => e.id);
+          const entities: Dictionary<WgerExerciseInfo> = {};
+          action.payload.forEach((e) => {
+            entities[e.id] = e;
+          });
+          state.entities = entities;
 
-        const entities: Dictionary<WgerExerciseInfo> = {};
-        action.payload.forEach((e) => {
-          entities[e.id] = e;
+          state.status = 'loaded';
         });
-        state.entities = entities;
-
-        state.status = 'loaded';
-      });
   },
 });
 

@@ -3,23 +3,24 @@ import {
   doc, DocumentData, getDoc, getDocs, query,
   QueryDocumentSnapshot, setDoc, updateDoc, where,
 } from '@firebase/firestore';
-import { COLLECTIONS, db } from '../firebase';
+import { db } from '../firebase';
 import Post from '../types/shared/Post';
 import User from '../types/shared/User';
+import { USERS_COLLECTION, POSTS_COLLECTION } from '../constants/firestore';
 
-async function getPosts(userId: string): Promise<Post[]> {
+async function fetchPostsForUser(userId: string): Promise<Post[]> {
   // fetch user document
-  const documentSnapshot = await getDoc(doc(db, COLLECTIONS.USERS, userId));
-  const user = documentSnapshot.data() as User;
+  const docSnap = await getDoc(doc(db, USERS_COLLECTION, userId));
+  const user = docSnap.data() as User;
 
   // if the user has posts, query their posts and return them
   if (user.postIds.length > 0) {
-    const q = query(collection(db, COLLECTIONS.POSTS), where('id', 'in', user.postIds));
-    const querySnapshot = await getDocs(q);
+    const q = query(collection(db, POSTS_COLLECTION), where('id', 'in', user.postIds));
+    const querySnap = await getDocs(q);
 
     // extract posts from querySnapshot
     const posts: Post[] = [];
-    querySnapshot.forEach((d: QueryDocumentSnapshot<DocumentData>) => {
+    querySnap.forEach((d: QueryDocumentSnapshot<DocumentData>) => {
       const post = d.data() as Post;
       posts.push(post);
     });
@@ -33,26 +34,26 @@ async function getPosts(userId: string): Promise<Post[]> {
 
 async function upsertPost(post: Post): Promise<void> {
   // add or update post
-  await setDoc(doc(db, COLLECTIONS.POSTS, post.id), post);
+  await setDoc(doc(db, POSTS_COLLECTION, post.id), post);
 
   // add postId to user's postIds if it doesn't already exist
-  await updateDoc(doc(db, COLLECTIONS.USERS, post.userId), {
+  await updateDoc(doc(db, USERS_COLLECTION, post.userId), {
     postIds: arrayUnion(post.id),
   });
 }
 
 async function removePost(post: Post): Promise<void> {
   // remove post
-  await deleteDoc(doc(db, COLLECTIONS.POSTS, post.id));
+  await deleteDoc(doc(db, POSTS_COLLECTION, post.id));
 
   // remove postId from user's postIds
-  await updateDoc(doc(db, COLLECTIONS.USERS, post.userId), {
+  await updateDoc(doc(db, USERS_COLLECTION, post.userId), {
     postIds: arrayRemove(post.id),
   });
 }
 
 export default {
-  getPosts,
+  fetchPostsForUser,
   upsertPost,
   removePost,
 };
