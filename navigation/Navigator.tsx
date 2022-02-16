@@ -1,5 +1,4 @@
 import { createStackNavigator } from '@react-navigation/stack';
-import { current } from '@reduxjs/toolkit';
 import React, { useState } from 'react';
 import { Dimensions, View } from 'react-native';
 import { ActivityIndicator, Snackbar } from 'react-native-paper';
