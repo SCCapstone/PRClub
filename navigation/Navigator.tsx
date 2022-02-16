@@ -2,7 +2,6 @@ import { createStackNavigator } from '@react-navigation/stack';
 import React, { useState } from 'react';
 import { Dimensions, View } from 'react-native';
 import { ActivityIndicator, Snackbar } from 'react-native-paper';
-import tw from 'twrnc';
 import useAppSelector from '../hooks/useAppSelector';
 import { selectCurrentUser, selectCurrentUserStatus } from '../state/currentUserSlice/selectors';
 import { selectExerciseInfosAreSyncing } from '../state/exerciseInfosSlice/selectors';
