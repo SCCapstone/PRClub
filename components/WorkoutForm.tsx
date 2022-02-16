@@ -1,7 +1,7 @@
 import { OptionType, Select } from '@mobile-reality/react-native-select-pro';
 import { Field, FieldArray, Formik } from 'formik';
 import _ from 'lodash';
-import React from 'react';
+import React, { useState } from 'react';
 import { View } from 'react-native';
 import 'react-native-get-random-values';
 import {
@@ -12,8 +12,8 @@ import { v4 as uuidv4 } from 'uuid';
 import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
 import { selectExerciseInfos, selectExericseInfosStatus } from '../state/exerciseInfosSlice/selectors';
-import { selectUserId } from '../state/userSlice/selectors';
-import { removeWorkoutByEntity, upsertWorkout } from '../state/workoutsSlice';
+import { selectCurrentUserId } from '../state/currentUserSlice/selectors';
+//import { removeWorkoutByEntity } from '../state/workoutsSlice';
 import WgerExerciseInfo from '../types/services/WgerExerciseInfo';
 import Workout from '../types/shared/Workout';
 import { SliceStatus } from '../types/state/SliceStatus';
@@ -24,7 +24,10 @@ import {
 } from '../types/validation/WorkoutInput';
 import DeleteButton from './DeleteButton';
 import { Snackbar } from 'react-native-paper';
-import { workoutsServiceUpsert } from '../state/workoutsSlice/thunks';
+import { clearWorkoutsServiceUpsertResult, removeWorkoutFromStore, upsertWorkoutToStore } from '../state/workoutsSlice'; 
+import { selectWorkoutsServiceUpsertResult, selectWorkoutsStatus } from '../state/workoutsSlice/selectors';
+import { workoutsServiceRemove , workoutsServiceUpsert } from '../state/workoutsSlice/thunks';
+
 
 
 export default function WorkoutForm({
@@ -37,12 +40,12 @@ export default function WorkoutForm({
   const exerciseInfos: WgerExerciseInfo[] = useAppSelector(selectExerciseInfos);
   const exerciseInfosStatus: SliceStatus = useAppSelector(selectExericseInfosStatus);
 
-  const [visible, setVisible] = React.useState(false);
-  const onToggleSnackBar = () => setVisible(!visible);
-  const onDismissSnackBar = () => setVisible(false);
-  const currentUserId: string | null = useAppSelector(selectUserId);
+  const currentUserId: string | null = useAppSelector(selectCurrentUserId);
 
   const dispatch = useAppDispatch();
+  const workoutsStatus = useAppSelector(selectWorkoutsStatus);
+  const workoutsServiceUpsertResult = useAppSelector(selectWorkoutsServiceUpsertResult);
+  const [submittedWorkout, setSubmittedWorkout] = useState<Workout | null>(null);
 
   const initialValues: WorkoutInput = {
     name: workoutToEdit?.name || '',
@@ -65,7 +68,7 @@ export default function WorkoutForm({
         onSubmit={(values) => {
           if (currentUserId) {
             dispatch(
-              upsertWorkout({
+              workoutsServiceUpsert({
                 id: workoutToEdit ? workoutToEdit.id : uuidv4(),
                 userId: currentUserId,
                 createdDate: workoutToEdit?.createdDate || new Date().toString(),
@@ -263,7 +266,6 @@ export default function WorkoutForm({
             <Button
               mode="contained"
               onPress={() => {
-                onToggleSnackBar();
                 formikProps.handleSubmit();
                 if (workoutToEdit) {
                   if (onSave) { onSave(); }
@@ -293,14 +295,14 @@ export default function WorkoutForm({
         )}
       </Formik>
       <Snackbar
-        visible={visible}
+        visible={!!workoutsServiceUpsertResult}
         duration={3000}
-        onDismiss={() => dispatch(clearWorkoutServiceUpsertResult())}
+        onDismiss={() => dispatch(clearWorkoutsServiceUpsertResult())}
         action={workoutsServiceUpsertResult && workoutsServiceUpsertResult.success ? {
           label: 'Done',
           onPress: () => {
             if(submittedWorkout) {
-              dispatch(removeWorkoutByEntity(submittedWorkout));
+              dispatch(removeWorkoutFromStore(submittedWorkout));
               dispatch(workoutsServiceRemove(submittedWorkout));
               setSubmittedWorkout(null);
             }
@@ -316,26 +318,3 @@ export default function WorkoutForm({
     </>
   );
 }
-
-
-          // <Snackbar
-          //   visible={!!postsServiceUpsertResult}
-          //   duration={3000}
-          //   onDismiss={() => dispatch(clearPostsServiceUpsertResult())}
-          //   action={postsServiceUpsertResult && postsServiceUpsertResult.success ? {
-          //     label: 'Undo',
-          //     onPress: () => {
-          //       if (submittedPost) {
-          //         dispatch(removePostFromStore(submittedPost));
-          //         dispatch(postsServiceRemove(submittedPost));
-          //         setSubmittedPost(null);
-          //       }
-          //     },
-          //   } : undefined}
-          // >
-          //   {postsServiceUpsertResult && (
-          //     postsServiceUpsertResult.success
-          //       ? 'Post Submitted!'
-          //       : `Error submitting post: ${postsServiceUpsertResult.error}`
-          //   )}
-          // </Snackbar>

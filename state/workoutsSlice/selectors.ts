@@ -19,9 +19,14 @@ export function selectWorkoutsSortedByMostRecentByUserId(
     .sort((a, b) => (new Date(b.createdDate) > new Date(a.createdDate) ? 1 : -1));
 }
 
-export function selectWorkoutsStatus(state: RootState): SliceStatus {
+export function selectWorkoutsStatus(state: RootState) {
   return state.workouts.status;
 }
+
+export function selectWorkoutsServiceRemoveResult(state: RootState) {
+  return state.workouts.workoutsServiceRemoveResult;
+}
+
 
 export function selectWorkoutsServiceUpsertResult(state: RootState) {
   return state.workouts.workoutsServiceUpsertResult;
