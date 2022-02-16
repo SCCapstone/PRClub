@@ -13,7 +13,7 @@ import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
 import { selectExerciseInfos, selectExericseInfosStatus } from '../state/exerciseInfosSlice/selectors';
 import { selectCurrentUserId } from '../state/currentUserSlice/selectors';
-//import { removeWorkoutByEntity } from '../state/workoutsSlice';
+import { removeWorkoutByEntity, upsertWorkout } from '../state/workoutsSlice';
 import WgerExerciseInfo from '../types/services/WgerExerciseInfo';
 import Workout from '../types/shared/Workout';
 import { SliceStatus } from '../types/state/SliceStatus';
@@ -67,8 +67,7 @@ export default function WorkoutForm({
         validationSchema={WorkoutInputSchema}
         onSubmit={(values) => {
           if (currentUserId) {
-            dispatch(
-              workoutsServiceUpsert({
+            const workout: Workout = {
                 id: workoutToEdit ? workoutToEdit.id : uuidv4(),
                 userId: currentUserId,
                 createdDate: workoutToEdit?.createdDate || new Date().toString(),
@@ -83,8 +82,10 @@ export default function WorkoutForm({
                     reps: Number(s.reps),
                   })),
                 })),
-              }),
-            );
+              };
+
+              dispatch(upsertWorkoutToStore(workout));
+              dispatch(workoutsServiceUpsert(workout));
           } else {
             throw new Error('Something went terribly wrong.'
               + ' You are here without being authenticated!');
@@ -299,7 +300,7 @@ export default function WorkoutForm({
         duration={3000}
         onDismiss={() => dispatch(clearWorkoutsServiceUpsertResult())}
         action={workoutsServiceUpsertResult && workoutsServiceUpsertResult.success ? {
-          label: 'Done',
+          label: 'Undo',
           onPress: () => {
             if(submittedWorkout) {
               dispatch(removeWorkoutFromStore(submittedWorkout));
