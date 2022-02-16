@@ -25,7 +25,7 @@ export default function Profile() {
   const currentUser = useAppSelector(selectCurrentUser);
 
   if (!currentUser) {
-    throw new Error('Something went seriously wrong! Current user should not be null');
+    return <></>;
   }
 
   const currentUserStatus = useAppSelector(selectCurrentUserStatus);

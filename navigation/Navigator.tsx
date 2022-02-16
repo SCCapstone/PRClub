@@ -1,4 +1,5 @@
 import { createStackNavigator } from '@react-navigation/stack';
+import { current } from '@reduxjs/toolkit';
 import React, { useState } from 'react';
 import { Dimensions, View } from 'react-native';
 import { ActivityIndicator, Snackbar } from 'react-native-paper';
@@ -45,30 +46,35 @@ export default function Navigator() {
             />
           )}
       </Stack.Navigator>
-      <View
-        style={{
-          position: 'absolute',
-          top: 0.75 * Dimensions.get('window').height,
-          height: 0.175 * Dimensions.get('window').height,
-          left: 0.025 * Dimensions.get('window').width,
-          width: 0.95 * Dimensions.get('window').width,
-        }}
-      >
-        <Snackbar
-          visible={exerciseInfosAreSyncing && showSyncing}
-          duration={1000}
-          onDismiss={() => setShowSyncing(false)}
-        >
-          Syncing exercises database...
-        </Snackbar>
-        <Snackbar
-          visible={!exerciseInfosAreSyncing && showSynced}
-          duration={1000}
-          onDismiss={() => setShowSynced(false)}
-        >
-          Exercises database synced!
-        </Snackbar>
-      </View>
+      {
+        currentUser
+        && (
+          <View
+            style={{
+              position: 'absolute',
+              top: 0.75 * Dimensions.get('window').height,
+              height: 0.175 * Dimensions.get('window').height,
+              left: 0.025 * Dimensions.get('window').width,
+              width: 0.95 * Dimensions.get('window').width,
+            }}
+          >
+            <Snackbar
+              visible={exerciseInfosAreSyncing && showSyncing}
+              duration={1000}
+              onDismiss={() => setShowSyncing(false)}
+            >
+              Syncing exercises database...
+            </Snackbar>
+            <Snackbar
+              visible={!exerciseInfosAreSyncing && showSynced}
+              duration={1000}
+              onDismiss={() => setShowSynced(false)}
+            >
+              Exercises database synced!
+            </Snackbar>
+          </View>
+        )
+      }
     </>
   );
 }
