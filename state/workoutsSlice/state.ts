@@ -3,7 +3,7 @@ import { SliceStatus } from '../../types/state/SliceStatus';
 import Workout from '../../types/shared/Workout';
 
 interface WorkoutsInitialState {
-  status: SliceStatus
+  status: SliceStatus | 'callingService'
   workoutsServiceUpsertResult: ServiceCallResult | null
   workoutsServiceRemoveResult: ServiceCallResult | null
 }
@@ -19,5 +19,4 @@ export const initialState = workoutsAdapter.getInitialState<WorkoutsInitialState
   status: 'idle',
   workoutsServiceUpsertResult: null,
   workoutsServiceRemoveResult: null,
-
 });

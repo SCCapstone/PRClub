@@ -22,3 +22,7 @@ export function selectWorkoutsSortedByMostRecentByUserId(
 export function selectWorkoutsStatus(state: RootState): SliceStatus {
   return state.workouts.status;
 }
+
+export function selectWorkoutsServiceUpsertResult(state: RootState) {
+  return state.workouts.workoutsServiceUpsertResult;
+}
