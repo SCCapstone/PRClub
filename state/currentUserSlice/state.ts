@@ -8,7 +8,9 @@ export type CurrentUserStatus = SliceStatus
 | 'signingIn'
 | 'signingUp'
 | 'loggingOut'
-| 'updatingProfile';
+| 'updatingProfile'
+| 'followingUser'
+| 'unfollowingUser';
 
 interface CurrentUserInitialState {
   currentUser: User | null;
@@ -16,6 +18,8 @@ interface CurrentUserInitialState {
   unsubscribeAuthStateListener: Unsubscribe | null;
   authError: SerializedError | null;
   updateProfileResult: ServiceCallResult | null;
+  followResult: (ServiceCallResult & {userId?: string}) | null;
+  unfollowResult: (ServiceCallResult & {userId?: string}) | null;
 }
 
 export const initialState: CurrentUserInitialState = {
@@ -24,4 +28,6 @@ export const initialState: CurrentUserInitialState = {
   unsubscribeAuthStateListener: null,
   authError: null,
   updateProfileResult: null,
+  followResult: null,
+  unfollowResult: null,
 };

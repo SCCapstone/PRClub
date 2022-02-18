@@ -1,10 +1,12 @@
 import { NextOrObserver, User as FirebaseUser } from '@firebase/auth';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import _ from 'lodash';
 import AuthService from '../../services/AuthService';
 import User from '../../types/shared/User';
 import { initialState } from './state';
 import {
-  fetchCurrentUserFromAsyncStorage, updateName, updateUsername, userLogOut, userSignIn, userSignUp,
+  fetchCurrentUserFromAsyncStorage,
+  followUser, unfollowUser, updateName, updateUsername, userLogOut, userSignIn, userSignUp,
 } from './thunks';
 
 const currentUserSlice = createSlice({
@@ -25,6 +27,12 @@ const currentUserSlice = createSlice({
     },
     clearUpdateProfileResult(state) {
       state.updateProfileResult = null;
+    },
+    clearFollowResult(state) {
+      state.followResult = null;
+    },
+    clearUnfollowResult(state) {
+      state.unfollowResult = null;
     },
   },
   extraReducers(builder) {
@@ -75,8 +83,14 @@ const currentUserSlice = createSlice({
       .addCase(updateName.fulfilled, (state, action: PayloadAction<string>) => {
         if (state.currentUser) {
           state.currentUser.name = action.payload;
+          state.updateProfileResult = { success: true };
+        } else {
+          state.updateProfileResult = {
+            success: false,
+            error: new Error('Current user cannot be null!'),
+          };
         }
-        state.updateProfileResult = { success: true };
+
         state.status = 'loaded';
       })
       .addCase(updateName.rejected, (state, action) => {
@@ -89,12 +103,69 @@ const currentUserSlice = createSlice({
       .addCase(updateUsername.fulfilled, (state, action: PayloadAction<string>) => {
         if (state.currentUser) {
           state.currentUser.username = action.payload;
+          state.updateProfileResult = { success: true };
+        } else {
+          state.updateProfileResult = {
+            success: false,
+            error: new Error('Current user cannot be null!'),
+          };
         }
-        state.updateProfileResult = { success: true };
+
         state.status = 'loaded';
       })
       .addCase(updateUsername.rejected, (state, action) => {
         state.updateProfileResult = { success: false, error: action.error };
+        state.status = 'loaded';
+      })
+      .addCase(followUser.pending, (state) => {
+        state.status = 'followingUser';
+      })
+      .addCase(followUser.fulfilled, (state, action: PayloadAction<string>) => {
+        if (state.currentUser) {
+          state.currentUser.followingIds = _.union(
+            state.currentUser.followingIds,
+            [action.payload],
+          );
+          state.followResult = {
+            success: true,
+            userId: action.payload,
+          };
+        } else {
+          state.followResult = {
+            success: false,
+            error: new Error('Current user cannot be null!'),
+          };
+        }
+
+        state.status = 'loaded';
+      })
+      .addCase(followUser.rejected, (state, action) => {
+        state.followResult = { success: false, error: action.error };
+        state.status = 'loaded';
+      })
+      .addCase(unfollowUser.pending, (state) => {
+        state.status = 'unfollowingUser';
+      })
+      .addCase(unfollowUser.fulfilled, (state, action: PayloadAction<string>) => {
+        if (state.currentUser) {
+          state.currentUser.followingIds = state.currentUser.followingIds.filter(
+            (i) => i !== action.payload,
+          );
+          state.unfollowResult = {
+            success: true,
+            userId: action.payload,
+          };
+        } else {
+          state.unfollowResult = {
+            success: false,
+            error: new Error('Current user cannot be null!'),
+          };
+        }
+
+        state.status = 'loaded';
+      })
+      .addCase(unfollowUser.rejected, (state, action) => {
+        state.followResult = { success: false, error: action.error };
         state.status = 'loaded';
       });
   },
@@ -105,6 +176,8 @@ export const {
   unsubscribeAuthStateListener,
   clearUserAuthError,
   clearUpdateProfileResult,
+  clearFollowResult,
+  clearUnfollowResult,
 } = currentUserSlice.actions;
 
 export default currentUserSlice.reducer;

@@ -20,7 +20,9 @@ import WorkoutItem from './WorkoutItem';
 
 const POST_CHARACTER_LIMIT = 100;
 
-export default function Workouts({ workouts }: {workouts: Workout[]}) {
+export default function Workouts(
+  { workouts, forCurrentUser }: {workouts: Workout[], forCurrentUser: boolean},
+) {
   const dispatch = useAppDispatch();
 
   const workoutsStatus = useAppSelector(selectWorkoutsStatus);
@@ -171,20 +173,26 @@ export default function Workouts({ workouts }: {workouts: Workout[]}) {
                 </View>
               )
               : workouts.map((workout) => (
-                <WorkoutItem
-                  key={workout.id}
-                  workout={workout}
-                  onEdit={() => {
-                    setWorkoutToEdit(workout);
-                    setWorkoutsState('editing');
-                  }}
-                  onDelete={() => dispatch(removeWorkout(workout))}
-                  onPost={() => {
-                    setWorkoutToPost(workout);
-                    setWorkoutsState('sharing');
-                  }}
-                />
-              ))}
+                forCurrentUser ? (
+                  <WorkoutItem
+                    key={workout.id}
+                    workout={workout}
+                    onEdit={() => {
+                      setWorkoutToEdit(workout);
+                      setWorkoutsState('editing');
+                    }}
+                    onDelete={() => dispatch(removeWorkout(workout))}
+                    onPost={() => {
+                      setWorkoutToPost(workout);
+                      setWorkoutsState('sharing');
+                    }}
+                  />
+                ) : (
+                  <WorkoutItem
+                    key={workout.id}
+                    workout={workout}
+                  />
+                )))}
           </ScrollView>
         </View>
       );

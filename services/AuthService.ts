@@ -46,6 +46,8 @@ async function signUp(
     email: userCred.user.email,
     workoutIds: [],
     postIds: [],
+    followerIds: [],
+    followingIds: [],
   };
   await setDoc(doc(db, USERS_COLLECTION, user.id), user);
 

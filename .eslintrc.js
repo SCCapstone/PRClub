@@ -49,6 +49,7 @@ module.exports = {
     }],
     'import/prefer-default-export': 'off',
     'react/require-default-props': 'off',
+    'no-nested-ternary': 'off',
   },
   ignorePatterns: ['cypress/**'], // temporary fix -- REMOVE LINE WHEN STARTING WRITING UI TESTS
 };
