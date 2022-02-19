@@ -150,7 +150,7 @@ const userSlice = createSlice({
 
           usersAdapter.upsertOne(state, state.currentUser);
 
-          // directly update UI at very end
+          // directly update UI
           if (state.userBeingViewedInSearch) {
             state.userBeingViewedInSearch.followerIds = _.union(
               state.userBeingViewedInSearch.followerIds,
@@ -190,12 +190,10 @@ const userSlice = createSlice({
 
           usersAdapter.upsertOne(state, state.currentUser);
 
-          // directly update UI at very end
+          // directly update UI
           if (state.userBeingViewedInSearch) {
-            state.userBeingViewedInSearch.followerIds = _.filter(
-              state.userBeingViewedInSearch.followerIds,
-              state.currentUser.id,
-            );
+            state.userBeingViewedInSearch.followerIds = state.userBeingViewedInSearch.followerIds
+              .filter((i) => state.currentUser && i !== state.currentUser.id);
           }
 
           state.unfollowResult = {

@@ -1,7 +1,7 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 import { Dimensions, View } from 'react-native';
-import { ActivityIndicator, Snackbar } from 'react-native-paper';
+import { ActivityIndicator, Snackbar, Text } from 'react-native-paper';
 import tw from 'twrnc';
 import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
@@ -70,13 +70,20 @@ export default function Navigator() {
                       dispatch(clearFollowResult());
                     }}
                     action={{
-                      label: 'Unfollow',
+                      label: 'Undo',
                       onPress() {
                         dispatch(unfollowUser(followResult.user?.id || ''));
                       },
                     }}
                   >
-                    Followed user!
+                    <Text style={tw`text-white`}>
+                      Successfully followed
+                      {' '}
+                      <Text style={tw`text-white font-bold`}>
+                        {`@${followResult.user?.username}`}
+                      </Text>
+                      .
+                    </Text>
                   </Snackbar>
                   <Snackbar
                     visible={!!followResult && !followResult.success}
@@ -99,13 +106,20 @@ export default function Navigator() {
                     duration={3000}
                     onDismiss={() => dispatch(clearUnfollowResult())}
                     action={{
-                      label: 'Follow',
+                      label: 'Undo',
                       onPress() {
                         dispatch(followUser(unfollowResult.user?.id || ''));
                       },
                     }}
                   >
-                    Unfollowed user!
+                    <Text style={tw`text-white`}>
+                      Successfully unfollowed
+                      {' '}
+                      <Text style={tw`text-white font-bold`}>
+                        {`@${unfollowResult.user?.username}`}
+                      </Text>
+                      .
+                    </Text>
                   </Snackbar>
                   <Snackbar
                     visible={!!unfollowResult && !unfollowResult.success}
