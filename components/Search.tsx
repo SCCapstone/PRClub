@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { TouchableOpacity } from 'react-native';
 import {
   ActivityIndicator, Searchbar, Text,
@@ -6,10 +6,11 @@ import {
 import tw from 'twrnc';
 import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
-import { selectUsers, selectUsersStatus } from '../state/usersSlice/selectors';
-import { getUsersByIds, getUsersByQuery } from '../state/usersSlice/thunks';
+import { selectSearchResults, selectSearchStatus } from '../state/searchSlice/selectors';
+import { queryUsers } from '../state/searchSlice/thunks';
+import { clearUserBeingViewedInSearch, setUserBeingViewedInSearch } from '../state/userSlice';
+import { selectUserBeingViewedInSearch } from '../state/userSlice/selectors';
 import User from '../types/shared/User';
-import { SliceStatus } from '../types/state/SliceStatus';
 import BackButton from './BackButton';
 import CenteredView from './CenteredView';
 import Profile from './Profile';
@@ -17,12 +18,10 @@ import Profile from './Profile';
 function SearchResults(
   { queryString, onUserPress }: {queryString: string, onUserPress: (user: User) => void},
 ) {
-  const queriedUsers: User[] = useAppSelector((selectUsers));
-  const usersStatus: SliceStatus = useAppSelector(selectUsersStatus);
+  const queriedUsers: User[] = useAppSelector(selectSearchResults);
+  const searchStatus = useAppSelector(selectSearchStatus);
 
-  const dispatch = useAppDispatch();
-
-  if (!queryString || queryString === '' || usersStatus === 'idle') {
+  if (!queryString || queryString === '' || searchStatus === 'idle') {
     return (
       <CenteredView>
         <Text style={tw`text-lg text-center`}>Start searching for users by typing in the search bar above!</Text>
@@ -30,7 +29,7 @@ function SearchResults(
     );
   }
 
-  if (usersStatus === 'fetching') {
+  if (searchStatus === 'fetching') {
     return (
       <CenteredView>
         <ActivityIndicator />
@@ -38,7 +37,7 @@ function SearchResults(
     );
   }
 
-  if (usersStatus === 'loaded') {
+  if (searchStatus === 'loaded') {
     if (queriedUsers.length > 0) {
       return (
         <>
@@ -49,7 +48,6 @@ function SearchResults(
                 style={tw`p-2 border-b`}
                 onPress={() => {
                   onUserPress(user);
-                  dispatch(getUsersByIds(user.followerIds));
                 }}
               >
                 <>
@@ -80,19 +78,26 @@ function SearchResults(
 
 export default function Search() {
   const [queryString, setQueryString] = useState<string>('');
-  const [userBeingViewed, setUserBeingViewed] = useState<User | null>(null);
+  const userBeingViewedInSearch = useAppSelector(selectUserBeingViewedInSearch);
+
+  useEffect(() => {
+    if (userBeingViewedInSearch) {
+      dispatch(clearUserBeingViewedInSearch());
+    }
+  }, []);
 
   const dispatch = useAppDispatch();
 
-  if (userBeingViewed) {
+  if (userBeingViewedInSearch) {
     return (
       <>
         <BackButton
           onPress={() => {
-            setUserBeingViewed(null);
+            dispatch(clearUserBeingViewedInSearch());
+            setQueryString('');
           }}
         />
-        <Profile user={userBeingViewed} />
+        <Profile user={userBeingViewedInSearch} />
       </>
     );
   }
@@ -103,14 +108,14 @@ export default function Search() {
         placeholder="search for users..."
         onChangeText={(query: string) => {
           setQueryString(query);
-          dispatch(getUsersByQuery(query));
+          dispatch(queryUsers(query));
         }}
         value={queryString}
       />
       <SearchResults
         queryString={queryString}
         onUserPress={(user) => {
-          setUserBeingViewed(user);
+          dispatch(setUserBeingViewedInSearch(user));
         }}
       />
     </>

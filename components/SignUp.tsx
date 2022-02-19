@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
 import tw from 'twrnc';
 import useAppDispatch from '../hooks/useAppDispatch';
-import { userSignUp } from '../state/currentUserSlice/thunks';
+import { userSignUp } from '../state/userSlice/thunks';
 
 export default function SignUp() {
   const [name, setName] = useState<string | null>(null);

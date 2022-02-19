@@ -7,12 +7,14 @@ import {
 import tw from 'twrnc';
 import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
-import { clearUpdateProfileResult } from '../state/currentUserSlice';
-import { selectCurrentUser, selectCurrentUserStatus, selectUpdateProfileResult } from '../state/currentUserSlice/selectors';
+import { selectPostsSortedByMostRecentByUserId } from '../state/postsSlice/selectors';
+import { clearUpdateProfileResult } from '../state/userSlice';
+import {
+  selectCurrentUser, selectCurrentUserStatus, selectUpdateProfileResult,
+} from '../state/userSlice/selectors';
 import {
   followUser, unfollowUser, updateName, updateUsername,
-} from '../state/currentUserSlice/thunks';
-import { selectPostsSortedByMostRecentByUserId } from '../state/postsSlice/selectors';
+} from '../state/userSlice/thunks';
 import { selectWorkoutsSortedByMostRecentByUserId } from '../state/workoutsSlice/selectors';
 import User from '../types/shared/User';
 import BackButton from './BackButton';
@@ -29,13 +31,13 @@ export default function Profile({ user }: { user: User }) {
 
   const currentUser = useAppSelector(selectCurrentUser);
   const currentUserStatus = useAppSelector(selectCurrentUserStatus);
-  const updateProfileResult = useAppSelector(selectUpdateProfileResult);
   const workouts = useAppSelector(
     (state) => selectWorkoutsSortedByMostRecentByUserId(state, user.id),
   );
   const posts = useAppSelector(
     (state) => selectPostsSortedByMostRecentByUserId(state, user.id),
   );
+  const updateProfileResult = useAppSelector(selectUpdateProfileResult);
 
   const [newName, setNewName] = useState<string>(user.name);
   const [newUsername, setNewUsername] = useState<string>(user.username);
@@ -170,7 +172,7 @@ export default function Profile({ user }: { user: User }) {
         </Tab.Screen>
         <Tab.Screen name="PRs" component={PRs} />
         <Tab.Screen name="Followers">
-          {() => <Followers userIds={user.followerIds} />}
+          {() => <Followers user={user} />}
         </Tab.Screen>
       </Tab.Navigator>
     </>

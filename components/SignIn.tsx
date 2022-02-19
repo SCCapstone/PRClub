@@ -6,7 +6,7 @@ import {
 } from 'react-native-paper';
 import tw from 'twrnc';
 import useAppDispatch from '../hooks/useAppDispatch';
-import { userSignIn } from '../state/currentUserSlice/thunks';
+import { userSignIn } from '../state/userSlice/thunks';
 
 export default function SignIn() {
   const [email, setEmail] = useState<string | null>(null);

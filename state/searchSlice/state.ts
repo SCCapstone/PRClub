@@ -2,12 +2,12 @@ import { createEntityAdapter } from '@reduxjs/toolkit';
 import User from '../../types/shared/User';
 import { SliceStatus } from '../../types/state/SliceStatus';
 
-interface UsersInitialState {
+interface SearchInitialState {
   status: SliceStatus,
 }
 
-export const usersAdapter = createEntityAdapter<User>();
+export const searchAdapter = createEntityAdapter<User>();
 
-export const initialState = usersAdapter.getInitialState<UsersInitialState>({
+export const initialState = searchAdapter.getInitialState<SearchInitialState>({
   status: 'idle',
 });

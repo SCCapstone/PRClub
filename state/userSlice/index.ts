@@ -1,16 +1,18 @@
+/* eslint-disable no-console */
 import { NextOrObserver, User as FirebaseUser } from '@firebase/auth';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import _ from 'lodash';
 import AuthService from '../../services/AuthService';
 import User from '../../types/shared/User';
-import { initialState } from './state';
+import { initialState, usersAdapter } from './state';
 import {
   fetchCurrentUserFromAsyncStorage,
+  fetchFollowersForUser,
   followUser, unfollowUser, updateName, updateUsername, userLogOut, userSignIn, userSignUp,
 } from './thunks';
 
-const currentUserSlice = createSlice({
-  name: 'currentUser',
+const userSlice = createSlice({
+  name: 'user',
   initialState,
   reducers: {
     registerAuthStateListener(state, action: PayloadAction<NextOrObserver<FirebaseUser | null>>) {
@@ -34,6 +36,14 @@ const currentUserSlice = createSlice({
     clearUnfollowResult(state) {
       state.unfollowResult = null;
     },
+    setUserBeingViewedInSearch(state, action: PayloadAction<User>) {
+      state.userBeingViewedInSearch = action.payload;
+    },
+    clearUserBeingViewedInSearch(state) {
+      state.userBeingViewedInSearch = null;
+    },
+    upsertUsers: usersAdapter.upsertMany,
+    flushUsersFromStore: usersAdapter.removeAll,
   },
   extraReducers(builder) {
     builder
@@ -44,6 +54,9 @@ const currentUserSlice = createSlice({
         fetchCurrentUserFromAsyncStorage.fulfilled,
         (state, action: PayloadAction<User | null>) => {
           state.currentUser = action.payload;
+          if (state.currentUser) {
+            usersAdapter.upsertOne(state, state.currentUser);
+          }
           state.status = 'loaded';
         },
       )
@@ -52,6 +65,7 @@ const currentUserSlice = createSlice({
       })
       .addCase(userSignIn.fulfilled, (state, action: PayloadAction<User>) => {
         state.currentUser = action.payload;
+        usersAdapter.upsertOne(state, state.currentUser);
         state.authError = null;
         state.status = 'loaded';
       })
@@ -64,6 +78,7 @@ const currentUserSlice = createSlice({
       })
       .addCase(userSignUp.fulfilled, (state, action: PayloadAction<User>) => {
         state.currentUser = action.payload;
+        usersAdapter.upsertOne(state, state.currentUser);
         state.status = 'loaded';
       })
       .addCase(userSignUp.rejected, (state, action) => {
@@ -83,6 +98,7 @@ const currentUserSlice = createSlice({
       .addCase(updateName.fulfilled, (state, action: PayloadAction<string>) => {
         if (state.currentUser) {
           state.currentUser.name = action.payload;
+          usersAdapter.upsertOne(state, state.currentUser);
           state.updateProfileResult = { success: true };
         } else {
           state.updateProfileResult = {
@@ -103,6 +119,7 @@ const currentUserSlice = createSlice({
       .addCase(updateUsername.fulfilled, (state, action: PayloadAction<string>) => {
         if (state.currentUser) {
           state.currentUser.username = action.payload;
+          usersAdapter.upsertOne(state, state.currentUser);
           state.updateProfileResult = { success: true };
         } else {
           state.updateProfileResult = {
@@ -120,15 +137,30 @@ const currentUserSlice = createSlice({
       .addCase(followUser.pending, (state) => {
         state.status = 'followingUser';
       })
-      .addCase(followUser.fulfilled, (state, action: PayloadAction<string>) => {
+      .addCase(followUser.fulfilled, (state, action: PayloadAction<User>) => {
+        const userToFollow = action.payload;
+
         if (state.currentUser) {
+          usersAdapter.upsertOne(state, userToFollow);
+
           state.currentUser.followingIds = _.union(
             state.currentUser.followingIds,
-            [action.payload],
+            [userToFollow.id],
           );
+
+          usersAdapter.upsertOne(state, state.currentUser);
+
+          // directly update UI at very end
+          if (state.userBeingViewedInSearch) {
+            state.userBeingViewedInSearch.followerIds = _.union(
+              state.userBeingViewedInSearch.followerIds,
+              [state.currentUser.id],
+            );
+          }
+
           state.followResult = {
             success: true,
-            userId: action.payload,
+            user: userToFollow,
           };
         } else {
           state.followResult = {
@@ -146,14 +178,29 @@ const currentUserSlice = createSlice({
       .addCase(unfollowUser.pending, (state) => {
         state.status = 'unfollowingUser';
       })
-      .addCase(unfollowUser.fulfilled, (state, action: PayloadAction<string>) => {
+      .addCase(unfollowUser.fulfilled, (state, action: PayloadAction<User>) => {
+        const userToUnfollow = action.payload;
+
         if (state.currentUser) {
+          usersAdapter.upsertOne(state, userToUnfollow);
+
           state.currentUser.followingIds = state.currentUser.followingIds.filter(
-            (i) => i !== action.payload,
+            (i) => i !== userToUnfollow.id,
           );
+
+          usersAdapter.upsertOne(state, state.currentUser);
+
+          // directly update UI at very end
+          if (state.userBeingViewedInSearch) {
+            state.userBeingViewedInSearch.followerIds = _.filter(
+              state.userBeingViewedInSearch.followerIds,
+              state.currentUser.id,
+            );
+          }
+
           state.unfollowResult = {
             success: true,
-            userId: action.payload,
+            user: userToUnfollow,
           };
         } else {
           state.unfollowResult = {
@@ -167,6 +214,13 @@ const currentUserSlice = createSlice({
       .addCase(unfollowUser.rejected, (state, action) => {
         state.followResult = { success: false, error: action.error };
         state.status = 'loaded';
+      })
+      .addCase(fetchFollowersForUser.pending, (state) => {
+        state.usersStatus = 'fetching';
+      })
+      .addCase(fetchFollowersForUser.fulfilled, (state, action: PayloadAction<User[]>) => {
+        usersAdapter.upsertMany(state, action.payload);
+        state.usersStatus = 'loaded';
       });
   },
 });
@@ -178,6 +232,10 @@ export const {
   clearUpdateProfileResult,
   clearFollowResult,
   clearUnfollowResult,
-} = currentUserSlice.actions;
+  setUserBeingViewedInSearch,
+  clearUserBeingViewedInSearch,
+  upsertUsers,
+  flushUsersFromStore,
+} = userSlice.actions;
 
-export default currentUserSlice.reducer;
+export default userSlice.reducer;
