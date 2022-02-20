@@ -8,8 +8,8 @@ import SignIn from '../../../../components/SignIn';
 import SignUp from '../../../../components/SignUp';
 import useAppDispatch from '../../../../hooks/useAppDispatch';
 import useAppSelector from '../../../../hooks/useAppSelector';
-import { clearUserAuthError } from '../../../../state/currentUserSlice';
-import { selectUserAuthError } from '../../../../state/currentUserSlice/selectors';
+import { clearUserAuthError } from '../../../../state/userSlice';
+import { selectUserAuthError } from '../../../../state/userSlice/selectors';
 
 export default function LoginScreen() {
   const [showSignIn, setShowSignIn] = useState<boolean>(true);

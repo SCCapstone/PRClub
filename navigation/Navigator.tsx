@@ -1,10 +1,15 @@
 import { createStackNavigator } from '@react-navigation/stack';
-import React, { useState } from 'react';
+import React from 'react';
 import { Dimensions, View } from 'react-native';
-import { ActivityIndicator, Snackbar } from 'react-native-paper';
+import { ActivityIndicator, Snackbar, Text } from 'react-native-paper';
+import tw from 'twrnc';
+import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
-import { selectCurrentUser, selectCurrentUserStatus } from '../state/currentUserSlice/selectors';
-import { selectExerciseInfosAreSyncing } from '../state/exerciseInfosSlice/selectors';
+import { clearFollowResult, clearUnfollowResult } from '../state/userSlice';
+import {
+  selectCurrentUser, selectCurrentUserStatus, selectFollowResult, selectUnfollowResult,
+} from '../state/userSlice/selectors';
+import { followUser, unfollowUser } from '../state/userSlice/thunks';
 import User from '../types/shared/User';
 import AuthStack from './stacks/auth';
 import MainStack from './stacks/main';
@@ -12,13 +17,12 @@ import MainStack from './stacks/main';
 const Stack = createStackNavigator();
 
 export default function Navigator() {
+  const dispatch = useAppDispatch();
+
   const currentUser: User | null = useAppSelector(selectCurrentUser);
   const currentUserStatus = useAppSelector(selectCurrentUserStatus);
-
-  const exerciseInfosAreSyncing = useAppSelector(selectExerciseInfosAreSyncing);
-
-  const [showSyncing, setShowSyncing] = useState<boolean>(true);
-  const [showSynced, setShowSynced] = useState<boolean>(true);
+  const followResult = useAppSelector(selectFollowResult);
+  const unfollowResult = useAppSelector(selectUnfollowResult);
 
   if (currentUserStatus === 'fetching') {
     return <ActivityIndicator />;
@@ -31,12 +35,10 @@ export default function Navigator() {
       >
         {currentUser
           ? (
-            <>
-              <Stack.Screen
-                name="Main"
-                component={MainStack}
-              />
-            </>
+            <Stack.Screen
+              name="Main"
+              component={MainStack}
+            />
           )
           : (
             <Stack.Screen
@@ -57,20 +59,79 @@ export default function Navigator() {
               width: 0.95 * Dimensions.get('window').width,
             }}
           >
-            <Snackbar
-              visible={exerciseInfosAreSyncing && showSyncing}
-              duration={1000}
-              onDismiss={() => setShowSyncing(false)}
-            >
-              Syncing exercises database...
-            </Snackbar>
-            <Snackbar
-              visible={!exerciseInfosAreSyncing && showSynced}
-              duration={1000}
-              onDismiss={() => setShowSynced(false)}
-            >
-              Exercises database synced!
-            </Snackbar>
+            {
+              followResult
+              && (
+                <>
+                  <Snackbar
+                    visible={!!followResult && followResult.success}
+                    duration={3000}
+                    onDismiss={() => {
+                      dispatch(clearFollowResult());
+                    }}
+                    action={{
+                      label: 'Undo',
+                      onPress() {
+                        dispatch(unfollowUser(followResult.user?.id || ''));
+                      },
+                    }}
+                  >
+                    <Text style={tw`text-white`}>
+                      Successfully followed
+                      {' '}
+                      <Text style={tw`text-white font-bold`}>
+                        {`@${followResult.user?.username}`}
+                      </Text>
+                      .
+                    </Text>
+                  </Snackbar>
+                  <Snackbar
+                    visible={!!followResult && !followResult.success}
+                    duration={3000}
+                    onDismiss={() => dispatch(clearFollowResult())}
+                    style={tw`bg-red-500`}
+                  >
+                    {`Error following user: ${followResult.error?.message}`}
+                  </Snackbar>
+                </>
+              )
+            }
+            {
+              unfollowResult
+              && (
+                <>
+
+                  <Snackbar
+                    visible={!!unfollowResult && unfollowResult.success}
+                    duration={3000}
+                    onDismiss={() => dispatch(clearUnfollowResult())}
+                    action={{
+                      label: 'Undo',
+                      onPress() {
+                        dispatch(followUser(unfollowResult.user?.id || ''));
+                      },
+                    }}
+                  >
+                    <Text style={tw`text-white`}>
+                      Successfully unfollowed
+                      {' '}
+                      <Text style={tw`text-white font-bold`}>
+                        {`@${unfollowResult.user?.username}`}
+                      </Text>
+                      .
+                    </Text>
+                  </Snackbar>
+                  <Snackbar
+                    visible={!!unfollowResult && !unfollowResult.success}
+                    duration={3000}
+                    onDismiss={() => dispatch(clearUnfollowResult())}
+                    style={tw`bg-red-500`}
+                  >
+                    {`Error unfollowing user: ${unfollowResult.error?.message}`}
+                  </Snackbar>
+                </>
+              )
+            }
           </View>
         )
       }
