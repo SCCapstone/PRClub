@@ -18,6 +18,7 @@ import Followers from './Followers';
 import Posts from './Posts';
 import PRs from './PRs';
 import Workouts from './Workouts';
+import ImageUploader from './ImageUploader';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -129,6 +130,7 @@ export default function Profile() {
         <View style={tw`flex flex-1`} />
       </View>
       <EditButton onPress={() => setEditingProfile(true)} />
+      <ImageUploader />
       <Tab.Navigator>
         <Tab.Screen name="Workouts">
           {() => <Workouts workouts={currentUserWorkouts} />}

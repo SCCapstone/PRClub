@@ -7,6 +7,7 @@ import { fetchExerciseInfos, syncExerciseInfos } from './exerciseInfosSlice/thun
 import postsReducer, { flushPostsFromStore } from './postsSlice';
 import { fetchPostsForUser } from './postsSlice/thunks';
 import usersReducer from './usersSlice';
+import imagesReducer from './imagesSlice';
 import workoutsReducer, { flushWorkoutsFromStore } from './workoutsSlice';
 import { fetchWorkoutsForUser } from './workoutsSlice/thunks';
 
@@ -17,6 +18,7 @@ export const store = configureStore({
     currentUser: currentUserReducer,
     users: usersReducer,
     posts: postsReducer,
+    images: imagesReducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware({
     serializableCheck: false,

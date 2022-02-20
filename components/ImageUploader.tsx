@@ -2,8 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { Platform, Button, Image } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import tw from 'twrnc';
+import ImageType from '../types/shared/Image';
+import { uploadImage, downloadImage } from '../state/imagesSlice/thunks';
+import useAppDispatch from '../hooks/useAppDispatch';
 
 export default function ImageUploader() {
+  const dispatch = useAppDispatch();
   const [image, setImage] = useState<string | null>(null);
   useEffect(() => {
     async function grantPermission() {
@@ -31,6 +35,12 @@ export default function ImageUploader() {
           // console.log(result);
           if (!result.cancelled) {
             setImage(result.uri);
+            const i: ImageType = {
+              result,
+              path: '',
+            };
+            // const image: ImageType.Image = new ImageType.Image();
+            dispatch(uploadImage(i));
           }
         }}
       />
