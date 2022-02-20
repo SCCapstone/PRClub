@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import PR from '../../types/shared/PR';
 import { initialState, prsAdapter } from './state';
 import {
-  fetchPRsForUser, upsertPR,
+  fetchPRsForUser, removePR, upsertPR,
 } from './thunks';
 
 const prsSlice = createSlice({
@@ -24,7 +24,7 @@ const prsSlice = createSlice({
         prsAdapter.upsertOne(state, action.payload);
         state.status = 'loaded';
       })
-      .addCase(upsertPR.fulfilled, (state, action: PayloadAction<PR>) => {
+      .addCase(removePR.fulfilled, (state, action: PayloadAction<PR>) => {
         prsAdapter.removeOne(state, action.payload.id);
         state.status = 'loaded';
       });
