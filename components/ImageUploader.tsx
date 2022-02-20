@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Platform, Button, Image } from 'react-native';
-import ImagePicker from 'expo-image-picker';
+import * as ImagePicker from 'expo-image-picker';
 import tw from 'twrnc';
 
 export default function ImageUploader() {
