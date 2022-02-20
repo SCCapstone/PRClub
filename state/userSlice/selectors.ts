@@ -28,8 +28,12 @@ export function selectUnfollowResult(state: RootState) {
 }
 
 export function selectUsersByIds(state: RootState, userIds: string[]): User[] {
-  return (Object.values(state.users.entities) as User[])
-    .filter((u) => userIds.includes(u.id));
+  if (userIds) {
+    return (Object.values(state.users.entities) as User[])
+      .filter((u) => userIds.includes(u.id));
+  }
+
+  return [];
 }
 
 export function selectUsersStatus(state: RootState) {
