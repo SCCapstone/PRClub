@@ -5,6 +5,7 @@ import { fetchExerciseInfos, syncExerciseInfos } from './exerciseInfosSlice/thun
 import postsReducer, { flushPostsFromStore } from './postsSlice';
 import { fetchPostsForUser } from './postsSlice/thunks';
 import searchReducer from './searchSlice';
+import prsReducer from './prsSlice';
 import userReducer, { flushUsersFromStore, registerAuthStateListener } from './userSlice';
 import { fetchCurrentUserFromAsyncStorage, fetchFollowersForUser } from './userSlice/thunks';
 import workoutsReducer, { flushWorkoutsFromStore } from './workoutsSlice';
@@ -16,6 +17,7 @@ export const store = configureStore({
     exerciseInfos: exerciseInfosReducer,
     users: userReducer,
     posts: postsReducer,
+    prs: prsReducer,
     search: searchReducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware({

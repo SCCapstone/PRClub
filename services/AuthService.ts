@@ -48,6 +48,7 @@ export default {
       email: userCred.user.email,
       workoutIds: [],
       postIds: [],
+      prIds: [],
       followerIds: [],
       followingIds: [],
     };

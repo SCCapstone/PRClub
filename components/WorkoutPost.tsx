@@ -12,12 +12,16 @@ import Post from '../types/shared/Post';
 import BackButton from './BackButton';
 import WorkoutItem from './WorkoutItem';
 
-export default function PostItem(
+export default function WorkoutPost(
   { post, forCurrentUser }: { post: Post, forCurrentUser: boolean },
 ) {
   const dispatch = useAppDispatch();
 
-  const workout = useAppSelector((state) => selectWorkoutById(state, post.workoutId));
+  if (!post.workoutId) {
+    return <></>;
+  }
+
+  const workout = useAppSelector((state) => selectWorkoutById(state, post.workoutId!));
 
   const [viewingDetails, setViewingDetails] = useState<boolean>(false);
 

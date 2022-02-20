@@ -114,6 +114,7 @@ export default function Workouts(
                 mode="contained"
                 onPress={() => {
                   const post: Post = {
+                    kind: 'workout',
                     id: uuidv4(),
                     userId: workoutToPost.userId,
                     username: workoutToPost.username,
