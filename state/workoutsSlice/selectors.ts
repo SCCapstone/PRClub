@@ -23,11 +23,11 @@ export function selectWorkoutsStatus(state: RootState) {
   return state.workouts.status;
 }
 
-export function selectWorkoutsServiceRemoveResult(state: RootState) {
-  return state.workouts.workoutsServiceRemoveResult;
+export function selectRemoveWorkoutResult(state: RootState) {
+  return state.workouts.removeWorkoutResult;
 }
 
 
-export function selectWorkoutsServiceUpsertResult(state: RootState) {
-  return state.workouts.workoutsServiceUpsertResult;
+export function selectUpsertWorkoutResult(state: RootState) {
+  return state.workouts.upsertWorkoutResult;
 }

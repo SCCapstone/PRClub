@@ -4,8 +4,8 @@ import Workout from '../../types/shared/Workout';
 
 interface WorkoutsInitialState {
   status: SliceStatus | 'callingService'
-  workoutsServiceUpsertResult: ServiceCallResult | null
-  workoutsServiceRemoveResult: ServiceCallResult | null
+  upsertWorkoutResult: ServiceCallResult | null
+  removeWorkoutResult: ServiceCallResult | null
 }
 
 interface ServiceCallResult {
@@ -17,6 +17,6 @@ export const workoutsAdapter = createEntityAdapter<Workout>();
 
 export const initialState = workoutsAdapter.getInitialState<WorkoutsInitialState>({
   status: 'idle',
-  workoutsServiceUpsertResult: null,
-  workoutsServiceRemoveResult: null,
+  upsertWorkoutResult: null,
+  removeWorkoutResult: null,
 });

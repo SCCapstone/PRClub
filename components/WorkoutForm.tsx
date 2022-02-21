@@ -23,8 +23,8 @@ import { ExerciseSetInput } from '../types/validation/ExerciseSetInput';
 import { WorkoutInput, WorkoutInputSchema} from '../types/validation/WorkoutInput';
 import DeleteButton from './DeleteButton';
 import { Snackbar } from 'react-native-paper';
-import { clearWorkoutsServiceUpsertResult} from '../state/workoutsSlice';
-import { selectWorkoutsServiceUpsertResult, selectWorkoutsStatus } from '../state/workoutsSlice/selectors';
+import { clearUpsertWorkoutResult} from '../state/workoutsSlice';
+import { selectUpsertWorkoutResult, selectWorkoutsStatus } from '../state/workoutsSlice/selectors';
 
 
 export default function WorkoutForm({
@@ -41,7 +41,7 @@ export default function WorkoutForm({
 
   const dispatch = useAppDispatch();
   const workoutsStatus = useAppSelector(selectWorkoutsStatus);
-  const workoutsServiceUpsertResult = useAppSelector(selectWorkoutsServiceUpsertResult);
+  const workoutsServiceUpsertResult = useAppSelector(selectUpsertWorkoutResult);
   const [submittedWorkout, setSubmittedWorkout] = useState<Workout | null>(null);
 
   const initialValues: WorkoutInput = {
@@ -295,7 +295,7 @@ export default function WorkoutForm({
       <Snackbar
         visible={!!workoutsServiceUpsertResult}
         duration={3000}
-        onDismiss={() => dispatch(clearWorkoutsServiceUpsertResult())}
+        onDismiss={() => dispatch(clearUpsertWorkoutResult())}
         action={workoutsServiceUpsertResult && workoutsServiceUpsertResult.success ? {
           label: 'Undo',
           onPress: () => {
