@@ -1,7 +1,7 @@
 import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import useAppSelector from '../../../hooks/useAppSelector';
-import { selectCurrentUserStatus } from '../../../state/currentUserSlice/selectors';
+import { selectCurrentUserStatus } from '../../../state/userSlice/selectors';
 import AuthActivityScreen from './screens/AuthActivityScreen';
 import LoginScreen from './screens/AuthScreen';
 

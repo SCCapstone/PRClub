@@ -8,5 +8,4 @@ export default interface Workout {
   modifiedDate: string | null;
   name: string;
   exercises: Exercise[];
-  image?: string;
 }

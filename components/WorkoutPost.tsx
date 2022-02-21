@@ -12,10 +12,16 @@ import Post from '../types/shared/Post';
 import BackButton from './BackButton';
 import WorkoutItem from './WorkoutItem';
 
-export default function PostItem({ post }: { post: Post }) {
+export default function WorkoutPost(
+  { post, forCurrentUser }: { post: Post, forCurrentUser: boolean },
+) {
   const dispatch = useAppDispatch();
 
-  const workout = useAppSelector((state) => selectWorkoutById(state, post.workoutId));
+  if (!post.workoutId) {
+    return <></>;
+  }
+
+  const workout = useAppSelector((state) => selectWorkoutById(state, post.workoutId!));
 
   const [viewingDetails, setViewingDetails] = useState<boolean>(false);
 
@@ -48,9 +54,14 @@ export default function PostItem({ post }: { post: Post }) {
           <Text>Posted workout:</Text>
         </View>
         <View style={tw`flex flex-1`}>
-          <Button onPress={() => dispatch(removePost(post))}>
-            <Ionicons name="trash" size={24} style={tw`text-black`} />
-          </Button>
+          {
+            forCurrentUser
+            && (
+              <Button onPress={() => dispatch(removePost(post))}>
+                <Ionicons name="trash" size={24} style={tw`text-black`} />
+              </Button>
+            )
+          }
         </View>
       </View>
       <View style={tw`bg-gray-300 p-3 flex flex-row`}>
