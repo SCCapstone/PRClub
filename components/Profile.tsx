@@ -5,6 +5,7 @@ import {
   ActivityIndicator, Button, Snackbar, Text, TextInput,
 } from 'react-native-paper';
 import tw from 'twrnc';
+import { unwrapResult } from '@reduxjs/toolkit';
 import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
 import { selectPostsSortedByMostRecentByUserId } from '../state/postsSlice/selectors';
@@ -44,12 +45,17 @@ export default function Profile({ user }: { user: User }) {
   const [newName, setNewName] = useState<string>(user.name);
   const [newUsername, setNewUsername] = useState<string>(user.username);
   const [editingProfile, setEditingProfile] = useState<boolean>(false);
-
+  const [profileUrl, setProfileUrl] = useState<string>('');
   const forCurrentUser = currentUser ? (user.id === currentUser.id) : false;
 
-  const profilePictureURL = dispatch(downloadImage({
-    userId: user.id, isProfile: true, postId: '',
-  }));
+  const fetchProfilePicture = async () => {
+    const profilePictureURL = await dispatch(downloadImage({
+      userId: user.id, isProfile: true, postId: '',
+    }));
+    const promiseResult = unwrapResult(profilePictureURL);
+    setProfileUrl(promiseResult.toString());
+  };
+  fetchProfilePicture();
 
   if (editingProfile) {
     return (
@@ -123,7 +129,7 @@ export default function Profile({ user }: { user: User }) {
       <View style={tw`flex flex-row h-35 bg-gray-800 items-center justify-center`}>
         <View style={tw`flex flex-1`} />
         <View style={tw`flex flex-2`}>
-          <Image source={{ uri: profilePictureURL.then((url) => url) }} style={tw`w-25 h-25 rounded-full`} />
+          <Image source={{ uri: profileUrl }} style={tw`w-25 h-25 rounded-full`} />
         </View>
         <View style={tw`flex flex-2`}>
           <Text style={tw`text-xl font-bold text-white text-left`}>{user && user.name}</Text>
