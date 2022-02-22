@@ -35,12 +35,17 @@ export default function ImageUploader() {
           // console.log(result);
           if (!result.cancelled) {
             setImage(result.uri);
-            const i: ImageType = {
+            const img: ImageType = {
               result,
               path: '',
             };
             // const image: ImageType.Image = new ImageType.Image();
-            dispatch(uploadImage(i));
+            dispatch(uploadImage({
+              image: img,
+              userId: 'test',
+              isProfile: true,
+              postId: 'test',
+            }));
           }
         }}
       />
