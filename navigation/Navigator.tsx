@@ -1,5 +1,5 @@
 import { createStackNavigator } from '@react-navigation/stack';
-import React from 'react';
+import React, { useState } from 'react';
 import { Dimensions, View } from 'react-native';
 import { ActivityIndicator, Snackbar, Text } from 'react-native-paper';
 import tw from 'twrnc';
@@ -10,9 +10,15 @@ import {
   selectCurrentUser, selectCurrentUserStatus, selectFollowResult, selectUnfollowResult,
 } from '../state/userSlice/selectors';
 import { followUser, unfollowUser } from '../state/userSlice/thunks';
+import { selectUpsertWorkoutResult } from '../state/workoutsSlice/selectors';
+import { clearUpsertWorkoutResult} from '../state/workoutsSlice';
+import { removeWorkout } from '../state/workoutsSlice/thunks';
 import User from '../types/shared/User';
+import Workout from '../types/shared/Workout';
 import AuthStack from './stacks/auth';
 import MainStack from './stacks/main';
+
+
 
 const Stack = createStackNavigator();
 
@@ -20,9 +26,12 @@ export default function Navigator() {
   const dispatch = useAppDispatch();
 
   const currentUser: User | null = useAppSelector(selectCurrentUser);
+  const upsertWorkoutResult = useAppSelector(selectUpsertWorkoutResult);
   const currentUserStatus = useAppSelector(selectCurrentUserStatus);
   const followResult = useAppSelector(selectFollowResult);
   const unfollowResult = useAppSelector(selectUnfollowResult);
+  const [submittedWorkout, setSubmittedWorkout] = useState<Workout | null>(null);
+  
 
   if (currentUserStatus === 'fetching') {
     return <ActivityIndicator />;
@@ -59,6 +68,33 @@ export default function Navigator() {
               width: 0.95 * Dimensions.get('window').width,
             }}
           >
+            {
+              upsertWorkoutResult
+              && (
+                <>
+                  <Snackbar
+                    visible={!!upsertWorkoutResult}
+                    duration={3000}
+                    onDismiss={() => dispatch(clearUpsertWorkoutResult())}
+                    action={upsertWorkoutResult && upsertWorkoutResult.success ? {
+                      label: 'Undo',
+                      onPress: () => {
+                        if (submittedWorkout) {
+                          dispatch(removeWorkout(submittedWorkout));
+                          setSubmittedWorkout(null);
+                        }
+                      },
+                    } : undefined}
+                  >
+                    {upsertWorkoutResult && (
+                      upsertWorkoutResult.success
+                        ? 'Workout Submitted!'
+                        : `Error submitting workout: ${upsertWorkoutResult.error}`
+                    )}
+                  </Snackbar>
+                </>
+              )
+            }
             {
               followResult
               && (

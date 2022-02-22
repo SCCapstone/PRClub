@@ -22,9 +22,7 @@ import { ExerciseInput } from '../types/validation/ExerciseInput';
 import { ExerciseSetInput } from '../types/validation/ExerciseSetInput';
 import { WorkoutInput, WorkoutInputSchema} from '../types/validation/WorkoutInput';
 import DeleteButton from './DeleteButton';
-import { Snackbar } from 'react-native-paper';
-import { clearUpsertWorkoutResult} from '../state/workoutsSlice';
-import { selectUpsertWorkoutResult, selectWorkoutsStatus } from '../state/workoutsSlice/selectors';
+//import { selectUpsertWorkoutResult, selectWorkoutsStatus } from '../state/workoutsSlice/selectors';
 
 
 export default function WorkoutForm({
@@ -40,9 +38,9 @@ export default function WorkoutForm({
   const currentUser: User | null = useAppSelector(selectCurrentUser);
 
   const dispatch = useAppDispatch();
-  const workoutsStatus = useAppSelector(selectWorkoutsStatus);
-  const workoutsServiceUpsertResult = useAppSelector(selectUpsertWorkoutResult);
-  const [submittedWorkout, setSubmittedWorkout] = useState<Workout | null>(null);
+  // const workoutsStatus = useAppSelector(selectWorkoutsStatus);
+  // const upsertWorkoutResult = useAppSelector(selectUpsertWorkoutResult);
+  // const [submittedWorkout, setSubmittedWorkout] = useState<Workout | null>(null);
 
   const initialValues: WorkoutInput = {
     name: workoutToEdit?.name || '',
@@ -292,11 +290,11 @@ export default function WorkoutForm({
           </View>
         )}
       </Formik>
-      <Snackbar
-        visible={!!workoutsServiceUpsertResult}
+      {/* <Snackbar
+        visible={!!upsertWorkoutResult}
         duration={3000}
         onDismiss={() => dispatch(clearUpsertWorkoutResult())}
-        action={workoutsServiceUpsertResult && workoutsServiceUpsertResult.success ? {
+        action={upsertWorkoutResult && upsertWorkoutResult.success ? {
           label: 'Undo',
           onPress: () => {
             if (submittedWorkout) {
@@ -306,12 +304,12 @@ export default function WorkoutForm({
           },
         } : undefined}
       >
-        {workoutsServiceUpsertResult && (
-          workoutsServiceUpsertResult.success
+        {upsertWorkoutResult && (
+          upsertWorkoutResult.success
             ? 'Workout Submitted!'
-            : `Error submitting workout: ${workoutsServiceUpsertResult.error}`
+            : `Error submitting workout: ${upsertWorkoutResult.error}`
         )}
-      </Snackbar>
+      </Snackbar> */}
     </>
   );
 }
