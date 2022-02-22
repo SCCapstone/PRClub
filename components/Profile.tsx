@@ -7,11 +7,16 @@ import {
 import tw from 'twrnc';
 import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
-import { clearUpdateProfileResult } from '../state/currentUserSlice';
-import { selectCurrentUser, selectCurrentUserStatus, selectUpdateProfileResult } from '../state/currentUserSlice/selectors';
-import { updateName, updateUsername } from '../state/currentUserSlice/thunks';
 import { selectPostsSortedByMostRecentByUserId } from '../state/postsSlice/selectors';
+import { clearUpdateProfileResult } from '../state/userSlice';
+import {
+  selectCurrentUser, selectCurrentUserStatus, selectUpdateProfileResult,
+} from '../state/userSlice/selectors';
+import {
+  followUser, unfollowUser, updateName, updateUsername,
+} from '../state/userSlice/thunks';
 import { selectWorkoutsSortedByMostRecentByUserId } from '../state/workoutsSlice/selectors';
+import User from '../types/shared/User';
 import BackButton from './BackButton';
 import EditButton from './EditButton';
 import Followers from './Followers';
@@ -22,29 +27,24 @@ import ImageUploader from './ImageUploader';
 
 const Tab = createMaterialTopTabNavigator();
 
-export default function Profile() {
-  const currentUser = useAppSelector(selectCurrentUser);
-
-  if (!currentUser) {
-    return <></>;
-  }
-
-  const currentUserStatus = useAppSelector(selectCurrentUserStatus);
-  const updateProfileResult = useAppSelector(selectUpdateProfileResult);
-
+export default function Profile({ user }: { user: User }) {
   const dispatch = useAppDispatch();
 
-  const currentUserWorkouts = useAppSelector(
-    (state) => selectWorkoutsSortedByMostRecentByUserId(state, currentUser.id),
+  const currentUser = useAppSelector(selectCurrentUser);
+  const currentUserStatus = useAppSelector(selectCurrentUserStatus);
+  const workouts = useAppSelector(
+    (state) => selectWorkoutsSortedByMostRecentByUserId(state, user.id),
   );
-
-  const currentUserPosts = useAppSelector(
-    (state) => selectPostsSortedByMostRecentByUserId(state, currentUser.id),
+  const posts = useAppSelector(
+    (state) => selectPostsSortedByMostRecentByUserId(state, user.id),
   );
+  const updateProfileResult = useAppSelector(selectUpdateProfileResult);
 
-  const [newName, setNewName] = useState<string>(currentUser.name);
-  const [newUsername, setNewUsername] = useState<string>(currentUser.username);
+  const [newName, setNewName] = useState<string>(user.name);
+  const [newUsername, setNewUsername] = useState<string>(user.username);
   const [editingProfile, setEditingProfile] = useState<boolean>(false);
+
+  const forCurrentUser = currentUser ? (user.id === currentUser.id) : false;
 
   if (editingProfile) {
     return (
@@ -54,8 +54,8 @@ export default function Profile() {
             onPress={() => {
               dispatch(clearUpdateProfileResult());
               setEditingProfile(false);
-              setNewName(currentUser.name);
-              setNewUsername(currentUser.username);
+              setNewName(user.name);
+              setNewUsername(user.username);
             }}
           />
           <Text style={tw`text-base`}>Name</Text>
@@ -73,10 +73,10 @@ export default function Profile() {
           <Button
             mode="contained"
             onPress={() => {
-              if (newName !== currentUser.name) {
+              if (newName !== user.name) {
                 dispatch(updateName(newName));
               }
-              if (newUsername !== currentUser.username) {
+              if (newUsername !== user.username) {
                 dispatch(updateUsername(newUsername));
               }
             }}
@@ -84,7 +84,7 @@ export default function Profile() {
               currentUserStatus === 'updatingProfile'
               || newName.length === 0
               || newUsername.length === 0
-              || (newName === currentUser.name && newUsername === currentUser.username)
+              || (newName === user.name && newUsername === user.username)
             }
           >
             {
@@ -113,7 +113,7 @@ export default function Profile() {
     );
   }
 
-  return (
+  return currentUser && (
     <>
       <View style={tw`flex flex-row h-35 bg-gray-800 items-center justify-center`}>
         <View style={tw`flex flex-1`} />
@@ -121,25 +121,62 @@ export default function Profile() {
           <Image source={{ uri: 'https://picsum.photos/id/1005/300/300' }} style={tw`w-25 h-25 rounded-full`} />
         </View>
         <View style={tw`flex flex-2`}>
-          <Text style={tw`text-xl font-bold text-white text-left`}>{currentUser && currentUser.name}</Text>
+          <Text style={tw`text-xl font-bold text-white text-left`}>{user && user.name}</Text>
           <Text style={tw`text-lg text-white text-left`}>
             @
-            {currentUser && currentUser.username}
+            {user && user.username}
           </Text>
         </View>
         <View style={tw`flex flex-1`} />
       </View>
       <EditButton onPress={() => setEditingProfile(true)} />
       <ImageUploader />
+      {
+        forCurrentUser
+          ? <EditButton onPress={() => setEditingProfile(true)} />
+          : (
+            currentUser.followingIds.includes(user.id)
+              ? (
+                <Button
+                  style={tw`bg-blue-200`}
+                  onPress={() => {
+                    dispatch(unfollowUser(user.id));
+                  }}
+                >
+                  {
+                    currentUserStatus === 'unfollowingUser'
+                      ? <ActivityIndicator size={10} color="black" />
+                      : <Text>Unfollow</Text>
+                  }
+                </Button>
+              )
+              : (
+                <Button
+                  style={tw`bg-blue-500`}
+                  onPress={() => {
+                    dispatch(followUser(user.id));
+                  }}
+                >
+                  {
+                    currentUserStatus === 'followingUser'
+                      ? <ActivityIndicator size={10} color="white" />
+                      : <Text style={tw`text-white`}>Follow</Text>
+                  }
+                </Button>
+              )
+          )
+      }
       <Tab.Navigator>
         <Tab.Screen name="Workouts">
-          {() => <Workouts workouts={currentUserWorkouts} />}
+          {() => <Workouts workouts={workouts} forCurrentUser={forCurrentUser} />}
         </Tab.Screen>
         <Tab.Screen name="Posts">
-          {() => <Posts posts={currentUserPosts} />}
+          {() => <Posts posts={posts} forCurrentUser={forCurrentUser} />}
         </Tab.Screen>
         <Tab.Screen name="PRs" component={PRs} />
-        <Tab.Screen name="Followers" component={Followers} />
+        <Tab.Screen name="Followers">
+          {() => <Followers user={user} />}
+        </Tab.Screen>
       </Tab.Navigator>
     </>
   );
