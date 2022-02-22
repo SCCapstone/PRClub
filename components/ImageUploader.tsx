@@ -5,8 +5,9 @@ import tw from 'twrnc';
 import ImageType from '../types/shared/Image';
 import { uploadImage, downloadImage } from '../state/imagesSlice/thunks';
 import useAppDispatch from '../hooks/useAppDispatch';
+import User from '../types/shared/User';
 
-export default function ImageUploader() {
+export default function ImageUploader({ user }: { user: User }) {
   const dispatch = useAppDispatch();
   const [image, setImage] = useState<string | null>(null);
   useEffect(() => {
@@ -42,7 +43,7 @@ export default function ImageUploader() {
             // const image: ImageType.Image = new ImageType.Image();
             dispatch(uploadImage({
               image: img,
-              userId: 'test',
+              userId: user.id,
               isProfile: true,
               postId: 'test',
             }));

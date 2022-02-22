@@ -24,6 +24,7 @@ import Posts from './Posts';
 import PRs from './PRs';
 import Workouts from './Workouts';
 import ImageUploader from './ImageUploader';
+import { downloadImage } from '../state/imagesSlice/thunks';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -45,6 +46,10 @@ export default function Profile({ user }: { user: User }) {
   const [editingProfile, setEditingProfile] = useState<boolean>(false);
 
   const forCurrentUser = currentUser ? (user.id === currentUser.id) : false;
+
+  const profilePictureURL = dispatch(downloadImage({
+    userId: user.id, isProfile: true, postId: '',
+  }));
 
   if (editingProfile) {
     return (
@@ -118,7 +123,7 @@ export default function Profile({ user }: { user: User }) {
       <View style={tw`flex flex-row h-35 bg-gray-800 items-center justify-center`}>
         <View style={tw`flex flex-1`} />
         <View style={tw`flex flex-2`}>
-          <Image source={{ uri: 'https://picsum.photos/id/1005/300/300' }} style={tw`w-25 h-25 rounded-full`} />
+          <Image source={{ uri: profilePictureURL.then((url) => url) }} style={tw`w-25 h-25 rounded-full`} />
         </View>
         <View style={tw`flex flex-2`}>
           <Text style={tw`text-xl font-bold text-white text-left`}>{user && user.name}</Text>
@@ -130,7 +135,7 @@ export default function Profile({ user }: { user: User }) {
         <View style={tw`flex flex-1`} />
       </View>
       <EditButton onPress={() => setEditingProfile(true)} />
-      <ImageUploader />
+      <ImageUploader user={user} />
       {
         forCurrentUser
           ? <EditButton onPress={() => setEditingProfile(true)} />

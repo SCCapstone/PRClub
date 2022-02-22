@@ -23,8 +23,16 @@ export default {
     }
   },
 
-  async downloadImage(image: Image): Promise<string> {
-    const storageRef = ref(storage, image.path);
+  async downloadImage(
+    userId: string, isProfile: boolean, postId: string,
+  ): Promise<string> {
+    let imgPath: string;
+    if (isProfile) {
+      imgPath = path.join(userId, 'profile');
+    } else {
+      imgPath = path.join(userId, 'posts', postId);
+    }
+    const storageRef = ref(storage, path.join('images', imgPath));
     return getDownloadURL(storageRef).then((url) => url);
   },
 };
