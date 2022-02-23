@@ -5,25 +5,25 @@ import { ActivityIndicator, Snackbar, Text } from 'react-native-paper';
 import tw from 'twrnc';
 import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
-import { clearFollowResult, clearUnfollowResult } from '../state/userSlice';
+import { clearFollowResult, clearUnfollowResult, clearUpdateProfileResult } from '../state/userSlice';
 import {
-  selectCurrentUser, selectCurrentUserStatus, selectFollowResult, selectUnfollowResult,
+  selectCurrentUser, selectCurrentUserStatus, selectFollowResult,
+  selectUnfollowResult, selectUpdateProfileResult,
 } from '../state/userSlice/selectors';
 import { followUser, unfollowUser } from '../state/userSlice/thunks';
 import { selectUpsertWorkoutResult } from '../state/workoutsSlice/selectors';
 import { clearUpsertWorkoutResult } from '../state/workoutsSlice';
 import User from '../types/shared/User';
-import Workout from '../types/shared/Workout';
-import Post from '../types/shared/Post';
 import AuthStack from './stacks/auth';
 import MainStack from './stacks/main';
-import { selectUpdateProfileResult } from '../state/userSlice/selectors';
-import { clearUpdateProfileResult } from '../state/userSlice';
 import { selectUpsertPostResult } from '../state/postsSlice/selectors';
 import { clearUpsertPostResult } from '../state/postsSlice';
 // for undo button
+// import Workout from '../types/shared/Workout';
+// import Post from '../types/shared/Post';
 // import { removePost } from '../state/postsSlice/thunks';
 // import { removeWorkout } from '../state/workoutsSlice/thunks';
+
 
 
 const Stack = createStackNavigator();
@@ -36,11 +36,13 @@ export default function Navigator() {
   const currentUserStatus = useAppSelector(selectCurrentUserStatus);
   const followResult = useAppSelector(selectFollowResult);
   const unfollowResult = useAppSelector(selectUnfollowResult);
-  const [submittedWorkout, setSubmittedWorkout] = useState<Workout | null>(null);
   const updateProfileResult = useAppSelector(selectUpdateProfileResult);
   const upsertPostResult = useAppSelector(selectUpsertPostResult);
-  const [submittedPost, setSubmittedPost] = useState<Post | null>(null);
 
+  /* // for undo button
+  const [submittedWorkout, setSubmittedWorkout] = useState<Workout | null>(null);
+  const [submittedPost, setSubmittedPost] = useState<Post | null>(null);
+  */
 
   if (currentUserStatus === 'fetching') {
     return <ActivityIndicator />;
@@ -111,10 +113,10 @@ export default function Navigator() {
                       label: 'Done',
                       // label: 'Undo',
                       onPress: () => {
-                        /*if (submittedWorkout) {
+                        /* if (submittedWorkout) {
                           dispatch(removeWorkout(submittedWorkout));
                           setSubmittedWorkout(null);
-                        }*/
+                        } */
                       },
                     } : undefined}
                   >
@@ -211,10 +213,10 @@ export default function Navigator() {
                       label: 'Done',
                       // label: 'Undo',
                       onPress: () => {
-                        /*if (submittedPost) {
+                        /* if (submittedPost) {
                           dispatch(removePost(submittedPost));
                           setSubmittedPost(null);
-                        }*/
+                        } */
                       },
                     } : undefined}
                   >

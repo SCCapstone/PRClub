@@ -1,4 +1,3 @@
-import { SliceStatus } from '../../types/state/SliceStatus';
 import Workout from '../../types/shared/Workout';
 import { RootState } from '../store';
 import { workoutsAdapter } from './state';
@@ -26,7 +25,6 @@ export function selectWorkoutsStatus(state: RootState) {
 export function selectRemoveWorkoutResult(state: RootState) {
   return state.workouts.removeWorkoutResult;
 }
-
 
 export function selectUpsertWorkoutResult(state: RootState) {
   return state.workouts.upsertWorkoutResult;
