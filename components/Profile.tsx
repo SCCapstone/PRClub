@@ -2,7 +2,7 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import React, { useState } from 'react';
 import { Image, View } from 'react-native';
 import {
-  ActivityIndicator, Button, Snackbar, Text, TextInput,
+  ActivityIndicator, Button, Text, TextInput,
 } from 'react-native-paper';
 import tw from 'twrnc';
 import useAppDispatch from '../hooks/useAppDispatch';
@@ -11,7 +11,7 @@ import { selectPostsSortedByMostRecentByUserId } from '../state/postsSlice/selec
 import { selectPRsSortedByMostRecentByUserId } from '../state/prsSlice/selectors';
 import { clearUpdateProfileResult } from '../state/userSlice';
 import {
-  selectCurrentUser, selectCurrentUserStatus, selectUpdateProfileResult,
+  selectCurrentUser, selectCurrentUserStatus,
 } from '../state/userSlice/selectors';
 import {
   followUser, unfollowUser, updateName, updateUsername,
@@ -41,7 +41,6 @@ export default function Profile({ user }: { user: User }) {
   const prs = useAppSelector(
     (state) => selectPRsSortedByMostRecentByUserId(state, user.id),
   );
-  const updateProfileResult = useAppSelector(selectUpdateProfileResult);
 
   const [newName, setNewName] = useState<string>(user.name);
   const [newUsername, setNewUsername] = useState<string>(user.username);
@@ -97,21 +96,6 @@ export default function Profile({ user }: { user: User }) {
             }
           </Button>
         </View>
-        <Snackbar
-          visible={!!updateProfileResult}
-          duration={3000}
-          onDismiss={() => dispatch(clearUpdateProfileResult())}
-          style={updateProfileResult && updateProfileResult.error ? tw`bg-red-500` : {}}
-        >
-          {
-            updateProfileResult
-            && (
-              updateProfileResult.error
-                ? `Error updating profile: ${updateProfileResult.error.message}`
-                : 'Profile updated successfully!'
-            )
-          }
-        </Snackbar>
       </>
     );
   }
