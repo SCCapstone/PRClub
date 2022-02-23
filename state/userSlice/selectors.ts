@@ -39,3 +39,7 @@ export function selectUsersStatus(state: RootState) {
 export function selectUserBeingViewedInSearch(state: RootState) {
   return state.users.userBeingViewedInSearch;
 }
+
+export function selectDefaultProfilePicture(state: RootState) {
+  return state.users.defaultProfilePicture;
+}

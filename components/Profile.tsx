@@ -7,13 +7,14 @@ import {
 } from 'react-native-paper';
 import tw from 'twrnc';
 import { unwrapResult } from '@reduxjs/toolkit';
-import ImageType from '../types/shared/Image';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
 import { selectPostsSortedByMostRecentByUserId } from '../state/postsSlice/selectors';
-import { clearUpdateProfileResult } from '../state/userSlice';
+import { clearUpdateProfileResult, setProfilePicture } from '../state/userSlice';
 import {
-  selectCurrentUser, selectCurrentUserStatus, selectUpdateProfileResult,
+  selectCurrentUser, selectCurrentUserStatus, selectDefaultProfilePicture,
+  selectUpdateProfileResult,
 } from '../state/userSlice/selectors';
 import {
   followUser, unfollowUser, updateName, updateUsername,
@@ -26,7 +27,6 @@ import Followers from './Followers';
 import Posts from './Posts';
 import PRs from './PRs';
 import Workouts from './Workouts';
-import ImageUploader from './ImageUploader';
 import { downloadImage, uploadImage } from '../state/imagesSlice/thunks';
 
 const Tab = createMaterialTopTabNavigator();
@@ -42,7 +42,9 @@ export default function Profile({ user }: { user: User }) {
   const posts = useAppSelector(
     (state) => selectPostsSortedByMostRecentByUserId(state, user.id),
   );
-  let imagePickerResult: ImagePicker.ImagePickerResult;
+
+  const [imagePickerResult, setImagePickerResult] = useState<ImagePicker.ImagePickerResult
+  |null>(null);
   const updateProfileResult = useAppSelector(selectUpdateProfileResult);
   const [profileUrl, setProfileUrl] = useState<string>('');
   const [newName, setNewName] = useState<string>(user.name);
@@ -50,6 +52,7 @@ export default function Profile({ user }: { user: User }) {
   const [editingProfile, setEditingProfile] = useState<boolean>(false);
   const [newProfilePicture, setNewProfilePicture] = useState<string>(profileUrl);
   const forCurrentUser = currentUser ? (user.id === currentUser.id) : false;
+  const isDefaultProfilePic = useAppSelector(selectDefaultProfilePicture);
   const fetchProfilePicture = async () => {
     const profilePictureURL = await dispatch(downloadImage({
       userId: user.id, isProfile: true, postId: '',
@@ -70,6 +73,13 @@ export default function Profile({ user }: { user: User }) {
     }
     imagePickerResult = result;
   };
+  let newimg;
+  if (imagePickerResult !== null) { newimg = <Image source={{ uri: newProfilePicture }} style={tw`w-25 h-25 rounded-full`} />; } else { newimg = defaultProfilePic; }
+
+  // let img;
+  // if (isDefaultProfilePic) { img = <Image source={{ uri: profileUrl }}
+  // style={tw`w-25 h-25 rounded-full`} />; } else { img = defaultProfilePic; }
+  //
   if (editingProfile) {
     return (
       <>
@@ -80,11 +90,11 @@ export default function Profile({ user }: { user: User }) {
               setEditingProfile(false);
               setNewName(user.name);
               setNewUsername(user.username);
-              setNewProfilePicture(profileUrl);
+              setImagePickerResult(null);
             }}
           />
           <View style={tw`items-center`}>
-            <Image source={{ uri: newProfilePicture }} style={tw`w-25 h-25 rounded-full`} />
+            {newimg}
             <ReactButton
               title="Choose Image"
               onPress={browseImages}
@@ -111,13 +121,14 @@ export default function Profile({ user }: { user: User }) {
               if (newUsername !== user.username) {
                 dispatch(updateUsername(newUsername));
               }
-              if (newProfilePicture !== profileUrl) {
+              if (imagePickerResult) {
                 dispatch(uploadImage({
                   image: { result: imagePickerResult, path: '' },
                   userId: user.id,
                   isProfile: true,
                   postId: '',
                 }));
+                // dispatch(setProfilePicture());
               }
             }}
             disabled={
@@ -127,7 +138,7 @@ export default function Profile({ user }: { user: User }) {
               || (
                 newName === user.name
                 && newUsername === user.username
-                && newProfilePicture === profileUrl
+                && imagePickerResult === null
               )
             }
           >
@@ -173,7 +184,6 @@ export default function Profile({ user }: { user: User }) {
         </View>
         <View style={tw`flex flex-1`} />
       </View>
-      <EditButton onPress={() => setEditingProfile(true)} />
       {
         forCurrentUser
           ? <EditButton onPress={() => setEditingProfile(true)} />

@@ -14,14 +14,21 @@ const imagesSlice = createSlice({
       .addCase(uploadImage.fulfilled, (state) => {
         state.status = 'loaded';
       })
+      .addCase(uploadImage.pending, (state) => {
+        state.status = 'uploadingImage';
+      })
       .addCase(uploadImage.rejected, (state) => {
         state.status = 'fetching';
       })
       .addCase(downloadImage.fulfilled, (state) => {
         state.status = 'loaded';
       })
-      .addCase(downloadImage.rejected, (state) => {
-        state.status = 'fetching';
+      .addCase(downloadImage.rejected, (state, action) => {
+        state.storageError = action.error;
+        state.status = 'idle';
+      })
+      .addCase(downloadImage.pending, (state) => {
+        state.status = 'downloadingImage';
       });
   },
 });

@@ -15,7 +15,7 @@ interface DownloadImageThunkArgs {
   postId: string,
 }
 
-export const uploadImage = createAsyncThunk(
+export const uploadImage = createAsyncThunk<void, UploadImageThunkArgs>(
   'image/uploadImage',
   async ({
     image, userId, isProfile, postId,
@@ -24,7 +24,7 @@ export const uploadImage = createAsyncThunk(
   },
 );
 
-export const downloadImage = createAsyncThunk(
+export const downloadImage = createAsyncThunk<string, DownloadImageThunkArgs>(
   'image/downloadImage',
   async ({
     userId, isProfile, postId,
