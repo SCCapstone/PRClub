@@ -6,7 +6,9 @@ import { queryUsers } from './thunks';
 const searchSlice = createSlice({
   name: 'search',
   initialState,
-  reducers: {},
+  reducers: {
+    flushSearch: searchAdapter.removeAll,
+  },
   extraReducers(builder) {
     builder
       .addCase(queryUsers.pending, (state) => {
@@ -19,5 +21,9 @@ const searchSlice = createSlice({
       });
   },
 });
+
+export const {
+  flushSearch,
+} = searchSlice.actions;
 
 export default searchSlice.reducer;

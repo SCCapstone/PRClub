@@ -16,6 +16,16 @@ export function selectPostsSortedByMostRecentByUserId(state: RootState, userId: 
     .sort((a, b) => (new Date(b.createdDate) > new Date(a.createdDate) ? 1 : -1));
 }
 
+export function selectCurrentUserFollowingPosts(state: RootState): Post[] {
+  if (!state.users.currentUser) {
+    return [];
+  }
+
+  return state.users.currentUser.followingIds.flatMap(
+    (i) => selectPostsSortedByMostRecentByUserId(state, i),
+  );
+}
+
 export function selectPostsStatus(state: RootState) {
   return state.posts.status;
 }

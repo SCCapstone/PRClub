@@ -3,6 +3,7 @@ import {
   doc, DocumentData, getDoc, getDocs, query,
   QueryDocumentSnapshot, setDoc, updateDoc, where,
 } from '@firebase/firestore';
+import _ from 'lodash';
 import { PRS_COLLECTION, USERS_COLLECTION } from '../constants/firestore';
 import { db } from '../firebase';
 import PR from '../types/shared/PR';
@@ -14,14 +15,21 @@ export default {
     const user = docSnap.data() as User;
 
     if (user.prIds.length > 0) {
-      const q = query(collection(db, PRS_COLLECTION), where('id', 'in', user.prIds));
-      const querySnap = await getDocs(q);
-
       const prs: PR[] = [];
-      querySnap.forEach((d: QueryDocumentSnapshot<DocumentData>) => {
-        const pr = d.data() as PR;
-        prs.push(pr);
-      });
+
+      await Promise.all(
+        _.chunk(user.prIds, 10).map(
+          async (chunk) => {
+            const q = query(collection(db, PRS_COLLECTION), where('id', 'in', chunk));
+            const querySnap = await getDocs(q);
+
+            querySnap.forEach((d: QueryDocumentSnapshot<DocumentData>) => {
+              const pr = d.data() as PR;
+              prs.push(pr);
+            });
+          },
+        ),
+      );
 
       return prs;
     }

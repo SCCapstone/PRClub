@@ -3,6 +3,7 @@ import {
   doc, DocumentData, getDoc, getDocs, query,
   QueryDocumentSnapshot, setDoc, updateDoc, where,
 } from '@firebase/firestore';
+import _ from 'lodash';
 import { db } from '../firebase';
 import Post from '../types/shared/Post';
 import User from '../types/shared/User';
@@ -16,15 +17,21 @@ export default {
 
     // if the user has posts, query their posts and return them
     if (user.postIds.length > 0) {
-      const q = query(collection(db, POSTS_COLLECTION), where('id', 'in', user.postIds));
-      const querySnap = await getDocs(q);
-
-      // extract posts from querySnapshot
       const posts: Post[] = [];
-      querySnap.forEach((d: QueryDocumentSnapshot<DocumentData>) => {
-        const post = d.data() as Post;
-        posts.push(post);
-      });
+
+      await Promise.all(
+        _.chunk(user.postIds, 10).map(
+          async (chunk) => {
+            const q = query(collection(db, POSTS_COLLECTION), where('id', 'in', chunk));
+            const querySnap = await getDocs(q);
+
+            querySnap.forEach((d: QueryDocumentSnapshot<DocumentData>) => {
+              const post = d.data() as Post;
+              posts.push(post);
+            });
+          },
+        ),
+      );
 
       return posts;
     }

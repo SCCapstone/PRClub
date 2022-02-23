@@ -6,10 +6,14 @@ import {
 import tw from 'twrnc';
 import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
+import { fetchPostsForUser } from '../state/postsSlice/thunks';
+import { flushSearch } from '../state/searchSlice';
 import { selectSearchResults, selectSearchStatus } from '../state/searchSlice/selectors';
 import { queryUsers } from '../state/searchSlice/thunks';
 import { clearUserBeingViewedInSearch, setUserBeingViewedInSearch } from '../state/userSlice';
 import { selectUserBeingViewedInSearch } from '../state/userSlice/selectors';
+import { fetchFollowersForUser } from '../state/userSlice/thunks';
+import { fetchWorkoutsForUser } from '../state/workoutsSlice/thunks';
 import User from '../types/shared/User';
 import BackButton from './BackButton';
 import CenteredView from './CenteredView';
@@ -18,7 +22,7 @@ import Profile from './Profile';
 function SearchResults(
   { queryString, onUserPress }: {queryString: string, onUserPress: (user: User) => void},
 ) {
-  const queriedUsers: User[] = useAppSelector(selectSearchResults);
+  const queriedUsers: User[] = useAppSelector((state) => selectSearchResults(state));
   const searchStatus = useAppSelector(selectSearchStatus);
 
   if (!queryString || queryString === '' || searchStatus === 'idle') {
@@ -108,6 +112,7 @@ export default function Search() {
         placeholder="search for users..."
         onChangeText={(query: string) => {
           setQueryString(query);
+          dispatch(flushSearch());
           dispatch(queryUsers(query));
         }}
         value={queryString}
@@ -116,6 +121,9 @@ export default function Search() {
         queryString={queryString}
         onUserPress={(user) => {
           dispatch(setUserBeingViewedInSearch(user));
+          dispatch(fetchWorkoutsForUser(user.id));
+          dispatch(fetchPostsForUser(user.id));
+          dispatch(fetchFollowersForUser(user.id));
         }}
       />
     </>

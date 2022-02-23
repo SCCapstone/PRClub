@@ -3,6 +3,7 @@ import {
   arrayUnion,
   collection, doc, DocumentData, DocumentReference, getDoc, getDocs, query, updateDoc, where,
 } from '@firebase/firestore';
+import _ from 'lodash';
 import { USERS_COLLECTION } from '../constants/firestore';
 import { db } from '../firebase';
 import User from '../types/shared/User';
@@ -19,17 +20,24 @@ export default {
       return [];
     }
 
-    const q = query(
-      collection(db, USERS_COLLECTION),
-      where('id', 'in', userIds),
-    );
-
-    const querySnap = await getDocs(q);
-
     const users: User[] = [];
-    querySnap.forEach((u) => {
-      users.push(u.data() as User);
-    });
+
+    await Promise.all(
+      _.chunk(userIds, 10).map(
+        async (chunk) => {
+          const q = query(
+            collection(db, USERS_COLLECTION),
+            where('id', 'in', chunk),
+          );
+
+          const querySnap = await getDocs(q);
+
+          querySnap.forEach((u) => {
+            users.push(u.data() as User);
+          });
+        },
+      ),
+    );
 
     return users;
   },

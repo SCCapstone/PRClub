@@ -2,6 +2,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CreateWorkoutScreen from './screens/CreateWorkoutScreen';
+import HomeScreen from './screens/HomeScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import SearchScreen from './screens/SearchScreen';
 import SettingsScreen from './screens/SettingsScreen';
@@ -23,6 +24,8 @@ export default function MainStack() {
             iconName = focused ? 'settings' : 'settings-outline';
           } else if (route.name === 'Search') {
             iconName = focused ? 'search' : 'search-outline';
+          } else if (route.name === 'Home') {
+            iconName = focused ? 'home' : 'home-outline';
           }
 
           return <Ionicons name={iconName} size={size} color={color} />;
@@ -31,6 +34,11 @@ export default function MainStack() {
         tabBarInactiveTintColor: 'gray',
       })}
     >
+      <Tab.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{ tabBarShowLabel: false }}
+      />
       <Tab.Screen
         name="Search"
         component={SearchScreen}

@@ -4,6 +4,7 @@ import {
   getDocs, query, QueryDocumentSnapshot,
   setDoc, updateDoc, where,
 } from '@firebase/firestore';
+import _ from 'lodash';
 import { USERS_COLLECTION, WORKOUTS_COLLECTION } from '../constants/firestore';
 import { db } from '../firebase';
 import User from '../types/shared/User';
@@ -17,15 +18,21 @@ export default {
 
     // if the user has workouts, query their workouts and return them
     if (user.workoutIds.length > 0) {
-      const q = query(collection(db, WORKOUTS_COLLECTION), where('id', 'in', user.workoutIds));
-      const querySnap = await getDocs(q);
-
-      // extract workouts from querySnapshot
       const workouts: Workout[] = [];
-      querySnap.forEach((d: QueryDocumentSnapshot<DocumentData>) => {
-        const workout = d.data() as Workout;
-        workouts.push(workout);
-      });
+
+      await Promise.all(
+        _.chunk(user.workoutIds, 10).map( // firebase maximum "in" limit
+          async (chunk) => {
+            const q = query(collection(db, WORKOUTS_COLLECTION), where('id', 'in', chunk));
+            const querySnap = await getDocs(q);
+
+            querySnap.forEach((d: QueryDocumentSnapshot<DocumentData>) => {
+              const workout = d.data() as Workout;
+              workouts.push(workout);
+            });
+          },
+        ),
+      );
 
       return workouts;
     }

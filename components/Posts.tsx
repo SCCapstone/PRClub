@@ -1,7 +1,10 @@
 import React from 'react';
+import { View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import { Text } from 'react-native-paper';
+import { ActivityIndicator, Text } from 'react-native-paper';
 import tw from 'twrnc';
+import useAppSelector from '../hooks/useAppSelector';
+import { selectPostsStatus } from '../state/postsSlice/selectors';
 import Post from '../types/shared/Post';
 import CenteredView from './CenteredView';
 import PRPost from './PRPost';
@@ -10,6 +13,16 @@ import WorkoutPost from './WorkoutPost';
 export default function Posts(
   { posts, forCurrentUser }: { posts: Post[], forCurrentUser: boolean },
 ) {
+  const postsStatus = useAppSelector(selectPostsStatus);
+
+  if (postsStatus === 'fetching') {
+    return (
+      <CenteredView>
+        <ActivityIndicator />
+      </CenteredView>
+    );
+  }
+
   if (posts.length > 0) {
     return (
       <ScrollView>
@@ -22,7 +35,7 @@ export default function Posts(
             return <PRPost post={p} key={p.id} forCurrentUser={forCurrentUser} />;
           }
 
-          return <></>;
+          return <View key={p.id} />;
         })}
       </ScrollView>
     );
