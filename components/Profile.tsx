@@ -93,21 +93,6 @@ export default function Profile({ user }: { user: User }) {
             }
           </Button>
         </View>
-        <Snackbar
-          visible={!!updateProfileResult}
-          duration={3000}
-          onDismiss={() => dispatch(clearUpdateProfileResult())}
-          style={updateProfileResult && updateProfileResult.error ? tw`bg-red-500` : {}}
-        >
-          {
-            updateProfileResult
-            && (
-              updateProfileResult.error
-                ? `Error updating profile: ${updateProfileResult.error.message}`
-                : 'Profile updated successfully!'
-            )
-          }
-        </Snackbar>
       </>
     );
   }

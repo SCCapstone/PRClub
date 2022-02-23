@@ -11,12 +11,14 @@ import {
 } from '../state/userSlice/selectors';
 import { followUser, unfollowUser } from '../state/userSlice/thunks';
 import { selectUpsertWorkoutResult } from '../state/workoutsSlice/selectors';
-import { clearUpsertWorkoutResult} from '../state/workoutsSlice';
+import { clearUpsertWorkoutResult } from '../state/workoutsSlice';
 import { removeWorkout } from '../state/workoutsSlice/thunks';
 import User from '../types/shared/User';
 import Workout from '../types/shared/Workout';
 import AuthStack from './stacks/auth';
 import MainStack from './stacks/main';
+import { selectUpdateProfileResult } from '../state/userSlice/selectors';
+import { clearUpdateProfileResult } from '../state/userSlice';
 
 
 
@@ -31,13 +33,14 @@ export default function Navigator() {
   const followResult = useAppSelector(selectFollowResult);
   const unfollowResult = useAppSelector(selectUnfollowResult);
   const [submittedWorkout, setSubmittedWorkout] = useState<Workout | null>(null);
-  
+  const updateProfileResult = useAppSelector(selectUpdateProfileResult);
+
 
   if (currentUserStatus === 'fetching') {
     return <ActivityIndicator />;
   }
 
-  return ( 
+  return (
     <>
       <Stack.Navigator
         screenOptions={{ headerShown: false }}
@@ -68,6 +71,28 @@ export default function Navigator() {
               width: 0.95 * Dimensions.get('window').width,
             }}
           >
+            {
+              updateProfileResult
+              && (
+                <>
+                  <Snackbar
+                    visible={!!updateProfileResult}
+                    duration={3000}
+                    onDismiss={() => dispatch(clearUpdateProfileResult())}
+                    style={updateProfileResult && updateProfileResult.error ? tw`bg-red-500` : {}}
+                  >
+                    {
+                      updateProfileResult
+                      && (
+                        updateProfileResult.error
+                          ? `Error updating profile: ${updateProfileResult.error.message}`
+                          : 'Profile updated successfully!'
+                      )
+                    }
+                  </Snackbar>
+                </>
+              )
+            }
             {
               upsertWorkoutResult
               && (
