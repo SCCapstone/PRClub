@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { ScrollView, View } from 'react-native';
 import {
-  ActivityIndicator, Button, Snackbar, Text, TextInput,
+  ActivityIndicator, Button, Text, TextInput,
 } from 'react-native-paper';
 import tw from 'twrnc';
 import { v4 as uuidv4 } from 'uuid';
 import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
 import { clearUpsertPostResult } from '../state/postsSlice';
-import { selectUpsertPostResult, selectPostsStatus } from '../state/postsSlice/selectors';
-import { removePost, upsertPost } from '../state/postsSlice/thunks';
+import {  selectPostsStatus } from '../state/postsSlice/selectors';
+import { upsertPost } from '../state/postsSlice/thunks';
 import { selectWorkoutsStatus } from '../state/workoutsSlice/selectors';
 import { removeWorkout } from '../state/workoutsSlice/thunks';
 import Post from '../types/shared/Post';
@@ -27,7 +27,6 @@ export default function Workouts(
 
   const workoutsStatus = useAppSelector(selectWorkoutsStatus);
   const postsStatus = useAppSelector(selectPostsStatus);
-  const postsServiceUpsertResult = useAppSelector(selectUpsertPostResult);
 
   const [workoutsState, setWorkoutsState] = useState<'default' | 'editing' | 'sharing'>('default');
 

@@ -30,7 +30,7 @@ const workoutsSlice = createSlice({
       })
       .addCase(upsertWorkout.fulfilled, (state, action: PayloadAction<Workout>) => {
         workoutsAdapter.upsertOne(state, action.payload);
-        state.upsertWorkoutResult = {success: true};
+        state.upsertWorkoutResult = { success: true };
         state.status = 'loaded';
       })
       .addCase(upsertWorkout.rejected, (state, action) => {
@@ -46,11 +46,9 @@ const workoutsSlice = createSlice({
         state.status = 'loaded';
       })
       .addCase(removeWorkout.rejected, (state, action) => {
-        state.removeWorkoutResult = { success: false, error: action.error }
+        state.removeWorkoutResult = { success: false, error: action.error };
         state.status = 'loaded';
-      })
-      ;
-
+      });
   },
 });
 
