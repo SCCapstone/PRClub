@@ -12,7 +12,6 @@ import {
 import { followUser, unfollowUser } from '../state/userSlice/thunks';
 import { selectUpsertWorkoutResult } from '../state/workoutsSlice/selectors';
 import { clearUpsertWorkoutResult } from '../state/workoutsSlice';
-import { removeWorkout } from '../state/workoutsSlice/thunks';
 import User from '../types/shared/User';
 import Workout from '../types/shared/Workout';
 import Post from '../types/shared/Post';
@@ -22,7 +21,9 @@ import { selectUpdateProfileResult } from '../state/userSlice/selectors';
 import { clearUpdateProfileResult } from '../state/userSlice';
 import { selectUpsertPostResult } from '../state/postsSlice/selectors';
 import { clearUpsertPostResult } from '../state/postsSlice';
-import { removePost } from '../state/postsSlice/thunks';
+// for undo button
+// import { removePost } from '../state/postsSlice/thunks';
+// import { removeWorkout } from '../state/workoutsSlice/thunks';
 
 
 const Stack = createStackNavigator();
@@ -119,8 +120,8 @@ export default function Navigator() {
                   >
                     {upsertWorkoutResult && (
                       upsertWorkoutResult.success
-                        ? 'Workout Submitted!'
-                        : `Error submitting workout: ${upsertWorkoutResult.error}`
+                        ? 'Workout Created!'
+                        : `Error creating workout: ${upsertWorkoutResult.error}`
                     )}
                   </Snackbar>
                 </>
@@ -219,8 +220,8 @@ export default function Navigator() {
                   >
                     {upsertPostResult && (
                       upsertPostResult.success
-                        ? 'Workout Submitted!'
-                        : `Error submitting workout: ${upsertPostResult.error}`
+                        ? 'Post Created!'
+                        : `Error creating post: ${upsertPostResult.error}`
                     )}
                   </Snackbar>
                 </>
