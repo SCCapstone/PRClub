@@ -2,7 +2,7 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import React, { useState } from 'react';
 import { Image, View } from 'react-native';
 import {
-  ActivityIndicator, Button, Snackbar, Text, TextInput,
+  ActivityIndicator, Button, Text, TextInput,
 } from 'react-native-paper';
 import tw from 'twrnc';
 import useAppDispatch from '../hooks/useAppDispatch';
@@ -37,7 +37,7 @@ export default function Profile({ user }: { user: User }) {
   const posts = useAppSelector(
     (state) => selectPostsSortedByMostRecentByUserId(state, user.id),
   );
-  const updateProfileResult = useAppSelector(selectUpdateProfileResult);
+  // const updateProfileResult = useAppSelector(selectUpdateProfileResult);
 
   const [newName, setNewName] = useState<string>(user.name);
   const [newUsername, setNewUsername] = useState<string>(user.username);
@@ -93,21 +93,6 @@ export default function Profile({ user }: { user: User }) {
             }
           </Button>
         </View>
-        <Snackbar
-          visible={!!updateProfileResult}
-          duration={3000}
-          onDismiss={() => dispatch(clearUpdateProfileResult())}
-          style={updateProfileResult && updateProfileResult.error ? tw`bg-red-500` : {}}
-        >
-          {
-            updateProfileResult
-            && (
-              updateProfileResult.error
-                ? `Error updating profile: ${updateProfileResult.error.message}`
-                : 'Profile updated successfully!'
-            )
-          }
-        </Snackbar>
       </>
     );
   }
