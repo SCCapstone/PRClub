@@ -22,7 +22,8 @@ import { ExerciseInput } from '../types/validation/ExerciseInput';
 import { ExerciseSetInput } from '../types/validation/ExerciseSetInput';
 import { WorkoutInput, WorkoutInputSchema } from '../types/validation/WorkoutInput';
 import DeleteButton from './DeleteButton';
-// import { selectUpsertWorkoutResult, selectWorkoutsStatus } from '../state/workoutsSlice/selectors';
+// import { selectUpsertWorkoutResult, 
+// selectWorkoutsStatus } from '../state/workoutsSlice/selectors';
 
 export default function WorkoutForm({
   workoutToEdit = undefined,
@@ -232,7 +233,7 @@ export default function WorkoutForm({
                                       } as ExerciseSetInput)}
                                     >
                                       add set
-                                  </Button>
+                                    </Button>
                                   </View>
                                 </View>
                               )}
@@ -311,4 +312,5 @@ export default function WorkoutForm({
       </Snackbar> */}
     </>
   );
+  
 }

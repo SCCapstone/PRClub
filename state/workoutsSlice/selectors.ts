@@ -26,7 +26,6 @@ export function selectRemoveWorkoutResult(state: RootState) {
   return state.workouts.removeWorkoutResult;
 }
 
-
 export function selectUpsertWorkoutResult(state: RootState) {
   return state.workouts.upsertWorkoutResult;
 }

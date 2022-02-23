@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
 import { clearUpsertPostResult } from '../state/postsSlice';
-import {  selectPostsStatus } from '../state/postsSlice/selectors';
+import { selectPostsStatus } from '../state/postsSlice/selectors';
 import { upsertPost } from '../state/postsSlice/thunks';
 import { selectWorkoutsStatus } from '../state/workoutsSlice/selectors';
 import { removeWorkout } from '../state/workoutsSlice/thunks';
