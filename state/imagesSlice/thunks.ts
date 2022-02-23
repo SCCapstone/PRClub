@@ -1,9 +1,8 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import ImagesService from '../../services/ImagesService';
-import ImageType from '../../types/shared/Image';
 
 interface UploadImageThunkArgs {
-  image: ImageType,
+  image: string,
   userId: string,
   isProfile: boolean,
   postId: string,
@@ -31,6 +30,14 @@ export const downloadImage = createAsyncThunk<string, DownloadImageThunkArgs>(
   }: DownloadImageThunkArgs): Promise<string> => {
     const image = await ImagesService.downloadImage(userId, isProfile, postId);
     // return image to be returned from Firebase when thunk is fulfilled
+    return image;
+  },
+);
+
+export const downloadDefaultProfileImage = createAsyncThunk<string>(
+  'image/downloadDefaultProfileImage',
+  async (): Promise<string> => {
+    const image = await ImagesService.downloadDefaultProfileImage();
     return image;
   },
 );

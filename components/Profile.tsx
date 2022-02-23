@@ -43,8 +43,6 @@ export default function Profile({ user }: { user: User }) {
     (state) => selectPostsSortedByMostRecentByUserId(state, user.id),
   );
 
-  const [imagePickerResult, setImagePickerResult] = useState<ImagePicker.ImagePickerResult
-  |null>(null);
   const updateProfileResult = useAppSelector(selectUpdateProfileResult);
   const [profileUrl, setProfileUrl] = useState<string>('');
   const [newName, setNewName] = useState<string>(user.name);
@@ -68,13 +66,12 @@ export default function Profile({ user }: { user: User }) {
     if (!result.cancelled) {
       setNewProfilePicture(result.uri);
     }
-    setImagePickerResult(result);
   };
 
   const defaultProfilePic = <Ionicons name="person-circle" size={100} color="gray" />;
 
   let newimg;
-  if (imagePickerResult !== null) { newimg = <Image source={{ uri: newProfilePicture }} style={tw`w-25 h-25 rounded-full`} />; } else { newimg = defaultProfilePic; }
+  if (newProfilePicture !== null) { newimg = <Image source={{ uri: newProfilePicture }} style={tw`w-25 h-25 rounded-full`} />; } else { newimg = defaultProfilePic; }
 
   // let img;
   // if (isDefaultProfilePic) { img = <Image source={{ uri: profileUrl }}
@@ -90,7 +87,7 @@ export default function Profile({ user }: { user: User }) {
               setEditingProfile(false);
               setNewName(user.name);
               setNewUsername(user.username);
-              setImagePickerResult(null);
+              setNewProfilePicture(profileUrl);
             }}
           />
           <View style={tw`items-center`}>
@@ -121,9 +118,9 @@ export default function Profile({ user }: { user: User }) {
               if (newUsername !== user.username) {
                 dispatch(updateUsername(newUsername));
               }
-              if (imagePickerResult) {
+              if (newProfilePicture) {
                 dispatch(uploadImage({
-                  image: { result: imagePickerResult, path: '' },
+                  image: newProfilePicture,
                   userId: user.id,
                   isProfile: true,
                   postId: '',
@@ -138,7 +135,7 @@ export default function Profile({ user }: { user: User }) {
               || (
                 newName === user.name
                 && newUsername === user.username
-                && imagePickerResult === null
+                && newProfilePicture === null
               )
             }
           >

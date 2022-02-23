@@ -1,26 +1,23 @@
 import { ref, uploadBytesResumable, getDownloadURL } from '@firebase/storage';
 import path from 'path';
 import { storage } from '../firebase/index';
-import Image from '../types/shared/Image';
 
 export default {
   async uploadImage(
-    image: Image, userId: string, isProfile: boolean, postId: string,
+    image: string, userId: string, isProfile: boolean, postId: string,
   ): Promise<void> {
-    if (!image.result.cancelled) {
-      const response = await fetch(image.result.uri);
-      const blob = await response.blob();
+    const response = await fetch(image);
+    const blob = await response.blob();
 
-      let imgPath: string;
-      if (isProfile) {
-        imgPath = path.join(userId, 'profile');
-      } else {
-        imgPath = path.join(userId, 'posts', postId);
-      }
-
-      const reference = ref(storage, path.join('images', imgPath));
-      await uploadBytesResumable(reference, blob);
+    let imgPath: string;
+    if (isProfile) {
+      imgPath = path.join(userId, 'profile');
+    } else {
+      imgPath = path.join(userId, 'posts', postId);
     }
+
+    const reference = ref(storage, path.join('images', imgPath));
+    await uploadBytesResumable(reference, blob);
   },
 
   async downloadImage(
@@ -33,6 +30,12 @@ export default {
       imgPath = path.join(userId, 'posts', postId);
     }
     const storageRef = ref(storage, path.join('images', imgPath));
+    const url = await getDownloadURL(storageRef);
+    return url;
+  },
+
+  async downloadDefaultProfileImage() :Promise<string> {
+    const storageRef = ref(storage, 'images/default-profile-pic');
     const url = await getDownloadURL(storageRef);
     return url;
   },
