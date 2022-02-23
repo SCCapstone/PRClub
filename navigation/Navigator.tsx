@@ -24,8 +24,6 @@ import { clearUpsertPostResult } from '../state/postsSlice';
 // import { removePost } from '../state/postsSlice/thunks';
 // import { removeWorkout } from '../state/workoutsSlice/thunks';
 
-
-
 const Stack = createStackNavigator();
 
 export default function Navigator() {
