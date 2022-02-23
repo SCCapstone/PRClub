@@ -121,8 +121,8 @@ export default function Navigator() {
                   >
                     {upsertWorkoutResult && (
                       upsertWorkoutResult.success
-                        ? 'Workout Created!'
-                        : `Error creating workout: ${upsertWorkoutResult.error}`
+                        ? 'Workout Submitted!'
+                        : `Error submitting workout: ${upsertWorkoutResult.error}`
                     )}
                   </Snackbar>
                 </>
@@ -221,8 +221,8 @@ export default function Navigator() {
                   >
                     {upsertPostResult && (
                       upsertPostResult.success
-                        ? 'Post Created!'
-                        : `Error creating post: ${upsertPostResult.error}`
+                        ? 'Post Submitted!'
+                        : `Error submitting post: ${upsertPostResult.error}`
                     )}
                   </Snackbar>
                 </>
