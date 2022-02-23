@@ -7,7 +7,7 @@ import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
 import { clearFollowResult, clearUnfollowResult, clearUpdateProfileResult } from '../state/userSlice';
 import {
-  selectCurrentUser, selectCurrentUserStatus, selectFollowResult, 
+  selectCurrentUser, selectCurrentUserStatus, selectFollowResult,
   selectUnfollowResult, selectUpdateProfileResult,
 } from '../state/userSlice/selectors';
 import { followUser, unfollowUser } from '../state/userSlice/thunks';
@@ -37,7 +37,6 @@ export default function Navigator() {
   const updateProfileResult = useAppSelector(selectUpdateProfileResult);
   const upsertPostResult = useAppSelector(selectUpsertPostResult);
   // const [submittedPost, setSubmittedPost] = useState<Post | null>(null);
-
 
   if (currentUserStatus === 'fetching') {
     return <ActivityIndicator />;

@@ -37,7 +37,7 @@ export default function Profile({ user }: { user: User }) {
   const posts = useAppSelector(
     (state) => selectPostsSortedByMostRecentByUserId(state, user.id),
   );
-  //const updateProfileResult = useAppSelector(selectUpdateProfileResult);
+  // const updateProfileResult = useAppSelector(selectUpdateProfileResult);
 
   const [newName, setNewName] = useState<string>(user.name);
   const [newUsername, setNewUsername] = useState<string>(user.username);

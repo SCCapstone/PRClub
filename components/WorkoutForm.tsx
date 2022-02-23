@@ -22,7 +22,7 @@ import { ExerciseInput } from '../types/validation/ExerciseInput';
 import { ExerciseSetInput } from '../types/validation/ExerciseSetInput';
 import { WorkoutInput, WorkoutInputSchema } from '../types/validation/WorkoutInput';
 import DeleteButton from './DeleteButton';
-// import { selectUpsertWorkoutResult, 
+// import { selectUpsertWorkoutResult,
 // selectWorkoutsStatus } from '../state/workoutsSlice/selectors';
 
 export default function WorkoutForm({
@@ -312,5 +312,4 @@ export default function WorkoutForm({
       </Snackbar> */}
     </>
   );
-  
 }
