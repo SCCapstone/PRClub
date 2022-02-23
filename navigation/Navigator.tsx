@@ -12,18 +12,11 @@ import {
   selectCurrentUser, selectCurrentUserStatus, selectFollowResult,
   selectUnfollowResult, selectUpdateProfileResult,
 } from '../state/userSlice/selectors';
-import { followUser, unfollowUser } from '../state/userSlice/thunks';
 import { clearUpsertWorkoutResult } from '../state/workoutsSlice';
 import { selectUpsertWorkoutResult } from '../state/workoutsSlice/selectors';
 import User from '../types/shared/User';
 import AuthStack from './stacks/auth';
 import MainStack from './stacks/main';
-
-// for undo button
-// import Workout from '../types/shared/Workout';
-// import Post from '../types/shared/Post';
-// import { removePost } from '../state/postsSlice/thunks';
-// import { removeWorkout } from '../state/workoutsSlice/thunks';
 
 const Stack = createStackNavigator();
 
@@ -37,11 +30,6 @@ export default function Navigator() {
   const unfollowResult = useAppSelector(selectUnfollowResult);
   const updateProfileResult = useAppSelector(selectUpdateProfileResult);
   const upsertPostResult = useAppSelector(selectUpsertPostResult);
-
-  /* // for undo button
-  const [submittedWorkout, setSubmittedWorkout] = useState<Workout | null>(null);
-  const [submittedPost, setSubmittedPost] = useState<Post | null>(null);
-  */
 
   if (currentUserStatus === 'fetching') {
     return <ActivityIndicator />;
@@ -66,6 +54,7 @@ export default function Navigator() {
             />
           )}
       </Stack.Navigator>
+      {/* central location for snackbars */}
       {
         currentUser
         && (
@@ -86,6 +75,10 @@ export default function Navigator() {
                     visible={!!updateProfileResult}
                     duration={3000}
                     onDismiss={() => dispatch(clearUpdateProfileResult())}
+                    action={{
+                      label: 'Dismiss',
+                      onPress: () => dispatch(clearUpdateProfileResult()),
+                    }}
                     style={updateProfileResult && updateProfileResult.error ? tw`bg-red-500` : {}}
                   >
                     {
@@ -108,20 +101,14 @@ export default function Navigator() {
                     visible={!!upsertWorkoutResult}
                     duration={3000}
                     onDismiss={() => dispatch(clearUpsertWorkoutResult())}
-                    action={upsertWorkoutResult && upsertWorkoutResult.success ? {
-                      label: 'Done',
-                      // label: 'Undo',
-                      onPress: () => {
-                        /* if (submittedWorkout) {
-                          dispatch(removeWorkout(submittedWorkout));
-                          setSubmittedWorkout(null);
-                        } */
-                      },
-                    } : undefined}
+                    action={{
+                      label: 'Dismiss',
+                      onPress: () => dispatch(clearUpsertWorkoutResult()),
+                    }}
                   >
                     {upsertWorkoutResult && (
                       upsertWorkoutResult.success
-                        ? 'Workout Submitted!'
+                        ? 'Workout submitted!'
                         : `Error submitting workout: ${upsertWorkoutResult.error}`
                     )}
                   </Snackbar>
@@ -135,14 +122,10 @@ export default function Navigator() {
                   <Snackbar
                     visible={!!followResult && followResult.success}
                     duration={3000}
-                    onDismiss={() => {
-                      dispatch(clearFollowResult());
-                    }}
+                    onDismiss={() => dispatch(clearFollowResult())}
                     action={{
-                      label: 'Undo',
-                      onPress() {
-                        dispatch(unfollowUser(followResult.user?.id || ''));
-                      },
+                      label: 'Dismiss',
+                      onPress: () => dispatch(clearFollowResult()),
                     }}
                   >
                     <Text style={tw`text-white`}>
@@ -158,6 +141,10 @@ export default function Navigator() {
                     visible={!!followResult && !followResult.success}
                     duration={3000}
                     onDismiss={() => dispatch(clearFollowResult())}
+                    action={{
+                      label: 'Dismiss',
+                      onPress: () => dispatch(clearFollowResult()),
+                    }}
                     style={tw`bg-red-500`}
                   >
                     {`Error following user: ${followResult.error?.message}`}
@@ -174,10 +161,8 @@ export default function Navigator() {
                     duration={3000}
                     onDismiss={() => dispatch(clearUnfollowResult())}
                     action={{
-                      label: 'Undo',
-                      onPress() {
-                        dispatch(followUser(unfollowResult.user?.id || ''));
-                      },
+                      label: 'Dismiss',
+                      onPress: () => dispatch(clearUnfollowResult()),
                     }}
                   >
                     <Text style={tw`text-white`}>
@@ -193,6 +178,10 @@ export default function Navigator() {
                     visible={!!unfollowResult && !unfollowResult.success}
                     duration={3000}
                     onDismiss={() => dispatch(clearUnfollowResult())}
+                    action={{
+                      label: 'Dismiss',
+                      onPress: () => dispatch(clearUnfollowResult()),
+                    }}
                     style={tw`bg-red-500`}
                   >
                     {`Error unfollowing user: ${unfollowResult.error?.message}`}
@@ -209,19 +198,13 @@ export default function Navigator() {
                     duration={3000}
                     onDismiss={() => dispatch(clearUpsertPostResult())}
                     action={upsertPostResult && upsertPostResult.success ? {
-                      label: 'Done',
-                      // label: 'Undo',
-                      onPress: () => {
-                        /* if (submittedPost) {
-                          dispatch(removePost(submittedPost));
-                          setSubmittedPost(null);
-                        } */
-                      },
+                      label: 'Dismiss',
+                      onPress: () => dispatch(clearUpsertPostResult()),
                     } : undefined}
                   >
                     {upsertPostResult && (
                       upsertPostResult.success
-                        ? 'Post Submitted!'
+                        ? 'Post submitted!'
                         : `Error submitting post: ${upsertPostResult.error}`
                     )}
                   </Snackbar>

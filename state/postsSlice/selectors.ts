@@ -16,14 +16,16 @@ export function selectPostsSortedByMostRecentByUserId(state: RootState, userId: 
     .sort((a, b) => (new Date(b.createdDate) > new Date(a.createdDate) ? 1 : -1));
 }
 
-export function selectCurrentUserFollowingPosts(state: RootState): Post[] {
-  if (!state.users.currentUser) {
+export function selectHomeScreenPosts(state: RootState): Post[] {
+  const { currentUser } = state.users;
+
+  if (!currentUser) {
     return [];
   }
 
-  return state.users.currentUser.followingIds.flatMap(
-    (i) => selectPostsSortedByMostRecentByUserId(state, i),
-  );
+  return selectPosts(state)
+    .filter((p) => p.userId === currentUser.id || currentUser.followingIds.includes(p.userId))
+    .sort((a, b) => (new Date(b.createdDate) > new Date(a.createdDate) ? 1 : -1));
 }
 
 export function selectPostsStatus(state: RootState) {
