@@ -18,13 +18,12 @@ import AuthStack from './stacks/auth';
 import MainStack from './stacks/main';
 import { selectUpsertPostResult } from '../state/postsSlice/selectors';
 import { clearUpsertPostResult } from '../state/postsSlice';
+
 // for undo button
 // import Workout from '../types/shared/Workout';
 // import Post from '../types/shared/Post';
 // import { removePost } from '../state/postsSlice/thunks';
 // import { removeWorkout } from '../state/workoutsSlice/thunks';
-
-
 
 const Stack = createStackNavigator();
 
@@ -43,6 +42,7 @@ export default function Navigator() {
   const [submittedWorkout, setSubmittedWorkout] = useState<Workout | null>(null);
   const [submittedPost, setSubmittedPost] = useState<Post | null>(null);
   */
+
   if (currentUserStatus === 'fetching') {
     return <ActivityIndicator />;
   }
