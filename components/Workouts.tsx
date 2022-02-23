@@ -139,26 +139,6 @@ export default function Workouts(
               </Button>
             </ScrollView>
           </View>
-          <Snackbar
-            visible={!!postsServiceUpsertResult}
-            duration={3000}
-            onDismiss={() => dispatch(clearUpsertPostResult())}
-            action={postsServiceUpsertResult && postsServiceUpsertResult.success ? {
-              label: 'Undo',
-              onPress: () => {
-                if (submittedPost) {
-                  dispatch(removePost(submittedPost));
-                  setSubmittedPost(null);
-                }
-              },
-            } : undefined}
-          >
-            {postsServiceUpsertResult && (
-              postsServiceUpsertResult.success
-                ? 'Post Submitted!'
-                : `Error submitting post: ${postsServiceUpsertResult.error}`
-            )}
-          </Snackbar>
         </>
       );
     }

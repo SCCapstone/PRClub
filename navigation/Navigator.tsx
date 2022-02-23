@@ -37,7 +37,7 @@ export default function Navigator() {
     return <ActivityIndicator />;
   }
 
-  return (
+  return ( 
     <>
       <Stack.Navigator
         screenOptions={{ headerShown: false }}
