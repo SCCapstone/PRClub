@@ -51,7 +51,14 @@ export default function WorkoutPost(
       <View style={tw`flex flex-row`}>
         <View style={tw`flex flex-4`}>
           <Text>{`On ${new Date(post.createdDate).toLocaleString()},`}</Text>
-          <Text>Posted workout:</Text>
+          <Text>
+            @
+            <Text style={tw`font-bold`}>
+              {post.username}
+            </Text>
+            {' '}
+            posted workout:
+          </Text>
         </View>
         <View style={tw`flex flex-1`}>
           {

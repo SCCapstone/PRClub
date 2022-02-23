@@ -7,6 +7,8 @@ import UsersService from '../../services/UsersService';
 import User from '../../types/shared/User';
 import { flushPostsFromStore } from '../postsSlice';
 import { fetchPostsForUser } from '../postsSlice/thunks';
+import { flushPRsFromStore } from '../prsSlice';
+import { fetchPRsForUser } from '../prsSlice/thunks';
 import type { AppDispatch, RootState } from '../store';
 import { flushWorkoutsFromStore } from '../workoutsSlice';
 import { fetchWorkoutsForUser } from '../workoutsSlice/thunks';
@@ -16,6 +18,7 @@ export const loadData = createAsyncThunk<void, string, {dispatch: AppDispatch}>(
   (userId: string, { dispatch }): void => {
     dispatch(fetchWorkoutsForUser(userId));
     dispatch(fetchPostsForUser(userId));
+    dispatch(fetchPRsForUser(userId));
     dispatch(fetchFollowingForUser(userId));
   },
 );
@@ -25,6 +28,7 @@ export const flushData = createAsyncThunk<void, void, {dispatch: AppDispatch}>(
   (...[, { dispatch }]): void => {
     dispatch(flushWorkoutsFromStore());
     dispatch(flushPostsFromStore());
+    dispatch(flushPRsFromStore());
     // flush users in index.ts
   },
 );
@@ -222,6 +226,7 @@ export const fetchFollowingForUser = createAsyncThunk<User[], string, {dispatch:
     following.forEach((f) => {
       dispatch(fetchWorkoutsForUser(f.id));
       dispatch(fetchPostsForUser(f.id));
+      dispatch(fetchPRsForUser(f.id));
     });
 
     return following;

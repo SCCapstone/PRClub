@@ -8,6 +8,7 @@ import tw from 'twrnc';
 import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
 import { selectPostsSortedByMostRecentByUserId } from '../state/postsSlice/selectors';
+import { selectPRsSortedByMostRecentByUserId } from '../state/prsSlice/selectors';
 import { clearUpdateProfileResult } from '../state/userSlice';
 import {
   selectCurrentUser, selectCurrentUserStatus, selectUpdateProfileResult,
@@ -36,6 +37,9 @@ export default function Profile({ user }: { user: User }) {
   );
   const posts = useAppSelector(
     (state) => selectPostsSortedByMostRecentByUserId(state, user.id),
+  );
+  const prs = useAppSelector(
+    (state) => selectPRsSortedByMostRecentByUserId(state, user.id),
   );
   const updateProfileResult = useAppSelector(selectUpdateProfileResult);
 
@@ -170,7 +174,9 @@ export default function Profile({ user }: { user: User }) {
         <Tab.Screen name="Posts">
           {() => <Posts posts={posts} forCurrentUser={forCurrentUser} />}
         </Tab.Screen>
-        <Tab.Screen name="PRs" component={PRs} />
+        <Tab.Screen name="PRs">
+          {() => <PRs prs={prs} forCurrentUser={forCurrentUser} />}
+        </Tab.Screen>
         <Tab.Screen name="Followers">
           {() => <Followers user={user} />}
         </Tab.Screen>

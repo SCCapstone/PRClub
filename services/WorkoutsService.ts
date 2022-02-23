@@ -1,47 +1,66 @@
 import {
-  arrayRemove, arrayUnion, collection,
-  deleteDoc, doc, DocumentData, getDoc,
-  getDocs, query, QueryDocumentSnapshot,
-  setDoc, updateDoc, where,
+  arrayRemove, arrayUnion, deleteDoc, doc, getDoc, setDoc, updateDoc,
 } from '@firebase/firestore';
 import _ from 'lodash';
+import { v4 as uuidv4 } from 'uuid';
 import { USERS_COLLECTION, WORKOUTS_COLLECTION } from '../constants/firestore';
 import { db } from '../firebase';
+import ExerciseSet from '../types/shared/ExerciseSet';
+import PR from '../types/shared/PR';
 import User from '../types/shared/User';
 import Workout from '../types/shared/Workout';
+import { queryCollectionById } from '../utils/firestore';
+
+function calculateTotalVolume(exerciseSets: ExerciseSet[]): number {
+  return _.sumBy(exerciseSets, (set) => (set.weight * set.reps));
+}
 
 export default {
   async fetchWorkoutsForUser(userId: string): Promise<Workout[]> {
-    // fetch user document
     const docSnap = await getDoc(doc(db, USERS_COLLECTION, userId));
     const user = docSnap.data() as User;
-
-    // if the user has workouts, query their workouts and return them
-    if (user.workoutIds.length > 0) {
-      const workouts: Workout[] = [];
-
-      await Promise.all(
-        _.chunk(user.workoutIds, 10).map( // firebase maximum "in" limit
-          async (chunk) => {
-            const q = query(collection(db, WORKOUTS_COLLECTION), where('id', 'in', chunk));
-            const querySnap = await getDocs(q);
-
-            querySnap.forEach((d: QueryDocumentSnapshot<DocumentData>) => {
-              const workout = d.data() as Workout;
-              workouts.push(workout);
-            });
-          },
-        ),
-      );
-
-      return workouts;
-    }
-
-    // otherwise, return an empty array
-    return [];
+    return queryCollectionById(WORKOUTS_COLLECTION, user.workoutIds);
   },
 
-  async upsertWorkout(workout: Workout): Promise<void> {
+  async upsertWorkout(workout: Workout): Promise<PR[]> {
+    // PR calculation algorithm
+    const userWorkouts = await this.fetchWorkoutsForUser(workout.userId);
+    const maxTotalVolumes = _.chain(userWorkouts)
+      .flatMap((userWorkout) => userWorkout.exercises)
+      .map((userExercise) => ({
+        exerciseName: userExercise.name,
+        totalVolume: calculateTotalVolume(userExercise.exerciseSets),
+      }))
+      .groupBy((result) => result.exerciseName)
+      .map((totalVolumes, exerciseName) => ({
+        exerciseName,
+        maxTotalVolume: _.max(totalVolumes.map((v) => v.totalVolume)),
+      }))
+      .filter((
+        o: {exerciseName: string, maxTotalVolume: number | undefined},
+      ): o is { exerciseName: string, maxTotalVolume: number } => !!o.maxTotalVolume)
+      .value();
+
+    const prs: PR[] = [];
+    workout.exercises.forEach((exercise) => {
+      const thisExerciseTotalVolume = calculateTotalVolume(exercise.exerciseSets);
+      const exerciseMaxTotalVolume = maxTotalVolumes
+        .find((i) => i.exerciseName === exercise.name)
+        ?.maxTotalVolume;
+
+      if (exerciseMaxTotalVolume && (thisExerciseTotalVolume > exerciseMaxTotalVolume)) {
+        prs.push({
+          id: uuidv4(),
+          date: workout.createdDate,
+          userId: workout.userId,
+          username: workout.username,
+          workoutId: workout.id,
+          exerciseName: exercise.name,
+          volume: thisExerciseTotalVolume,
+        });
+      }
+    });
+
     // add or update workout
     await setDoc(doc(db, WORKOUTS_COLLECTION, workout.id), workout);
 
@@ -49,6 +68,8 @@ export default {
     await updateDoc(doc(db, USERS_COLLECTION, workout.userId), {
       workoutIds: arrayUnion(workout.id),
     });
+
+    return prs;
   },
 
   async removeWorkout(workout: Workout): Promise<void> {

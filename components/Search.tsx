@@ -7,6 +7,7 @@ import tw from 'twrnc';
 import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
 import { fetchPostsForUser } from '../state/postsSlice/thunks';
+import { fetchPRsForUser } from '../state/prsSlice/thunks';
 import { flushSearch } from '../state/searchSlice';
 import { selectSearchResults, selectSearchStatus } from '../state/searchSlice/selectors';
 import { queryUsers } from '../state/searchSlice/thunks';
@@ -123,6 +124,7 @@ export default function Search() {
           dispatch(setUserBeingViewedInSearch(user));
           dispatch(fetchWorkoutsForUser(user.id));
           dispatch(fetchPostsForUser(user.id));
+          dispatch(fetchPRsForUser(user.id));
           dispatch(fetchFollowersForUser(user.id));
         }}
       />

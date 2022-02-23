@@ -1,11 +1,13 @@
 import React from 'react';
-import { View } from 'react-native';
 import { Text } from 'react-native-paper';
+import PR from '../types/shared/PR';
 
-export default function PRs() {
+// TODO implement full PRs component
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export default function PRs({ prs, forCurrentUser }: {prs: PR[], forCurrentUser: boolean}) {
   return (
-    <View>
-      <Text>PRs Component</Text>
-    </View>
+    <>
+      {prs.map((pr) => <Text key={pr.id}>{JSON.stringify(pr)}</Text>)}
+    </>
   );
 }
