@@ -15,11 +15,14 @@ import { clearUpsertWorkoutResult } from '../state/workoutsSlice';
 import { removeWorkout } from '../state/workoutsSlice/thunks';
 import User from '../types/shared/User';
 import Workout from '../types/shared/Workout';
+import Post from '../types/shared/Post';
 import AuthStack from './stacks/auth';
 import MainStack from './stacks/main';
 import { selectUpdateProfileResult } from '../state/userSlice/selectors';
 import { clearUpdateProfileResult } from '../state/userSlice';
-
+import { selectUpsertPostResult } from '../state/postsSlice/selectors';
+import { clearUpsertPostResult } from '../state/postsSlice';
+import { removePost } from '../state/postsSlice/thunks';
 
 
 const Stack = createStackNavigator();
@@ -34,6 +37,8 @@ export default function Navigator() {
   const unfollowResult = useAppSelector(selectUnfollowResult);
   const [submittedWorkout, setSubmittedWorkout] = useState<Workout | null>(null);
   const updateProfileResult = useAppSelector(selectUpdateProfileResult);
+  const upsertPostResult = useAppSelector(selectUpsertPostResult);
+  const [submittedPost, setSubmittedPost] = useState<Post | null>(null);
 
 
   if (currentUserStatus === 'fetching') {
@@ -102,12 +107,13 @@ export default function Navigator() {
                     duration={3000}
                     onDismiss={() => dispatch(clearUpsertWorkoutResult())}
                     action={upsertWorkoutResult && upsertWorkoutResult.success ? {
-                      label: 'Undo',
+                      label: 'Done',
+                      // label: 'Undo',
                       onPress: () => {
-                        if (submittedWorkout) {
+                        /*if (submittedWorkout) {
                           dispatch(removeWorkout(submittedWorkout));
                           setSubmittedWorkout(null);
-                        }
+                        }*/
                       },
                     } : undefined}
                   >
@@ -161,7 +167,6 @@ export default function Navigator() {
               unfollowResult
               && (
                 <>
-
                   <Snackbar
                     visible={!!unfollowResult && unfollowResult.success}
                     duration={3000}
@@ -189,6 +194,34 @@ export default function Navigator() {
                     style={tw`bg-red-500`}
                   >
                     {`Error unfollowing user: ${unfollowResult.error?.message}`}
+                  </Snackbar>
+                </>
+              )
+            }
+            {
+              upsertPostResult
+              && (
+                <>
+                  <Snackbar
+                    visible={!!upsertPostResult}
+                    duration={3000}
+                    onDismiss={() => dispatch(clearUpsertPostResult())}
+                    action={upsertPostResult && upsertPostResult.success ? {
+                      label: 'Done',
+                      // label: 'Undo',
+                      onPress: () => {
+                        /*if (submittedPost) {
+                          dispatch(removePost(submittedPost));
+                          setSubmittedPost(null);
+                        }*/
+                      },
+                    } : undefined}
+                  >
+                    {upsertPostResult && (
+                      upsertPostResult.success
+                        ? 'Workout Submitted!'
+                        : `Error submitting workout: ${upsertPostResult.error}`
+                    )}
                   </Snackbar>
                 </>
               )
