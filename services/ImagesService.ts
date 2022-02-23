@@ -33,6 +33,7 @@ export default {
       imgPath = path.join(userId, 'posts', postId);
     }
     const storageRef = ref(storage, path.join('images', imgPath));
-    return getDownloadURL(storageRef).then((url) => url);
+    const url = await getDownloadURL(storageRef);
+    return url;
   },
 };

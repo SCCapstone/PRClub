@@ -53,14 +53,12 @@ export default function Profile({ user }: { user: User }) {
   const [newProfilePicture, setNewProfilePicture] = useState<string>(profileUrl);
   const forCurrentUser = currentUser ? (user.id === currentUser.id) : false;
   const isDefaultProfilePic = useAppSelector(selectDefaultProfilePicture);
-  const fetchProfilePicture = async () => {
-    const profilePictureURL = await dispatch(downloadImage({
-      userId: user.id, isProfile: true, postId: '',
-    }));
-    const promiseResult = unwrapResult(profilePictureURL);
-    setProfileUrl(promiseResult.toString());
-  };
-  fetchProfilePicture();
+
+  const downloadProfileImage = dispatch(downloadImage({
+    userId: user.id, isProfile: true, postId: '',
+  }));
+  downloadProfileImage.then((res) => setProfileUrl(res.payload));
+
   const browseImages = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
