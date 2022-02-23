@@ -43,7 +43,6 @@ export default function Navigator() {
   const [submittedWorkout, setSubmittedWorkout] = useState<Workout | null>(null);
   const [submittedPost, setSubmittedPost] = useState<Post | null>(null);
   */
-
   if (currentUserStatus === 'fetching') {
     return <ActivityIndicator />;
   }
