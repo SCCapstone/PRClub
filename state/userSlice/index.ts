@@ -44,9 +44,6 @@ const userSlice = createSlice({
     },
     upsertUsers: usersAdapter.upsertMany,
     flushUsersFromStore: usersAdapter.removeAll,
-    setProfilePicture(state) {
-      state.defaultProfilePicture = false;
-    },
   },
   extraReducers(builder) {
     builder
@@ -243,7 +240,6 @@ export const {
   clearUserBeingViewedInSearch,
   upsertUsers,
   flushUsersFromStore,
-  setProfilePicture,
 } = userSlice.actions;
 
 export default userSlice.reducer;

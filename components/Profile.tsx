@@ -11,9 +11,9 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
 import { selectPostsSortedByMostRecentByUserId } from '../state/postsSlice/selectors';
-import { clearUpdateProfileResult, setProfilePicture } from '../state/userSlice';
+import { clearUpdateProfileResult } from '../state/userSlice';
 import {
-  selectCurrentUser, selectCurrentUserStatus, selectDefaultProfilePicture,
+  selectCurrentUser, selectCurrentUserStatus,
   selectUpdateProfileResult,
 } from '../state/userSlice/selectors';
 import {
@@ -52,7 +52,6 @@ export default function Profile({ user }: { user: User }) {
   const [editingProfile, setEditingProfile] = useState<boolean>(false);
   const [newProfilePicture, setNewProfilePicture] = useState<string>(profileUrl);
   const forCurrentUser = currentUser ? (user.id === currentUser.id) : false;
-  const isDefaultProfilePic = useAppSelector(selectDefaultProfilePicture);
 
   const downloadProfileImage = dispatch(downloadImage({
     userId: user.id, isProfile: true, postId: '',

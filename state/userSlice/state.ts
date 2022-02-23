@@ -22,7 +22,6 @@ interface CurrentUserInitialState {
   followResult: (ServiceCallResult & {user?: User}) | null;
   unfollowResult: (ServiceCallResult & {user?: User}) | null;
   userBeingViewedInSearch: User | null;
-  defaultProfilePicture: boolean;
 }
 
 export const usersAdapter = createEntityAdapter<User>();
@@ -37,5 +36,4 @@ export const initialState = usersAdapter.getInitialState<CurrentUserInitialState
   followResult: null,
   unfollowResult: null,
   userBeingViewedInSearch: null,
-  defaultProfilePicture: true,
 });
