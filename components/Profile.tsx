@@ -71,8 +71,11 @@ export default function Profile({ user }: { user: User }) {
     if (!result.cancelled) {
       setNewProfilePicture(result.uri);
     }
-    imagePickerResult = result;
+    setImagePickerResult(result);
   };
+
+  const defaultProfilePic = <Ionicons name="person-circle" size={100} color="gray" />;
+
   let newimg;
   if (imagePickerResult !== null) { newimg = <Image source={{ uri: newProfilePicture }} style={tw`w-25 h-25 rounded-full`} />; } else { newimg = defaultProfilePic; }
 
