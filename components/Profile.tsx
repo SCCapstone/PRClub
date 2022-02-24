@@ -6,8 +6,6 @@ import {
   ActivityIndicator, Button, Snackbar, Text, TextInput,
 } from 'react-native-paper';
 import tw from 'twrnc';
-import { unwrapResult } from '@reduxjs/toolkit';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
 import { selectPostsSortedByMostRecentByUserId } from '../state/postsSlice/selectors';
@@ -45,16 +43,19 @@ export default function Profile({ user }: { user: User }) {
 
   const updateProfileResult = useAppSelector(selectUpdateProfileResult);
   const [profileUrl, setProfileUrl] = useState<string>('');
+  const [isLoaded, setIsLoaded] = useState<boolean>(false);
+  if (!isLoaded) {
+    const downloadProfileImage = dispatch(downloadImage({
+      userId: user.id, isProfile: true, postId: '',
+    }));
+    downloadProfileImage.then((res) => setProfileUrl(res.payload));
+    setIsLoaded(true);
+  }
   const [newName, setNewName] = useState<string>(user.name);
   const [newUsername, setNewUsername] = useState<string>(user.username);
   const [editingProfile, setEditingProfile] = useState<boolean>(false);
   const [newProfilePicture, setNewProfilePicture] = useState<string>(profileUrl);
   const forCurrentUser = currentUser ? (user.id === currentUser.id) : false;
-
-  const downloadProfileImage = dispatch(downloadImage({
-    userId: user.id, isProfile: true, postId: '',
-  }));
-  downloadProfileImage.then((res) => setProfileUrl(res.payload));
 
   const browseImages = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -68,15 +69,6 @@ export default function Profile({ user }: { user: User }) {
     }
   };
 
-  const defaultProfilePic = <Ionicons name="person-circle" size={100} color="gray" />;
-
-  let newimg;
-  if (newProfilePicture !== null) { newimg = <Image source={{ uri: newProfilePicture }} style={tw`w-25 h-25 rounded-full`} />; } else { newimg = defaultProfilePic; }
-
-  // let img;
-  // if (isDefaultProfilePic) { img = <Image source={{ uri: profileUrl }}
-  // style={tw`w-25 h-25 rounded-full`} />; } else { img = defaultProfilePic; }
-  //
   if (editingProfile) {
     return (
       <>
@@ -91,7 +83,7 @@ export default function Profile({ user }: { user: User }) {
             }}
           />
           <View style={tw`items-center`}>
-            {newimg}
+            <Image source={{ uri: newProfilePicture }} style={tw`w-25 h-25 rounded-full`} />
             <ReactButton
               title="Choose Image"
               onPress={browseImages}
@@ -125,7 +117,7 @@ export default function Profile({ user }: { user: User }) {
                   isProfile: true,
                   postId: '',
                 }));
-                // dispatch(setProfilePicture());
+                setProfileUrl(newProfilePicture);
               }
             }}
             disabled={
@@ -183,7 +175,13 @@ export default function Profile({ user }: { user: User }) {
       </View>
       {
         forCurrentUser
-          ? <EditButton onPress={() => setEditingProfile(true)} />
+          ? (
+            <EditButton onPress={() => {
+              setEditingProfile(true);
+              if (profileUrl !== newProfilePicture) { setNewProfilePicture(profileUrl); }
+            }}
+            />
+          )
           : (
             currentUser.followingIds.includes(user.id)
               ? (
