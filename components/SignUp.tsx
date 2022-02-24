@@ -14,8 +14,6 @@ export default function SignUp() {
   const [password, setPassword] = useState<string | null>(null);
   const [confirmPassword, setConfirmPassword] = useState<string | null>(null);
 
-  const [userId, setUserId] = useState<string>('');
-
   const dispatch = useAppDispatch();
 
   const getConfirmPasswordStyle = () => {
@@ -75,12 +73,11 @@ export default function SignUp() {
             if (!submitIsDisabled) {
               dispatch(userSignUp({
                 name, username, email, password,
-              })).then((res) => setUserId(res.id));
-              dispatch(uploadImage(
+              })).then((res) => dispatch(uploadImage(
                 {
-                  image: profileImgUri, userId, isProfile: true, postId: '',
+                  image: profileImgUri, userId: res.payload.id, isProfile: true, postId: '',
                 },
-              ));
+              )));
             }
           }}
           disabled={submitIsDisabled}
