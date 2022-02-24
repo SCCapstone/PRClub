@@ -33,10 +33,4 @@ export default {
     const url = await getDownloadURL(storageRef);
     return url;
   },
-
-  async downloadDefaultProfileImage() :Promise<string> {
-    const storageRef = ref(storage, 'images/default-profile-pic');
-    const url = await getDownloadURL(storageRef);
-    return url;
-  },
 };

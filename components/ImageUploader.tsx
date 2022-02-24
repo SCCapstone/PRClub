@@ -7,7 +7,7 @@ import { uploadImage, downloadImage } from '../state/imagesSlice/thunks';
 import useAppDispatch from '../hooks/useAppDispatch';
 import User from '../types/shared/User';
 
-export default function ImageUploader({ user }: { user: User }) {
+export default function ImageUploader() {
   const dispatch = useAppDispatch();
   const [image, setImage] = useState<string | null>(null);
   useEffect(() => {
@@ -36,17 +36,14 @@ export default function ImageUploader({ user }: { user: User }) {
           // console.log(result);
           if (!result.cancelled) {
             setImage(result.uri);
-            const img: ImageType = {
-              result,
-              path: '',
-            };
+            console.log(result.uri);
             // const image: ImageType.Image = new ImageType.Image();
-            dispatch(uploadImage({
-              image: img,
-              userId: user.id,
-              isProfile: true,
-              postId: 'test',
-            }));
+            // dispatch(uploadImage({
+            //   image,
+            //   userId: user.id,
+            //   isProfile: true,
+            //   postId: 'test',
+            // }));
           }
         }}
       />

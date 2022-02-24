@@ -33,11 +33,3 @@ export const downloadImage = createAsyncThunk<string, DownloadImageThunkArgs>(
     return image;
   },
 );
-
-export const downloadDefaultProfileImage = createAsyncThunk<string>(
-  'image/downloadDefaultProfileImage',
-  async (): Promise<string> => {
-    const image = await ImagesService.downloadDefaultProfileImage();
-    return image;
-  },
-);

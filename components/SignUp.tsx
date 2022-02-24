@@ -3,8 +3,9 @@ import { View, Image } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
 import tw from 'twrnc';
 import useAppDispatch from '../hooks/useAppDispatch';
-import { downloadDefaultProfileImage, uploadImage } from '../state/imagesSlice/thunks';
+import { uploadImage } from '../state/imagesSlice/thunks';
 import { userSignUp } from '../state/userSlice/thunks';
+import { profileImgUri } from '../constants/profile-img';
 
 export default function SignUp() {
   const [name, setName] = useState<string | null>(null);
@@ -75,13 +76,11 @@ export default function SignUp() {
               dispatch(userSignUp({
                 name, username, email, password,
               })).then((res) => setUserId(res.id));
-              dispatch(downloadDefaultProfileImage())
-                .then((res) => console.log(res.payload));
-              // dispatch(uploadImage(
-              //   {
-              //     image: defaultImgUri, userId, isProfile: true, postId: '',
-              //   },
-              // ));
+              dispatch(uploadImage(
+                {
+                  image: profileImgUri, userId, isProfile: true, postId: '',
+                },
+              ));
             }
           }}
           disabled={submitIsDisabled}
