@@ -111,8 +111,8 @@ export default function Navigator() {
                   >
                     {upsertWorkoutResult && (
                       upsertWorkoutResult.success
-                        ? 'Workout submitted!'
-                        : `Error submitting workout: ${upsertWorkoutResult.error}`
+                        ? 'Saved workout!'
+                        : `Error saving workout: ${upsertWorkoutResult.error}`
                     )}
                   </Snackbar>
                 </>

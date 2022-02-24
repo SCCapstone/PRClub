@@ -22,8 +22,6 @@ import { ExerciseInput } from '../types/validation/ExerciseInput';
 import { ExerciseSetInput } from '../types/validation/ExerciseSetInput';
 import { WorkoutInput, WorkoutInputSchema } from '../types/validation/WorkoutInput';
 import DeleteButton from './DeleteButton';
-// import { selectUpsertWorkoutResult,
-// selectWorkoutsStatus } from '../state/workoutsSlice/selectors';
 
 export default function WorkoutForm({
   workoutToEdit = undefined,
@@ -38,9 +36,6 @@ export default function WorkoutForm({
   const currentUser: User | null = useAppSelector(selectCurrentUser);
 
   const dispatch = useAppDispatch();
-  // const workoutsStatus = useAppSelector(selectWorkoutsStatus);
-  // const upsertWorkoutResult = useAppSelector(selectUpsertWorkoutResult);
-  // const [submittedWorkout, setSubmittedWorkout] = useState<Workout | null>(null);
 
   const initialValues: WorkoutInput = {
     name: workoutToEdit?.name || '',
@@ -285,7 +280,7 @@ export default function WorkoutForm({
                 )
                 || (workoutToEdit && _.isEqual(initialValues, formikProps.values))}
             >
-              {`${workoutToEdit ? 'save' : 'submit'} workout`}
+              save workout
             </Button>
           </View>
         )}
