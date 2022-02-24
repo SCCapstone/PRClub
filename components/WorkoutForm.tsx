@@ -14,13 +14,13 @@ import useAppSelector from '../hooks/useAppSelector';
 import { selectExerciseInfos, selectExericseInfosStatus } from '../state/exerciseInfosSlice/selectors';
 import { selectCurrentUser } from '../state/userSlice/selectors';
 import { upsertWorkout } from '../state/workoutsSlice/thunks';
-import WgerExerciseInfo from '../types/services/WgerExerciseInfo';
-import User from '../types/shared/User';
-import Workout from '../types/shared/Workout';
-import { SliceStatus } from '../types/state/SliceStatus';
-import { ExerciseInput } from '../types/validation/ExerciseInput';
-import { ExerciseSetInput } from '../types/validation/ExerciseSetInput';
-import { WorkoutInput, WorkoutInputSchema } from '../types/validation/WorkoutInput';
+import WgerExerciseInfo from '../models/services/WgerExerciseInfo';
+import User from '../models/firestore/User';
+import Workout from '../models/firestore/Workout';
+import { SliceStatus } from '../models/state/SliceStatus';
+import { ExerciseInput } from '../models/validation/ExerciseInput';
+import { ExerciseSetInput } from '../models/validation/ExerciseSetInput';
+import { WorkoutInput, WorkoutInputSchema } from '../models/validation/WorkoutInput';
 import DeleteButton from './DeleteButton';
 
 export default function WorkoutForm({

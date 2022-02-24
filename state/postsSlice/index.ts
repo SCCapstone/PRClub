@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import Post from '../../types/shared/Post';
+import Post from '../../models/firestore/Post';
 import { initialState, postsAdapter } from './state';
 import { fetchPostsForUser, removePost, upsertPost } from './thunks';
 

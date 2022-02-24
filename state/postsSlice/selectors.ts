@@ -1,4 +1,4 @@
-import Post from '../../types/shared/Post';
+import Post from '../../models/firestore/Post';
 import { RootState } from '../store';
 import { postsAdapter } from './state';
 

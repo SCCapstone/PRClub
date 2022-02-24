@@ -4,7 +4,7 @@ import { Button, Text } from 'react-native-paper';
 import tw from 'twrnc';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import useAppDispatch from '../hooks/useAppDispatch';
-import Post from '../types/shared/Post';
+import Post from '../models/firestore/Post';
 import { removePost } from '../state/postsSlice/thunks';
 import useAppSelector from '../hooks/useAppSelector';
 import { selectWorkoutById } from '../state/workoutsSlice/selectors';

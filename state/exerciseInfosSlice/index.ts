@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import WgerExerciseInfo from '../../types/services/WgerExerciseInfo';
+import WgerExerciseInfo from '../../models/services/WgerExerciseInfo';
 import { exerciseInfosAdapter, initialState } from './state';
 import { fetchExerciseInfos, syncExerciseInfos } from './thunks';
 

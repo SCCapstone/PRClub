@@ -3,7 +3,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import _ from 'lodash';
 import { EXERCISE_INFOS_KEY } from '../../constants/async-storage';
 import WgerService from '../../services/WgerService';
-import WgerExerciseInfo from '../../types/services/WgerExerciseInfo';
+import WgerExerciseInfo from '../../models/services/WgerExerciseInfo';
 
 export const fetchExerciseInfos = createAsyncThunk<WgerExerciseInfo[], void>(
   'exerciseInfos/fetchExerciseInfos',

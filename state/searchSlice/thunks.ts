@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import UsersService from '../../services/UsersService';
-import User from '../../types/shared/User';
+import User from '../../models/firestore/User';
 import type { AppDispatch, RootState } from '../store';
 import { upsertUsers } from '../userSlice';
 

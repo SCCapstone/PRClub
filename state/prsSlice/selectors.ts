@@ -1,5 +1,5 @@
-import PR from '../../types/shared/PR';
-import { SliceStatus } from '../../types/state/SliceStatus';
+import PR from '../../models/firestore/PR';
+import { SliceStatus } from '../../models/state/SliceStatus';
 import { RootState } from '../store';
 import { prsAdapter } from './state';
 

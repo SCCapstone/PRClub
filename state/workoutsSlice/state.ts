@@ -1,6 +1,6 @@
 import { createEntityAdapter, SerializedError } from '@reduxjs/toolkit';
-import { SliceStatus } from '../../types/state/SliceStatus';
-import Workout from '../../types/shared/Workout';
+import { SliceStatus } from '../../models/state/SliceStatus';
+import Workout from '../../models/firestore/Workout';
 
 interface WorkoutsInitialState {
   status: SliceStatus | 'callingService'

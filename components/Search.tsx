@@ -15,7 +15,7 @@ import { clearUserBeingViewedInSearch, setUserBeingViewedInSearch } from '../sta
 import { selectUserBeingViewedInSearch } from '../state/userSlice/selectors';
 import { fetchFollowersForUser } from '../state/userSlice/thunks';
 import { fetchWorkoutsForUser } from '../state/workoutsSlice/thunks';
-import User from '../types/shared/User';
+import User from '../models/firestore/User';
 import BackButton from './BackButton';
 import CenteredView from './CenteredView';
 import Profile from './Profile';

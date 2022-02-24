@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import User from '../../types/shared/User';
+import User from '../../models/firestore/User';
 import { initialState, searchAdapter } from './state';
 import { queryUsers } from './thunks';
 

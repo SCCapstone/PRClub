@@ -4,8 +4,8 @@ import {
 import _ from 'lodash';
 import { PRS_COLLECTION, USERS_COLLECTION } from '../constants/firestore';
 import { db } from '../firebase';
-import PR from '../types/shared/PR';
-import User from '../types/shared/User';
+import PR from '../models/firestore/PR';
+import User from '../models/firestore/User';
 import { queryCollectionById } from '../utils/firestore';
 
 export default {

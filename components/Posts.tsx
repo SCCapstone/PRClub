@@ -4,7 +4,7 @@ import { ActivityIndicator, Text } from 'react-native-paper';
 import tw from 'twrnc';
 import useAppSelector from '../hooks/useAppSelector';
 import { selectPostsStatus } from '../state/postsSlice/selectors';
-import Post from '../types/shared/Post';
+import Post from '../models/firestore/Post';
 import CenteredView from './CenteredView';
 import PRPost from './PRPost';
 import WorkoutPost from './WorkoutPost';

@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import PostsService from '../../services/PostsService';
-import Post from '../../types/shared/Post';
+import Post from '../../models/firestore/Post';
 
 export const fetchPostsForUser = createAsyncThunk<Post[], string>(
   'posts/fetchPostsForUser',

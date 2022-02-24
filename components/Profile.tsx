@@ -17,7 +17,7 @@ import {
   followUser, unfollowUser, updateName, updateUsername,
 } from '../state/userSlice/thunks';
 import { selectWorkoutsSortedByMostRecentByUserId } from '../state/workoutsSlice/selectors';
-import User from '../types/shared/User';
+import User from '../models/firestore/User';
 import BackButton from './BackButton';
 import EditButton from './EditButton';
 import Followers from './Followers';

@@ -3,8 +3,8 @@ import {
 } from '@firebase/firestore';
 import { POSTS_COLLECTION, USERS_COLLECTION } from '../constants/firestore';
 import { db } from '../firebase';
-import Post from '../types/shared/Post';
-import User from '../types/shared/User';
+import Post from '../models/firestore/Post';
+import User from '../models/firestore/User';
 import { queryCollectionById } from '../utils/firestore';
 
 export default {

@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import PR from '../../types/shared/PR';
+import PR from '../../models/firestore/PR';
 import { initialState, prsAdapter } from './state';
 import {
   fetchPRsForUser, removePR, removePRs, upsertPRs,

@@ -17,8 +17,8 @@ import { upsertPost } from '../state/postsSlice/thunks';
 import { clearUpsertPRResult } from '../state/prsSlice';
 import { selectPRsStatus } from '../state/prsSlice/selectors';
 import { removePR } from '../state/prsSlice/thunks';
-import Post from '../types/shared/Post';
-import PR from '../types/shared/PR';
+import Post from '../models/firestore/Post';
+import PR from '../models/firestore/PR';
 import BackButton from './BackButton';
 import CenteredView from './CenteredView';
 

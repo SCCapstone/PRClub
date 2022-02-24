@@ -5,10 +5,10 @@ import _ from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 import { USERS_COLLECTION, WORKOUTS_COLLECTION } from '../constants/firestore';
 import { db } from '../firebase';
-import ExerciseSet from '../types/shared/ExerciseSet';
-import PR from '../types/shared/PR';
-import User from '../types/shared/User';
-import Workout from '../types/shared/Workout';
+import ExerciseSet from '../models/firestore/ExerciseSet';
+import PR from '../models/firestore/PR';
+import User from '../models/firestore/User';
+import Workout from '../models/firestore/Workout';
 import { queryCollectionById } from '../utils/firestore';
 import PRsService from './PRsService';
 

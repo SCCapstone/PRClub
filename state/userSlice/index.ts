@@ -3,7 +3,7 @@ import { NextOrObserver, User as FirebaseUser } from '@firebase/auth';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import _ from 'lodash';
 import AuthService from '../../services/AuthService';
-import User from '../../types/shared/User';
+import User from '../../models/firestore/User';
 import { initialState, usersAdapter } from './state';
 import {
   fetchCurrentUserFromAsyncStorage, fetchFollowersForUser, fetchFollowingForUser, flushData,

@@ -4,7 +4,7 @@ import _ from 'lodash';
 import { CURRENT_USER_KEY } from '../../constants/async-storage';
 import AuthService from '../../services/AuthService';
 import UsersService from '../../services/UsersService';
-import User from '../../types/shared/User';
+import User from '../../models/firestore/User';
 import { flushPostsFromStore } from '../postsSlice';
 import { fetchPostsForUser } from '../postsSlice/thunks';
 import { flushPRsFromStore } from '../prsSlice';

@@ -6,7 +6,7 @@ import {
 import _ from 'lodash';
 import { USERS_COLLECTION } from '../constants/firestore';
 import { db } from '../firebase';
-import User from '../types/shared/User';
+import User from '../models/firestore/User';
 
 async function checkUserExists(userDocRef: DocumentReference<DocumentData>): Promise<void> {
   if (!(await getDoc(userDocRef)).exists()) {

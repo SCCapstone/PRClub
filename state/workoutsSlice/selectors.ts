@@ -1,4 +1,4 @@
-import Workout from '../../types/shared/Workout';
+import Workout from '../../models/firestore/Workout';
 import { RootState } from '../store';
 import { workoutsAdapter } from './state';
 

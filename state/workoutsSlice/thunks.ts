@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import WorkoutsService from '../../services/WorkoutsService';
-import Workout from '../../types/shared/Workout';
+import Workout from '../../models/firestore/Workout';
 import { removePRs, upsertPRs } from '../prsSlice/thunks';
 import type { AppDispatch } from '../store';
 

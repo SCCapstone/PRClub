@@ -16,7 +16,7 @@ import {
 } from '../state/userSlice/selectors';
 import { clearUpsertWorkoutResult } from '../state/workoutsSlice';
 import { selectUpsertWorkoutResult } from '../state/workoutsSlice/selectors';
-import User from '../types/shared/User';
+import User from '../models/firestore/User';
 import AuthStack from './stacks/auth';
 import MainStack from './stacks/main';
 

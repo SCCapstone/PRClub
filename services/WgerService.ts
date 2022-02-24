@@ -1,8 +1,8 @@
 import axios, { AxiosResponse } from 'axios';
 import { camelizeKeys } from 'humps';
 import _ from 'lodash';
-import WgerExerciseInfo from '../types/services/WgerExerciseInfo';
-import WgerExerciseInfoResponse from '../types/services/WgerExerciseInfoResponse';
+import WgerExerciseInfo from '../models/services/WgerExerciseInfo';
+import WgerExerciseInfoResponse from '../models/services/WgerExerciseInfoResponse';
 
 // initialize and configure Axios client for wger.de API
 const client = axios.create({

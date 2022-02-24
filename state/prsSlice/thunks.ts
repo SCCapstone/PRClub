@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import PRsService from '../../services/PRsService';
-import PR from '../../types/shared/PR';
+import PR from '../../models/firestore/PR';
 
 export const fetchPRsForUser = createAsyncThunk<PR[], string>(
   'prs/fetchPRsForUser',

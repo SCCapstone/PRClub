@@ -8,7 +8,7 @@ import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
 import { removePost } from '../state/postsSlice/thunks';
 import { selectWorkoutById } from '../state/workoutsSlice/selectors';
-import Post from '../types/shared/Post';
+import Post from '../models/firestore/Post';
 import BackButton from './BackButton';
 import WorkoutItem from './WorkoutItem';
 

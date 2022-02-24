@@ -1,7 +1,7 @@
 import { createEntityAdapter } from '@reduxjs/toolkit';
-import PR from '../../types/shared/PR';
-import { ServiceCallResult } from '../../types/state/ServiceCallResult';
-import { SliceStatus } from '../../types/state/SliceStatus';
+import PR from '../../models/firestore/PR';
+import { ServiceCallResult } from '../../models/state/ServiceCallResult';
+import { SliceStatus } from '../../models/state/SliceStatus';
 
 interface PRsInitialState {
   status: SliceStatus
