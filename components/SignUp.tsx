@@ -5,7 +5,7 @@ import tw from 'twrnc';
 import useAppDispatch from '../hooks/useAppDispatch';
 import { uploadImage } from '../state/imagesSlice/thunks';
 import { userSignUp } from '../state/userSlice/thunks';
-import { profileImgUri } from '../constants/profile-img';
+import { PROFILE_IMG_URI } from '../constants/profile';
 
 export default function SignUp() {
   const [name, setName] = useState<string | null>(null);
@@ -75,7 +75,7 @@ export default function SignUp() {
                 name, username, email, password,
               })).then((res) => dispatch(uploadImage(
                 {
-                  image: profileImgUri, userId: res.payload.id, isProfile: true, postId: '',
+                  image: PROFILE_IMG_URI, userId: res.payload.id, isProfile: true, postId: '',
                 },
               )));
             }
