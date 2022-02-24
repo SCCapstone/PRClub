@@ -19,3 +19,5 @@ web-build/
 
 cypress/screenshots/
 cypress/videos/
+
+bugs.txt

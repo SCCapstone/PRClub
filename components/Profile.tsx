@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import { Button as ReactButton, Image, View } from 'react-native';
 import {
-  ActivityIndicator, Button, Snackbar, Text, TextInput,
+  ActivityIndicator, Button, Text, TextInput,
 } from 'react-native-paper';
 import tw from 'twrnc';
 import useAppDispatch from '../hooks/useAppDispatch';
@@ -12,7 +12,6 @@ import { selectPostsSortedByMostRecentByUserId } from '../state/postsSlice/selec
 import { clearUpdateProfileResult } from '../state/userSlice';
 import {
   selectCurrentUser, selectCurrentUserStatus,
-  selectUpdateProfileResult,
 } from '../state/userSlice/selectors';
 import {
   followUser, unfollowUser, updateName, updateUsername,
@@ -41,7 +40,6 @@ export default function Profile({ user }: { user: User }) {
     (state) => selectPostsSortedByMostRecentByUserId(state, user.id),
   );
 
-  const updateProfileResult = useAppSelector(selectUpdateProfileResult);
   const [profileUrl, setProfileUrl] = useState<string>('');
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   if (!isLoaded) {
@@ -138,21 +136,6 @@ export default function Profile({ user }: { user: User }) {
             }
           </Button>
         </View>
-        <Snackbar
-          visible={!!updateProfileResult}
-          duration={3000}
-          onDismiss={() => dispatch(clearUpdateProfileResult())}
-          style={updateProfileResult && updateProfileResult.error ? tw`bg-red-500` : {}}
-        >
-          {
-            updateProfileResult
-            && (
-              updateProfileResult.error
-                ? `Error updating profile: ${updateProfileResult.error.message}`
-                : 'Profile updated successfully!'
-            )
-          }
-        </Snackbar>
       </>
     );
   }
