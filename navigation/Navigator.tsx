@@ -7,6 +7,8 @@ import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
 import { clearUpsertPostResult } from '../state/postsSlice';
 import { selectUpsertPostResult } from '../state/postsSlice/selectors';
+import { clearUpsertPRResult } from '../state/prsSlice';
+import { selectUpsertPRResult } from '../state/prsSlice/selectors';
 import { clearFollowResult, clearUnfollowResult, clearUpdateProfileResult } from '../state/userSlice';
 import {
   selectCurrentUser, selectCurrentUserStatus, selectFollowResult,
@@ -30,6 +32,7 @@ export default function Navigator() {
   const unfollowResult = useAppSelector(selectUnfollowResult);
   const updateProfileResult = useAppSelector(selectUpdateProfileResult);
   const upsertPostResult = useAppSelector(selectUpsertPostResult);
+  const upsertPRResult = useAppSelector(selectUpsertPRResult);
 
   if (currentUserStatus === 'fetching') {
     return <ActivityIndicator />;
@@ -114,6 +117,27 @@ export default function Navigator() {
                   </Snackbar>
                 </>
               )
+            }
+            {
+              upsertPRResult
+              && upsertPRResult.numberPRsUpserted
+              && upsertPRResult.numberPRsUpserted > 0
+                ? (
+                  <>
+                    <Snackbar
+                      visible={!!upsertPRResult && upsertPRResult.success}
+                      duration={3000}
+                      onDismiss={() => dispatch(clearUpsertPRResult())}
+                      action={{
+                        label: 'Dismiss',
+                        onPress: () => dispatch(clearUpsertPRResult()),
+                      }}
+                    >
+                      {`Just earned ${upsertPRResult.numberPRsUpserted} PR${upsertPRResult.numberPRsUpserted > 1 ? 's' : ''}!`}
+                    </Snackbar>
+                  </>
+                )
+                : <></>
             }
             {
               followResult

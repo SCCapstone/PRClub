@@ -1,5 +1,4 @@
 import React from 'react';
-import { View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { ActivityIndicator, Text } from 'react-native-paper';
 import tw from 'twrnc';
@@ -27,15 +26,11 @@ export default function Posts(
     return (
       <ScrollView>
         {posts.map((p) => {
-          if (p.kind === 'workout') {
-            return <WorkoutPost post={p} key={p.id} forCurrentUser={forCurrentUser} />;
-          }
-
-          if (p.kind === 'pr') {
+          if (p.prId) {
             return <PRPost post={p} key={p.id} forCurrentUser={forCurrentUser} />;
           }
 
-          return <View key={p.id} />;
+          return <WorkoutPost post={p} key={p.id} forCurrentUser={forCurrentUser} />;
         })}
       </ScrollView>
     );

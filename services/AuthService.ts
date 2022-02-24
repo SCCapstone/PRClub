@@ -51,6 +51,8 @@ export default {
       prIds: [],
       followerIds: [],
       followingIds: [],
+      likedPostIds: [],
+      commentIds: [],
     };
     await setDoc(doc(db, USERS_COLLECTION, user.id), user);
 

@@ -22,3 +22,7 @@ export function selectPRsSortedByMostRecentByUserId(
 export function selectPRsStatus(state: RootState): SliceStatus {
   return state.prs.status;
 }
+
+export function selectUpsertPRResult(state: RootState) {
+  return state.prs.upsertPRResult;
+}

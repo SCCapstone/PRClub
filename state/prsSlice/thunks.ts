@@ -7,10 +7,10 @@ export const fetchPRsForUser = createAsyncThunk<PR[], string>(
   async (userId: string): Promise<PR[]> => PRsService.fetchPRsForUser(userId),
 );
 
-export const upsertPRs = createAsyncThunk<PR[], {userId: string, prs: PR[]}>(
+export const upsertPRs = createAsyncThunk<PR[], PR[]>(
   'prs/upsertPRs',
-  async ({ userId, prs }: {userId: string, prs: PR[]}): Promise<PR[]> => {
-    await PRsService.upsertPRs(userId, prs);
+  async (prs: PR[]): Promise<PR[]> => {
+    await PRsService.upsertPRs(prs);
     return prs;
   },
 );
@@ -20,5 +20,13 @@ export const removePR = createAsyncThunk<PR, PR>(
   async (pr: PR): Promise<PR> => {
     await PRsService.removePR(pr);
     return pr;
+  },
+);
+
+export const removePRs = createAsyncThunk<PR[], PR[]>(
+  'prs/removePRs',
+  async (prs: PR[]): Promise<PR[]> => {
+    await PRsService.removePRs(prs);
+    return prs;
   },
 );

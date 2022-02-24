@@ -1,18 +1,18 @@
 import { OptionType, Select } from '@mobile-reality/react-native-select-pro';
 import { Field, FieldArray, Formik } from 'formik';
 import _ from 'lodash';
-import React, { useState } from 'react';
+import React from 'react';
 import { View } from 'react-native';
 import 'react-native-get-random-values';
 import {
-  Button, Text, TextInput, ActivityIndicator,
+  ActivityIndicator, Button, Text, TextInput,
 } from 'react-native-paper';
 import tw from 'twrnc';
 import { v4 as uuidv4 } from 'uuid';
 import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
-import { selectCurrentUser } from '../state/userSlice/selectors';
 import { selectExerciseInfos, selectExericseInfosStatus } from '../state/exerciseInfosSlice/selectors';
+import { selectCurrentUser } from '../state/userSlice/selectors';
 import { upsertWorkout } from '../state/workoutsSlice/thunks';
 import WgerExerciseInfo from '../types/services/WgerExerciseInfo';
 import User from '../types/shared/User';

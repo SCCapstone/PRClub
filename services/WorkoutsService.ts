@@ -10,6 +10,7 @@ import PR from '../types/shared/PR';
 import User from '../types/shared/User';
 import Workout from '../types/shared/Workout';
 import { queryCollectionById } from '../utils/firestore';
+import PRsService from './PRsService';
 
 function calculateTotalVolume(exerciseSets: ExerciseSet[]): number {
   return _.sumBy(exerciseSets, (set) => (set.weight * set.reps));
@@ -23,7 +24,6 @@ export default {
   },
 
   async upsertWorkout(workout: Workout): Promise<PR[]> {
-    // PR calculation algorithm
     const userWorkouts = await this.fetchWorkoutsForUser(workout.userId);
     const maxTotalVolumes = _.chain(userWorkouts)
       .flatMap((userWorkout) => userWorkout.exercises)
@@ -41,6 +41,7 @@ export default {
       ): o is { exerciseName: string, maxTotalVolume: number } => !!o.maxTotalVolume)
       .value();
 
+    const userPRs = await PRsService.fetchPRsForUser(workout.userId);
     const prs: PR[] = [];
     workout.exercises.forEach((exercise) => {
       const thisExerciseTotalVolume = calculateTotalVolume(exercise.exerciseSets);
@@ -48,16 +49,28 @@ export default {
         .find((i) => i.exerciseName === exercise.name)
         ?.maxTotalVolume;
 
-      if (exerciseMaxTotalVolume && (thisExerciseTotalVolume > exerciseMaxTotalVolume)) {
-        prs.push({
-          id: uuidv4(),
-          date: workout.createdDate,
-          userId: workout.userId,
-          username: workout.username,
-          workoutId: workout.id,
-          exerciseName: exercise.name,
-          volume: thisExerciseTotalVolume,
-        });
+      const existingPR = userPRs
+        .find((p) => p.workoutId === workout.id && p.exerciseName === exercise.name);
+
+      if (!exerciseMaxTotalVolume
+        || (exerciseMaxTotalVolume && (thisExerciseTotalVolume > exerciseMaxTotalVolume))) {
+        prs.push(
+          existingPR
+            ? {
+              ...existingPR,
+              date: workout.modifiedDate || workout.createdDate,
+              volume: thisExerciseTotalVolume,
+            }
+            : {
+              id: uuidv4(),
+              date: workout.createdDate,
+              userId: workout.userId,
+              username: workout.username,
+              workoutId: workout.id,
+              exerciseName: exercise.name,
+              volume: thisExerciseTotalVolume,
+            },
+        );
       }
     });
 
@@ -72,13 +85,18 @@ export default {
     return prs;
   },
 
-  async removeWorkout(workout: Workout): Promise<void> {
-  // remove post
+  async removeWorkout(workout: Workout): Promise<PR[]> {
+    const userPRs = await PRsService.fetchPRsForUser(workout.userId);
+    const prsToDelete = userPRs.filter((p) => p.workoutId === workout.id);
+
+    // remove post
     await deleteDoc(doc(db, WORKOUTS_COLLECTION, workout.id));
 
     // remove postId from user's postIds
     await updateDoc(doc(db, USERS_COLLECTION, workout.userId), {
       workoutIds: arrayRemove(workout.id),
     });
+
+    return prsToDelete;
   },
 };

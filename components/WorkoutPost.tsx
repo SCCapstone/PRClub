@@ -21,7 +21,7 @@ export default function WorkoutPost(
     return <></>;
   }
 
-  const workout = useAppSelector((state) => selectWorkoutById(state, post.workoutId!));
+  const workout = useAppSelector((state) => selectWorkoutById(state, post.workoutId));
 
   const [viewingDetails, setViewingDetails] = useState<boolean>(false);
 

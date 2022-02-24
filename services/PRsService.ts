@@ -1,6 +1,7 @@
 import {
   arrayRemove, arrayUnion, deleteDoc, doc, getDoc, setDoc, updateDoc,
 } from '@firebase/firestore';
+import _ from 'lodash';
 import { PRS_COLLECTION, USERS_COLLECTION } from '../constants/firestore';
 import { db } from '../firebase';
 import PR from '../types/shared/PR';
@@ -14,7 +15,7 @@ export default {
     return queryCollectionById(PRS_COLLECTION, user.prIds);
   },
 
-  async upsertPRs(userId: string, prs: PR[]): Promise<void> {
+  async upsertPRs(prs: PR[]): Promise<void> {
     await Promise.all(
       prs.map(
         async (pr) => {
@@ -23,9 +24,17 @@ export default {
       ),
     );
 
-    await updateDoc(doc(db, USERS_COLLECTION, userId), {
-      prIds: arrayUnion(...prs.map((p) => p.id)),
-    });
+    const prsByUserId = _.groupBy(prs, (pr) => pr.userId);
+
+    await Promise.all(
+      Object.keys(prsByUserId).map(
+        async (userId) => {
+          await updateDoc(doc(db, USERS_COLLECTION, userId), {
+            prIds: arrayUnion(...prsByUserId[userId].map((p) => p.id)),
+          });
+        },
+      ),
+    );
   },
 
   async removePR(pr: PR): Promise<void> {
@@ -34,5 +43,27 @@ export default {
     await updateDoc(doc(db, USERS_COLLECTION, pr.userId), {
       postIds: arrayRemove(pr.id),
     });
+  },
+
+  async removePRs(prs: PR[]): Promise<void> {
+    await Promise.all(
+      prs.map(
+        async (pr) => {
+          await deleteDoc(doc(db, PRS_COLLECTION, pr.id));
+        },
+      ),
+    );
+
+    const prsByUserId = _.groupBy(prs, (pr) => pr.userId);
+
+    await Promise.all(
+      Object.keys(prsByUserId).map(
+        async (userId) => {
+          await updateDoc(doc(db, USERS_COLLECTION, userId), {
+            prIds: arrayRemove(...prsByUserId[userId].map((p) => p.id)),
+          });
+        },
+      ),
+    );
   },
 };

@@ -5,6 +5,7 @@ import {
 } from 'react-native-paper';
 import tw from 'twrnc';
 import { v4 as uuidv4 } from 'uuid';
+import { POST_CHARACTER_LIMIT } from '../constants/posts';
 import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
 import { clearUpsertPostResult } from '../state/postsSlice';
@@ -17,8 +18,6 @@ import Workout from '../types/shared/Workout';
 import BackButton from './BackButton';
 import WorkoutForm from './WorkoutForm';
 import WorkoutItem from './WorkoutItem';
-
-const POST_CHARACTER_LIMIT = 100;
 
 export default function Workouts(
   { workouts, forCurrentUser }: {workouts: Workout[], forCurrentUser: boolean},
@@ -34,8 +33,6 @@ export default function Workouts(
 
   const [workoutToPost, setWorkoutToPost] = useState<Workout | null>(null);
   const [postCaption, setPostCaption] = useState<string>('');
-
-  const [submittedPost, setSubmittedPost] = useState<Post | null>(null);
 
   if (workoutsStatus === 'idle') {
     return (
@@ -113,18 +110,16 @@ export default function Workouts(
                 mode="contained"
                 onPress={() => {
                   const post: Post = {
-                    kind: 'workout',
                     id: uuidv4(),
                     userId: workoutToPost.userId,
                     username: workoutToPost.username,
                     workoutId: workoutToPost.id,
                     createdDate: new Date().toString(),
                     caption: postCaption,
+                    commentIds: [],
                   };
 
                   dispatch(upsertPost(post));
-
-                  setSubmittedPost(post);
 
                   setPostCaption('');
                 }}
