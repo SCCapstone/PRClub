@@ -13,6 +13,13 @@ import type { AppDispatch, RootState } from '../store';
 import { flushWorkoutsFromStore } from '../workoutsSlice';
 import { fetchWorkoutsForUser } from '../workoutsSlice/thunks';
 
+export const removeCachedUser = createAsyncThunk<void, void>(
+  'users/removeCachedUser',
+  async () => {
+    await AsyncStorage.removeItem(CURRENT_USER_KEY);
+  },
+);
+
 export const loadData = createAsyncThunk<void, string, {dispatch: AppDispatch}>(
   'users/loadData',
   (userId: string, { dispatch }): void => {
