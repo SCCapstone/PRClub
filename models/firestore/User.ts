@@ -8,4 +8,6 @@ export default interface User {
   workoutIds: string[];
   postIds: string[];
   prIds: string[];
+  commentIds: string[];
+  likedPostIds: string[];
 }

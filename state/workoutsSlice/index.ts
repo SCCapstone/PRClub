@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import Workout from '../../types/shared/Workout';
+import Workout from '../../models/firestore/Workout';
 import { initialState, workoutsAdapter } from './state';
 import { fetchWorkoutsForUser, removeWorkout, upsertWorkout } from './thunks';
 

@@ -1,5 +1,5 @@
 import { SerializedError } from '@reduxjs/toolkit';
-import User from '../../types/shared/User';
+import User from '../../models/firestore/User';
 import { RootState } from '../store';
 import { CurrentUserStatus } from './state';
 

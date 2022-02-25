@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import { Button, Menu, Text } from 'react-native-paper';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import tw from 'twrnc';
-import Workout from '../types/shared/Workout';
+import Workout from '../models/firestore/Workout';
 
 export default function WorkoutItem({
   workout,

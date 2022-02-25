@@ -1,5 +1,5 @@
-import PR from '../../types/shared/PR';
-import { SliceStatus } from '../../types/state/SliceStatus';
+import PR from '../../models/firestore/PR';
+import { SliceStatus } from '../../models/state/SliceStatus';
 import { RootState } from '../store';
 import { prsAdapter } from './state';
 
@@ -21,4 +21,8 @@ export function selectPRsSortedByMostRecentByUserId(
 
 export function selectPRsStatus(state: RootState): SliceStatus {
   return state.prs.status;
+}
+
+export function selectUpsertPRResult(state: RootState) {
+  return state.prs.upsertPRResult;
 }
