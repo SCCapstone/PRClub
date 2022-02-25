@@ -1,3 +1,4 @@
+/* eslint-disable import/no-named-as-default-member */
 import React, { useState } from 'react';
 import { View } from 'react-native';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
