@@ -64,15 +64,17 @@ export default {
   },
 
   async unlikePost(post: Post, userId: string): Promise<void> {
-    // add like to post and increment post's like counter
-    await updateDoc(doc(db, POSTS_COLLECTION, post.id), {
-      likedByIds: arrayRemove(userId),
-      likes: increment(-1),
-    });
+    if (post.likes > 0) {
+      // add like to post and increment post's like counter
+      await updateDoc(doc(db, POSTS_COLLECTION, post.id), {
+        likedByIds: arrayRemove(userId),
+        likes: increment(-1),
+      });
 
-    // update user with like
-    await updateDoc(doc(db, USERS_COLLECTION, userId), {
-      likedPostIds: arrayRemove(post.id),
-    });
+      // update user with like
+      await updateDoc(doc(db, USERS_COLLECTION, userId), {
+        likedPostIds: arrayRemove(post.id),
+      });
+    }
   },
 };
