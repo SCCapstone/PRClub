@@ -1,7 +1,7 @@
 import { createEntityAdapter } from '@reduxjs/toolkit';
-import Post from '../../types/shared/Post';
-import { ServiceCallResult } from '../../types/state/ServiceCallResult';
-import { SliceStatus } from '../../types/state/SliceStatus';
+import Post from '../../models/firestore/Post';
+import { ServiceCallResult } from '../../models/state/ServiceCallResult';
+import { SliceStatus } from '../../models/state/SliceStatus';
 
 interface PostsInitialState {
   status: SliceStatus | 'callingService',

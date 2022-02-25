@@ -8,7 +8,7 @@ import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
 import { removePost } from '../state/postsSlice/thunks';
 import { selectWorkoutById } from '../state/workoutsSlice/selectors';
-import Post from '../types/shared/Post';
+import Post from '../models/firestore/Post';
 import BackButton from './BackButton';
 import WorkoutItem from './WorkoutItem';
 
@@ -21,7 +21,7 @@ export default function WorkoutPost(
     return <></>;
   }
 
-  const workout = useAppSelector((state) => selectWorkoutById(state, post.workoutId!));
+  const workout = useAppSelector((state) => selectWorkoutById(state, post.workoutId));
 
   const [viewingDetails, setViewingDetails] = useState<boolean>(false);
 
@@ -51,7 +51,14 @@ export default function WorkoutPost(
       <View style={tw`flex flex-row`}>
         <View style={tw`flex flex-4`}>
           <Text>{`On ${new Date(post.createdDate).toLocaleString()},`}</Text>
-          <Text>Posted workout:</Text>
+          <Text>
+            @
+            <Text style={tw`font-bold`}>
+              {post.username}
+            </Text>
+            {' '}
+            posted workout:
+          </Text>
         </View>
         <View style={tw`flex flex-1`}>
           {

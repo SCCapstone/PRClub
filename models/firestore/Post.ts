@@ -2,9 +2,10 @@ export default interface Post {
   id: string;
   userId: string;
   username: string;
-  kind: 'workout' | 'pr';
-  workoutId?: string;
-  prId?: string;
+  workoutId: string;
   createdDate: string;
   caption: string;
+  commentIds: string[];
+  prId?: string;
+  image?: string;
 }

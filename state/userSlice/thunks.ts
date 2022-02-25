@@ -4,41 +4,78 @@ import _ from 'lodash';
 import { CURRENT_USER_KEY } from '../../constants/async-storage';
 import AuthService from '../../services/AuthService';
 import UsersService from '../../services/UsersService';
-import User from '../../types/shared/User';
+import User from '../../models/firestore/User';
+import { flushPostsFromStore } from '../postsSlice';
 import { fetchPostsForUser } from '../postsSlice/thunks';
+import { flushPRsFromStore } from '../prsSlice';
+import { fetchPRsForUser } from '../prsSlice/thunks';
 import type { AppDispatch, RootState } from '../store';
+import { flushWorkoutsFromStore } from '../workoutsSlice';
 import { fetchWorkoutsForUser } from '../workoutsSlice/thunks';
+
+export const loadData = createAsyncThunk<void, string, {dispatch: AppDispatch}>(
+  'users/loadData',
+  (userId: string, { dispatch }): void => {
+    dispatch(fetchWorkoutsForUser(userId));
+    dispatch(fetchPostsForUser(userId));
+    dispatch(fetchPRsForUser(userId));
+    dispatch(fetchFollowingForUser(userId));
+  },
+);
+
+export const flushData = createAsyncThunk<void, void, {dispatch: AppDispatch}>(
+  'users/flushData',
+  (...[, { dispatch }]): void => {
+    dispatch(flushWorkoutsFromStore());
+    dispatch(flushPostsFromStore());
+    dispatch(flushPRsFromStore());
+    // flush users in index.ts
+  },
+);
 
 export const fetchCurrentUserFromAsyncStorage = createAsyncThunk<
   User | null,
   void,
-  {dispatch: AppDispatch}
->(
-  'users/fetchCurrentUserFromAsyncStorage',
-  async (...[, { dispatch }]): Promise<User | null> => {
-    const currentUserJson = await AsyncStorage.getItem(CURRENT_USER_KEY);
+  {state: RootState, dispatch: AppDispatch}
+    >(
+      'users/fetchCurrentUserFromAsyncStorage',
+      async (...[, { getState, dispatch }]): Promise<User | null> => {
+        const currentUserJson = await AsyncStorage.getItem(CURRENT_USER_KEY);
 
-    if (currentUserJson) {
-      const currentUser = JSON.parse(currentUserJson) as User;
-      dispatch(fetchWorkoutsForUser(currentUser.id));
-      dispatch(fetchPostsForUser(currentUser.id));
-      return currentUser;
-    }
+        if (currentUserJson) {
+          const currentUser = JSON.parse(currentUserJson) as User;
 
-    return null;
-  },
-);
+          dispatch(loadData(currentUser.id));
+
+          currentUser.workoutIds = _.union(
+            currentUser.workoutIds,
+            getState().workouts.ids as string[],
+          );
+          currentUser.postIds = _.union(
+            currentUser.postIds,
+            getState().posts.ids as string[],
+          );
+
+          return currentUser;
+        }
+
+        return null;
+      },
+    );
 
 interface SignInThunkArgs {
   email: string;
   password: string;
+  remember: boolean;
 }
 
 export const userSignIn = createAsyncThunk<User, SignInThunkArgs>(
   'users/signIn',
-  async ({ email, password }: SignInThunkArgs): Promise<User> => {
+  async ({ email, password, remember }: SignInThunkArgs): Promise<User> => {
     const user = await AuthService.signIn(email, password);
-    await AsyncStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
+    if (remember) {
+      await AsyncStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
+    }
     return user;
   },
 );
@@ -48,15 +85,18 @@ interface SignUpThunkArgs {
   username: string;
   email: string;
   password: string;
+  remember: boolean;
 }
 
 export const userSignUp = createAsyncThunk<User, SignUpThunkArgs>(
   'users/signUp',
   async ({
-    name, username, email, password,
+    name, username, email, password, remember,
   }: SignUpThunkArgs): Promise<User> => {
     const user = await AuthService.signUp(name, username, email, password);
-    await AsyncStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
+    if (remember) {
+      await AsyncStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
+    }
     return user;
   },
 );
@@ -103,9 +143,7 @@ export const updateUsername = createAsyncThunk<string, string, { state: RootStat
     await AuthService.updateUsername(currentUser.id, newUsername);
 
     const currentUserJson = await AsyncStorage.getItem(CURRENT_USER_KEY);
-    if (!currentUserJson) {
-      throw new Error('Could not cache profile update.');
-    } else {
+    if (currentUserJson) {
       const cachedCurrentUser = JSON.parse(currentUserJson) as User;
       cachedCurrentUser.username = newUsername;
       await AsyncStorage.setItem(CURRENT_USER_KEY, JSON.stringify(cachedCurrentUser));
@@ -128,9 +166,7 @@ export const followUser = createAsyncThunk<User, string, {state: RootState}>(
 
     // apply update to cache
     const currentUserJson = await AsyncStorage.getItem(CURRENT_USER_KEY);
-    if (!currentUserJson) {
-      throw new Error('Could not cache profile update.');
-    } else {
+    if (currentUserJson) {
       const cachedCurrentUser = JSON.parse(currentUserJson) as User;
       cachedCurrentUser.followingIds = _.union(cachedCurrentUser.followingIds, [userToFollowId]);
       await AsyncStorage.setItem(CURRENT_USER_KEY, JSON.stringify(cachedCurrentUser));
@@ -157,9 +193,7 @@ export const unfollowUser = createAsyncThunk<User, string, {state: RootState}>(
 
     // apply update to cache
     const currentUserJson = await AsyncStorage.getItem(CURRENT_USER_KEY);
-    if (!currentUserJson) {
-      throw new Error('Could not cache profile update.');
-    } else {
+    if (currentUserJson) {
       const cachedCurrentUser = JSON.parse(currentUserJson) as User;
       cachedCurrentUser.followingIds = cachedCurrentUser
         .followingIds.filter((i) => i !== userToUnfollowId);
@@ -174,17 +208,27 @@ export const unfollowUser = createAsyncThunk<User, string, {state: RootState}>(
   },
 );
 
-export const fetchFollowersForUser = createAsyncThunk<User[], string, {dispatch: AppDispatch}>(
+export const fetchFollowersForUser = createAsyncThunk<User[], string>(
   'users/fetchFollowersForUser',
-  async (userId: string, { dispatch }): Promise<User[]> => {
+  async (userId: string): Promise<User[]> => {
     const user = (await UsersService.getUsersByIds([userId]))[0];
     const followers = await UsersService.getUsersByIds(user.followerIds);
+    return followers;
+  },
+);
 
-    followers.forEach((follower) => {
-      dispatch(fetchWorkoutsForUser(follower.id));
-      dispatch(fetchPostsForUser(follower.id));
+export const fetchFollowingForUser = createAsyncThunk<User[], string, {dispatch: AppDispatch}>(
+  'users/fetchFollowingForUser',
+  async (userId: string, { dispatch }): Promise<User[]> => {
+    const user = (await UsersService.getUsersByIds([userId]))[0];
+    const following = await UsersService.getUsersByIds(user.followingIds);
+
+    following.forEach((f) => {
+      dispatch(fetchWorkoutsForUser(f.id));
+      dispatch(fetchPostsForUser(f.id));
+      dispatch(fetchPRsForUser(f.id));
     });
 
-    return followers;
+    return following;
   },
 );

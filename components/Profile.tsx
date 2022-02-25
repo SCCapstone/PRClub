@@ -9,6 +9,7 @@ import tw from 'twrnc';
 import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
 import { selectPostsSortedByMostRecentByUserId } from '../state/postsSlice/selectors';
+import { selectPRsSortedByMostRecentByUserId } from '../state/prsSlice/selectors';
 import { clearUpdateProfileResult } from '../state/userSlice';
 import {
   selectCurrentUser, selectCurrentUserStatus,
@@ -17,7 +18,7 @@ import {
   followUser, unfollowUser, updateName, updateUsername,
 } from '../state/userSlice/thunks';
 import { selectWorkoutsSortedByMostRecentByUserId } from '../state/workoutsSlice/selectors';
-import User from '../types/shared/User';
+import User from '../models/firestore/User';
 import BackButton from './BackButton';
 import EditButton from './EditButton';
 import Followers from './Followers';
@@ -38,6 +39,9 @@ export default function Profile({ user }: { user: User }) {
   );
   const posts = useAppSelector(
     (state) => selectPostsSortedByMostRecentByUserId(state, user.id),
+  );
+  const prs = useAppSelector(
+    (state) => selectPRsSortedByMostRecentByUserId(state, user.id),
   );
 
   const [profileUrl, setProfileUrl] = useState<string>('');
@@ -204,7 +208,9 @@ export default function Profile({ user }: { user: User }) {
         <Tab.Screen name="Posts">
           {() => <Posts posts={posts} forCurrentUser={forCurrentUser} />}
         </Tab.Screen>
-        <Tab.Screen name="PRs" component={PRs} />
+        <Tab.Screen name="PRs">
+          {() => <PRs prs={prs} forCurrentUser={forCurrentUser} />}
+        </Tab.Screen>
         <Tab.Screen name="Followers">
           {() => <Followers user={user} />}
         </Tab.Screen>

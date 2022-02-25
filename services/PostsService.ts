@@ -1,36 +1,17 @@
 import {
-  arrayRemove, arrayUnion, collection, deleteDoc,
-  doc, DocumentData, getDoc, getDocs, query,
-  QueryDocumentSnapshot, setDoc, updateDoc, where,
+  arrayRemove, arrayUnion, deleteDoc, doc, getDoc, setDoc, updateDoc,
 } from '@firebase/firestore';
+import { POSTS_COLLECTION, USERS_COLLECTION } from '../constants/firestore';
 import { db } from '../firebase';
-import Post from '../types/shared/Post';
-import User from '../types/shared/User';
-import { USERS_COLLECTION, POSTS_COLLECTION } from '../constants/firestore';
+import Post from '../models/firestore/Post';
+import User from '../models/firestore/User';
+import { queryCollectionById } from '../utils/firestore';
 
 export default {
   async fetchPostsForUser(userId: string): Promise<Post[]> {
-    // fetch user document
     const docSnap = await getDoc(doc(db, USERS_COLLECTION, userId));
     const user = docSnap.data() as User;
-
-    // if the user has posts, query their posts and return them
-    if (user.postIds.length > 0) {
-      const q = query(collection(db, POSTS_COLLECTION), where('id', 'in', user.postIds));
-      const querySnap = await getDocs(q);
-
-      // extract posts from querySnapshot
-      const posts: Post[] = [];
-      querySnap.forEach((d: QueryDocumentSnapshot<DocumentData>) => {
-        const post = d.data() as Post;
-        posts.push(post);
-      });
-
-      return posts;
-    }
-
-    // otherwise, return an empty array
-    return [];
+    return queryCollectionById(POSTS_COLLECTION, user.postIds);
   },
 
   async upsertPost(post: Post): Promise<void> {

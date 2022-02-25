@@ -1,6 +1,6 @@
 import { createEntityAdapter } from '@reduxjs/toolkit';
-import WgerExerciseInfo from '../../types/services/WgerExerciseInfo';
-import { SliceStatus } from '../../types/state/SliceStatus';
+import WgerExerciseInfo from '../../models/services/WgerExerciseInfo';
+import { SliceStatus } from '../../models/state/SliceStatus';
 
 interface ExerciseInfosInitialState {
   status: SliceStatus;

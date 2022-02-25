@@ -1,8 +1,8 @@
 import { Unsubscribe } from '@firebase/auth';
 import { createEntityAdapter, SerializedError } from '@reduxjs/toolkit';
-import User from '../../types/shared/User';
-import { ServiceCallResult } from '../../types/state/ServiceCallResult';
-import { SliceStatus } from '../../types/state/SliceStatus';
+import User from '../../models/firestore/User';
+import { ServiceCallResult } from '../../models/state/ServiceCallResult';
+import { SliceStatus } from '../../models/state/SliceStatus';
 
 export type CurrentUserStatus = SliceStatus
 | 'signingIn'

@@ -4,5 +4,6 @@ export default interface PR {
   username: string;
   date: string;
   workoutId: string;
-  exerciseId: string;
+  exerciseName: string;
+  volume: number;
 }

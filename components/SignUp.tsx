@@ -7,7 +7,7 @@ import { uploadImage } from '../state/imagesSlice/thunks';
 import { userSignUp } from '../state/userSlice/thunks';
 import { PROFILE_IMG_URI } from '../constants/profile';
 
-export default function SignUp() {
+export default function SignUp({ remember }: {remember: boolean}) {
   const [name, setName] = useState<string | null>(null);
   const [username, setUsername] = useState<string | null>(null);
   const [email, setEmail] = useState<string | null>(null);

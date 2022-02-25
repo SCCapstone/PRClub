@@ -1,4 +1,4 @@
-import User from '../../types/shared/User';
+import User from '../../models/firestore/User';
 import { RootState } from '../store';
 
 export function selectSearchResults(state: RootState): User[] {

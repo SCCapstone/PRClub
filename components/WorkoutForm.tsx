@@ -1,29 +1,27 @@
 import { OptionType, Select } from '@mobile-reality/react-native-select-pro';
 import { Field, FieldArray, Formik } from 'formik';
 import _ from 'lodash';
-import React, { useState } from 'react';
+import React from 'react';
 import { View } from 'react-native';
 import 'react-native-get-random-values';
 import {
-  Button, Text, TextInput, ActivityIndicator,
+  ActivityIndicator, Button, Text, TextInput,
 } from 'react-native-paper';
 import tw from 'twrnc';
 import { v4 as uuidv4 } from 'uuid';
 import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
-import { selectCurrentUser } from '../state/userSlice/selectors';
 import { selectExerciseInfos, selectExericseInfosStatus } from '../state/exerciseInfosSlice/selectors';
+import { selectCurrentUser } from '../state/userSlice/selectors';
 import { upsertWorkout } from '../state/workoutsSlice/thunks';
-import WgerExerciseInfo from '../types/services/WgerExerciseInfo';
-import User from '../types/shared/User';
-import Workout from '../types/shared/Workout';
-import { SliceStatus } from '../types/state/SliceStatus';
-import { ExerciseInput } from '../types/validation/ExerciseInput';
-import { ExerciseSetInput } from '../types/validation/ExerciseSetInput';
-import { WorkoutInput, WorkoutInputSchema } from '../types/validation/WorkoutInput';
+import WgerExerciseInfo from '../models/services/WgerExerciseInfo';
+import User from '../models/firestore/User';
+import Workout from '../models/firestore/Workout';
+import { SliceStatus } from '../models/state/SliceStatus';
+import { ExerciseInput } from '../models/validation/ExerciseInput';
+import { ExerciseSetInput } from '../models/validation/ExerciseSetInput';
+import { WorkoutInput, WorkoutInputSchema } from '../models/validation/WorkoutInput';
 import DeleteButton from './DeleteButton';
-// import { selectUpsertWorkoutResult,
-// selectWorkoutsStatus } from '../state/workoutsSlice/selectors';
 
 export default function WorkoutForm({
   workoutToEdit = undefined,
@@ -38,9 +36,6 @@ export default function WorkoutForm({
   const currentUser: User | null = useAppSelector(selectCurrentUser);
 
   const dispatch = useAppDispatch();
-  // const workoutsStatus = useAppSelector(selectWorkoutsStatus);
-  // const upsertWorkoutResult = useAppSelector(selectUpsertWorkoutResult);
-  // const [submittedWorkout, setSubmittedWorkout] = useState<Workout | null>(null);
 
   const initialValues: WorkoutInput = {
     name: workoutToEdit?.name || '',
@@ -285,7 +280,7 @@ export default function WorkoutForm({
                 )
                 || (workoutToEdit && _.isEqual(initialValues, formikProps.values))}
             >
-              {`${workoutToEdit ? 'save' : 'submit'} workout`}
+              save workout
             </Button>
           </View>
         )}
