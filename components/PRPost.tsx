@@ -74,7 +74,7 @@ export default function PRPost({ post, forCurrentUser }: {post: Post, forCurrent
           )
           : <Text style={tw`italic text-lg text-center`}>deleted PR</Text>}
       </View>
-      <Text style={tw`font-bold`}>{`${post.likes} like${post.likes !== 1 ? 's' : ''}`}</Text>
+      <Text style={tw`font-bold`}>{`${post.likedByIds.length} like${post.likedByIds.length !== 1 ? 's' : ''}`}</Text>
       <Ionicons
         name={isLiked ? 'heart' : 'heart-outline'}
         size={24}

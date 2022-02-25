@@ -102,7 +102,7 @@ export default function WorkoutPost(
             )
         }
       </View>
-      <Text style={tw`font-bold`}>{`${post.likes} like${post.likes !== 1 ? 's' : ''}`}</Text>
+      <Text style={tw`font-bold`}>{`${post.likedByIds.length} like${post.likedByIds.length !== 1 ? 's' : ''}`}</Text>
       <Ionicons
         name={isLiked ? 'heart' : 'heart-outline'}
         size={24}

@@ -60,7 +60,6 @@ const postsSlice = createSlice({
           if (!post.likedByIds.includes(userId)) {
             postsAdapter.upsertOne(state, {
               ...post,
-              likes: post.likes + 1,
               likedByIds: [...post.likedByIds, userId],
             });
           }
@@ -75,10 +74,9 @@ const postsSlice = createSlice({
         unlikePost.fulfilled,
         (state, action: PayloadAction<{post: Post, userId: string}>) => {
           const { post, userId } = action.payload;
-          if (post.likes > 0) {
+          if (post.likedByIds.length > 0) {
             postsAdapter.upsertOne(state, {
               ...post,
-              likes: post.likes - 1,
               likedByIds: post.likedByIds.filter((i) => i !== userId),
             });
           }

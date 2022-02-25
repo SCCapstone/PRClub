@@ -145,9 +145,7 @@ export default function PRs({ prs, forCurrentUser }: {prs: PR[], forCurrentUser:
                     workoutId: prToPost.id,
                     createdDate: new Date().toString(),
                     caption: postCaption,
-                    comments: 0,
                     commentIds: [],
-                    likes: 0,
                     likedByIds: [],
                     prId: prToPost.id,
                   };

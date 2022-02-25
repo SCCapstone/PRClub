@@ -1,5 +1,5 @@
 import {
-  arrayRemove, arrayUnion, deleteDoc, doc, getDoc, increment, setDoc, updateDoc,
+  arrayRemove, arrayUnion, deleteDoc, doc, getDoc, setDoc, updateDoc,
 } from '@firebase/firestore';
 import { POSTS_COLLECTION, USERS_COLLECTION } from '../constants/firestore';
 import { db } from '../firebase';
@@ -53,7 +53,6 @@ export default {
     if (!postInDb.likedByIds.includes(userId)) {
       await updateDoc(doc(db, POSTS_COLLECTION, post.id), {
         likedByIds: arrayUnion(userId),
-        likes: increment(1),
       });
     }
 
@@ -64,11 +63,10 @@ export default {
   },
 
   async unlikePost(post: Post, userId: string): Promise<void> {
-    if (post.likes > 0) {
+    if (post.likedByIds.length > 0) {
       // add like to post and increment post's like counter
       await updateDoc(doc(db, POSTS_COLLECTION, post.id), {
         likedByIds: arrayRemove(userId),
-        likes: increment(-1),
       });
 
       // update user with like
