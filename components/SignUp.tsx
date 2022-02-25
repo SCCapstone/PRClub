@@ -72,7 +72,7 @@ export default function SignUp({ remember }: {remember: boolean}) {
           onPress={() => {
             if (!submitIsDisabled) {
               dispatch(userSignUp({
-                name, username, email, password,
+                name, username, email, password, remember
               })).then((res) => dispatch(uploadImage(
                 {
                   image: PROFILE_IMG_URI, userId: res.payload.id, isProfile: true, postId: '',
