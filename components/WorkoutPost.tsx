@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { View } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
+import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { Button, Text } from 'react-native-paper';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import tw from 'twrnc';
 import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
-import { removePost } from '../state/postsSlice/thunks';
+import {
+  isPostLiked, likePost, removePost, unlikePost,
+} from '../state/postsSlice/thunks';
 import { selectWorkoutById } from '../state/workoutsSlice/selectors';
 import Post from '../types/shared/Post';
 import BackButton from './BackButton';
@@ -24,7 +26,20 @@ export default function WorkoutPost(
   const workout = useAppSelector((state) => selectWorkoutById(state, post.workoutId!));
 
   const [viewingDetails, setViewingDetails] = useState<boolean>(false);
+  const [likeStatus, setLikeStatus] = useState<boolean>(false);
+  const likeButton = async () => {
+    setLikeStatus(!likeStatus);
+    const postId: string = post.id;
+    const { userId } = post;
+    const isLiked = await dispatch(isPostLiked({ postId, userId })).then((res) => res.payload);
 
+    console.log(isLiked);
+    if (!likeStatus) {
+      dispatch(likePost({ postId, userId }));
+    } else {
+      dispatch(unlikePost({ postId, userId }));
+    }
+  };
   if (workout && viewingDetails) {
     return (
       <View style={tw`flex-1`}>
@@ -97,6 +112,9 @@ export default function WorkoutPost(
           {post.caption}
         </Text>
       </Text>
+      <TouchableOpacity onPress={likeButton}>
+        <Ionicons name={likeStatus ? 'heart-sharp' : 'heart-outline'} size={25} />
+      </TouchableOpacity>
     </View>
   );
 }

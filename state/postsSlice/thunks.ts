@@ -24,3 +24,26 @@ export const removePost = createAsyncThunk<Post, Post>(
     return post;
   },
 );
+
+export const likePost = createAsyncThunk(
+  'posts/likePost',
+  async ({ postId, userId }: {postId: string, userId: string}): Promise<void> => {
+    await PostsService.likePost(postId, userId);
+  },
+);
+
+export const unlikePost = createAsyncThunk(
+  'posts/unlikePost',
+  async ({ postId, userId }: {postId: string, userId: string}): Promise<void> => {
+    await PostsService.unlikePost(postId, userId);
+  },
+);
+
+export const isPostLiked = createAsyncThunk(
+  'posts/isPostLiked',
+  async ({ postId, userId }: {postId: string, userId: string}): Promise<boolean> => {
+    const isLiked = await PostsService.isPostLiked(postId, userId);
+    return isLiked;
+  },
+
+);

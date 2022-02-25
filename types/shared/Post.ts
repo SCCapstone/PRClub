@@ -7,4 +7,5 @@ export default interface Post {
   prId?: string;
   createdDate: string;
   caption: string;
+  likedBy: string[];
 }
