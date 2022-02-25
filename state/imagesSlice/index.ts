@@ -1,6 +1,5 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import ImageType from '../../types/shared/Image';
-import { initialState, imageAdapter, ImageStatus } from './state';
+import { createSlice } from '@reduxjs/toolkit';
+import { initialState, imageAdapter } from './state';
 import { downloadImage, uploadImage } from './thunks';
 
 const imagesSlice = createSlice({

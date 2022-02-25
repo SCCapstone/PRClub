@@ -1,7 +1,7 @@
 import { createEntityAdapter, SerializedError } from '@reduxjs/toolkit';
-import { SliceStatus } from '../../types/state/SliceStatus';
-import ImageType from '../../types/shared/Image';
-import { ServiceCallResult } from '../../types/state/ServiceCallResult';
+import { SliceStatus } from '../../models/state/SliceStatus';
+import ImageType from '../../models/firestore/Image';
+import { ServiceCallResult } from '../../models/state/ServiceCallResult';
 
 export type ImageStatus = SliceStatus
 | 'uploadingImage'
