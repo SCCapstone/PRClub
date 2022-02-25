@@ -1,4 +1,4 @@
-import Post from '../../types/shared/Post';
+import Post from '../../models/firestore/Post';
 import { RootState } from '../store';
 import { postsAdapter } from './state';
 
@@ -13,6 +13,18 @@ export const {
 export function selectPostsSortedByMostRecentByUserId(state: RootState, userId: string): Post[] {
   return selectPosts(state)
     .filter((p) => p.userId === userId)
+    .sort((a, b) => (new Date(b.createdDate) > new Date(a.createdDate) ? 1 : -1));
+}
+
+export function selectHomeScreenPosts(state: RootState): Post[] {
+  const { currentUser } = state.users;
+
+  if (!currentUser) {
+    return [];
+  }
+
+  return selectPosts(state)
+    .filter((p) => p.userId === currentUser.id || currentUser.followingIds.includes(p.userId))
     .sort((a, b) => (new Date(b.createdDate) > new Date(a.createdDate) ? 1 : -1));
 }
 

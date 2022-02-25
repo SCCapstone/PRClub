@@ -8,7 +8,7 @@ import {
   selectCurrentUser, selectUsersByIds, selectUsersStatus,
 } from '../state/userSlice/selectors';
 import { followUser, unfollowUser } from '../state/userSlice/thunks';
-import User from '../types/shared/User';
+import User from '../models/firestore/User';
 import CenteredView from './CenteredView';
 
 export default function Followers({ user }: { user: User }) {

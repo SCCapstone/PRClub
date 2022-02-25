@@ -3,11 +3,10 @@ import { NextOrObserver, User as FirebaseUser } from '@firebase/auth';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import _ from 'lodash';
 import AuthService from '../../services/AuthService';
-import User from '../../types/shared/User';
+import User from '../../models/firestore/User';
 import { initialState, usersAdapter } from './state';
 import {
-  fetchCurrentUserFromAsyncStorage,
-  fetchFollowersForUser,
+  fetchCurrentUserFromAsyncStorage, fetchFollowersForUser, fetchFollowingForUser, flushData,
   followUser, unfollowUser, updateName, updateUsername, userLogOut, userSignIn, userSignUp,
 } from './thunks';
 
@@ -47,6 +46,9 @@ const userSlice = createSlice({
   },
   extraReducers(builder) {
     builder
+      .addCase(flushData.fulfilled, (state) => {
+        usersAdapter.removeAll(state);
+      })
       .addCase(fetchCurrentUserFromAsyncStorage.pending, (state) => {
         state.status = 'fetching';
       })
@@ -223,6 +225,13 @@ const userSlice = createSlice({
         state.usersStatus = 'fetching';
       })
       .addCase(fetchFollowersForUser.fulfilled, (state, action: PayloadAction<User[]>) => {
+        usersAdapter.upsertMany(state, action.payload);
+        state.usersStatus = 'loaded';
+      })
+      .addCase(fetchFollowingForUser.pending, (state) => {
+        state.usersStatus = 'fetching';
+      })
+      .addCase(fetchFollowingForUser.fulfilled, (state, action: PayloadAction<User[]>) => {
         usersAdapter.upsertMany(state, action.payload);
         state.usersStatus = 'loaded';
       });

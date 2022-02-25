@@ -10,7 +10,7 @@ import {
 } from '@firebase/firestore';
 import { USERS_COLLECTION } from '../constants/firestore';
 import { auth, db } from '../firebase';
-import User from '../types/shared/User';
+import User from '../models/firestore/User';
 
 // "private" functions
 async function checkUsernameIsAvailable(username: string): Promise<void> {
@@ -51,6 +51,8 @@ export default {
       prIds: [],
       followerIds: [],
       followingIds: [],
+      likedPostIds: [],
+      commentIds: [],
     };
     await setDoc(doc(db, USERS_COLLECTION, user.id), user);
 

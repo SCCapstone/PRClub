@@ -8,7 +8,7 @@ import tw from 'twrnc';
 import useAppDispatch from '../hooks/useAppDispatch';
 import { userSignIn } from '../state/userSlice/thunks';
 
-export default function SignIn() {
+export default function SignIn({ remember }: {remember: boolean}) {
   const [email, setEmail] = useState<string | null>(null);
   const [password, setPassword] = useState<string | null>(null);
 
@@ -33,7 +33,7 @@ export default function SignIn() {
           color="green"
           onPress={() => {
             if (email && password) {
-              dispatch(userSignIn({ email, password }));
+              dispatch(userSignIn({ email, password, remember }));
             }
           }}
           disabled={!email || !password}

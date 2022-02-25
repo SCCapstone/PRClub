@@ -5,7 +5,7 @@ import tw from 'twrnc';
 import useAppDispatch from '../hooks/useAppDispatch';
 import { userSignUp } from '../state/userSlice/thunks';
 
-export default function SignUp() {
+export default function SignUp({ remember }: {remember: boolean}) {
   const [name, setName] = useState<string | null>(null);
   const [username, setUsername] = useState<string | null>(null);
   const [email, setEmail] = useState<string | null>(null);
@@ -70,7 +70,7 @@ export default function SignUp() {
           onPress={() => {
             if (!submitIsDisabled) {
               dispatch(userSignUp({
-                name, username, email, password,
+                name, username, email, password, remember,
               }));
             }
           }}

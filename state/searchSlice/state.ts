@@ -1,6 +1,6 @@
 import { createEntityAdapter } from '@reduxjs/toolkit';
-import User from '../../types/shared/User';
-import { SliceStatus } from '../../types/state/SliceStatus';
+import User from '../../models/firestore/User';
+import { SliceStatus } from '../../models/state/SliceStatus';
 
 interface SearchInitialState {
   status: SliceStatus,
