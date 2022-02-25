@@ -1,19 +1,29 @@
 import React from 'react';
 import { View } from 'react-native';
 import { Button, Text } from 'react-native-paper';
-import tw from 'twrnc';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import tw from 'twrnc';
 import useAppDispatch from '../hooks/useAppDispatch';
-import Post from '../models/firestore/Post';
-import { removePost } from '../state/postsSlice/thunks';
 import useAppSelector from '../hooks/useAppSelector';
-import { selectWorkoutById } from '../state/workoutsSlice/selectors';
+import Post from '../models/firestore/Post';
+import { likePost, removePost, unlikePost } from '../state/postsSlice/thunks';
 import { selectPRById } from '../state/prsSlice/selectors';
+import { selectCurrentUser } from '../state/userSlice/selectors';
+import { selectWorkoutById } from '../state/workoutsSlice/selectors';
 
 export default function PRPost({ post, forCurrentUser }: {post: Post, forCurrentUser: boolean}) {
-  const dispatch = useAppDispatch();
+  const currentUser = useAppSelector(selectCurrentUser);
+
+  if (!currentUser) {
+    throw new Error('Current user cannot be null!');
+  }
+
   const pr = useAppSelector((state) => selectPRById(state, post.prId!));
   const workout = useAppSelector((state) => selectWorkoutById(state, pr?.workoutId ?? ''));
+
+  const isLiked = post.likedByIds.includes(currentUser.id);
+
+  const dispatch = useAppDispatch();
 
   return (
     <View style={tw`rounded overflow-hidden shadow-lg m-2 p-2`}>
@@ -64,6 +74,15 @@ export default function PRPost({ post, forCurrentUser }: {post: Post, forCurrent
           )
           : <Text style={tw`italic text-lg text-center`}>deleted PR</Text>}
       </View>
+      <Text style={tw`font-bold`}>{`${post.likes} like${post.likes !== 1 ? 's' : ''}`}</Text>
+      <Ionicons
+        name={isLiked ? 'heart' : 'heart-outline'}
+        size={24}
+        style={isLiked ? tw`text-red-500` : tw`text-black`}
+        onPress={isLiked
+          ? () => dispatch(unlikePost({ post, userId: currentUser.id }))
+          : () => dispatch(likePost({ post, userId: currentUser.id }))}
+      />
       <Text>
         <Text style={tw`font-bold`}>
           @

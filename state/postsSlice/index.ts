@@ -1,7 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import Post from '../../models/firestore/Post';
 import { initialState, postsAdapter } from './state';
-import { fetchPostsForUser, removePost, upsertPost } from './thunks';
+import {
+  fetchPostsForUser, likePost, removePost, unlikePost, upsertPost,
+} from './thunks';
 
 const postsSlice = createSlice({
   name: 'posts',
@@ -47,7 +49,41 @@ const postsSlice = createSlice({
       .addCase(removePost.rejected, (state, action) => {
         state.removePostResult = { success: false, error: action.error };
         state.status = 'loaded';
-      });
+      })
+      .addCase(likePost.pending, (state) => {
+        state.status = 'interactingWithPost';
+      })
+      .addCase(
+        likePost.fulfilled,
+        (state, action: PayloadAction<{post: Post, userId: string}>) => {
+          const { post, userId } = action.payload;
+          if (!post.likedByIds.includes(userId)) {
+            postsAdapter.upsertOne(state, {
+              ...post,
+              likes: post.likes + 1,
+              likedByIds: [...post.likedByIds, userId],
+            });
+          }
+
+          state.status = 'loaded';
+        },
+      )
+      .addCase(unlikePost.pending, (state) => {
+        state.status = 'interactingWithPost';
+      })
+      .addCase(
+        unlikePost.fulfilled,
+        (state, action: PayloadAction<{post: Post, userId: string}>) => {
+          const { post, userId } = action.payload;
+          postsAdapter.upsertOne(state, {
+            ...post,
+            likes: post.likes - 1,
+            likedByIds: post.likedByIds.filter((i) => i !== userId),
+          });
+
+          state.status = 'loaded';
+        },
+      );
   },
 });
 

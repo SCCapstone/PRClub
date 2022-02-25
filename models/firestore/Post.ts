@@ -5,7 +5,10 @@ export default interface Post {
   workoutId: string;
   createdDate: string;
   caption: string;
+  comments: number;
   commentIds: string[];
+  likes: number;
+  likedByIds: string[];
   prId?: string;
   image?: string;
 }

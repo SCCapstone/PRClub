@@ -1,5 +1,5 @@
 import {
-  arrayRemove, arrayUnion, deleteDoc, doc, getDoc, setDoc, updateDoc,
+  arrayRemove, arrayUnion, deleteDoc, doc, getDoc, increment, setDoc, updateDoc,
 } from '@firebase/firestore';
 import { POSTS_COLLECTION, USERS_COLLECTION } from '../constants/firestore';
 import { db } from '../firebase';
@@ -28,9 +28,51 @@ export default {
     // remove post
     await deleteDoc(doc(db, POSTS_COLLECTION, post.id));
 
-    // remove postId from user's postIds
+    // remove post's id from user's postIds
     await updateDoc(doc(db, USERS_COLLECTION, post.userId), {
       postIds: arrayRemove(post.id),
+    });
+
+    // remove post's id from likedPostIds of users who liked the post
+    await Promise.all(
+      post.likedByIds.map(
+        async (userId) => {
+          await updateDoc(doc(db, USERS_COLLECTION, userId), {
+            likedPostIds: arrayRemove(post.id),
+          });
+        },
+      ),
+    );
+  },
+
+  async likePost(post: Post, userId: string): Promise<void> {
+    const postDoc = await getDoc(doc(db, POSTS_COLLECTION, post.id));
+    const postInDb: Post = postDoc.data() as Post;
+
+    // if user hasn't already liked post, add like to post and increment like counter
+    if (!postInDb.likedByIds.includes(userId)) {
+      await updateDoc(doc(db, POSTS_COLLECTION, post.id), {
+        likedByIds: arrayUnion(userId),
+        likes: increment(1),
+      });
+    }
+
+    // update user with like
+    await updateDoc(doc(db, USERS_COLLECTION, userId), {
+      likedPostIds: arrayUnion(post.id),
+    });
+  },
+
+  async unlikePost(post: Post, userId: string): Promise<void> {
+    // add like to post and increment post's like counter
+    await updateDoc(doc(db, POSTS_COLLECTION, post.id), {
+      likedByIds: arrayRemove(userId),
+      likes: increment(-1),
+    });
+
+    // update user with like
+    await updateDoc(doc(db, USERS_COLLECTION, userId), {
+      likedPostIds: arrayRemove(post.id),
     });
   },
 };

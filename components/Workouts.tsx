@@ -116,7 +116,10 @@ export default function Workouts(
                     workoutId: workoutToPost.id,
                     createdDate: new Date().toString(),
                     caption: postCaption,
+                    comments: 0,
                     commentIds: [],
+                    likes: 0,
+                    likedByIds: [],
                   };
 
                   dispatch(upsertPost(post));
