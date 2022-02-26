@@ -44,7 +44,11 @@ export default function Profile({ user }: { user: User }) {
     (state) => selectPRsSortedByMostRecentByUserId(state, user.id),
   );
 
-  const [profileUrl, setProfileUrl] = useState<string>('');
+  const [profilePictureUri, setProfilePictureUri] = useState<string | undefined>(undefined);
+  const [
+    newProfilePictureUri,
+    setNewProfilePictureUri,
+  ] = useState<string | undefined>(profilePictureUri);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
   useEffect(() => {
@@ -54,7 +58,7 @@ export default function Profile({ user }: { user: User }) {
         userId: user.id, isProfile: true, postId: '',
       }));
 
-      setProfileUrl(result.payload);
+      setProfilePictureUri(result.payload);
       setIsLoaded(true);
     }
 
@@ -66,7 +70,6 @@ export default function Profile({ user }: { user: User }) {
   const [newName, setNewName] = useState<string>(user.name);
   const [newUsername, setNewUsername] = useState<string>(user.username);
   const [editingProfile, setEditingProfile] = useState<boolean>(false);
-  const [newProfilePicture, setNewProfilePicture] = useState<string>(profileUrl);
   const forCurrentUser = currentUser ? (user.id === currentUser.id) : false;
 
   const browseImages = async () => {
@@ -77,7 +80,7 @@ export default function Profile({ user }: { user: User }) {
       quality: 1,
     });
     if (!result.cancelled) {
-      setNewProfilePicture(result.uri);
+      setNewProfilePictureUri(result.uri);
     }
   };
 
@@ -91,11 +94,15 @@ export default function Profile({ user }: { user: User }) {
               setEditingProfile(false);
               setNewName(user.name);
               setNewUsername(user.username);
-              setNewProfilePicture(profileUrl);
+              setNewProfilePictureUri(profilePictureUri);
             }}
           />
           <View style={tw`items-center`}>
-            <Image source={{ uri: newProfilePicture }} style={tw`w-25 h-25 rounded-full`} />
+            {
+              !isLoaded
+                ? <ActivityIndicator size="large" color="white" />
+                : <Image source={{ uri: newProfilePictureUri }} style={tw`w-25 h-25 rounded-full`} />
+            }
             <ReactButton
               title="Choose Image"
               onPress={browseImages}
@@ -122,14 +129,14 @@ export default function Profile({ user }: { user: User }) {
               if (newUsername !== user.username) {
                 dispatch(updateUsername(newUsername));
               }
-              if (newProfilePicture) {
+              if (newProfilePictureUri) {
                 dispatch(uploadImage({
-                  image: newProfilePicture,
+                  image: newProfilePictureUri,
                   userId: user.id,
                   isProfile: true,
                   postId: '',
                 }));
-                setProfileUrl(newProfilePicture);
+                setProfilePictureUri(newProfilePictureUri);
               }
             }}
             disabled={
@@ -139,7 +146,7 @@ export default function Profile({ user }: { user: User }) {
               || (
                 newName === user.name
                 && newUsername === user.username
-                && newProfilePicture === null
+                && newProfilePictureUri === null
               )
             }
           >
@@ -159,7 +166,7 @@ export default function Profile({ user }: { user: User }) {
       <View style={tw`flex flex-row h-35 bg-gray-800 items-center justify-center`}>
         <View style={tw`flex flex-1`} />
         <View style={tw`flex flex-2`}>
-          <Image source={{ uri: profileUrl }} style={tw`w-25 h-25 rounded-full`} />
+          <Image source={{ uri: profilePictureUri }} style={tw`w-25 h-25 rounded-full`} />
         </View>
         <View style={tw`flex flex-2`}>
           <Text style={tw`text-xl font-bold text-white text-left`}>{user && user.name}</Text>
@@ -175,7 +182,9 @@ export default function Profile({ user }: { user: User }) {
           ? (
             <EditButton onPress={() => {
               setEditingProfile(true);
-              if (profileUrl !== newProfilePicture) { setNewProfilePicture(profileUrl); }
+              if (profilePictureUri !== newProfilePictureUri) {
+                setNewProfilePictureUri(profilePictureUri);
+              }
             }}
             />
           )

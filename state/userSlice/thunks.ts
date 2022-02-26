@@ -12,6 +12,7 @@ import { fetchPRsForUser } from '../prsSlice/thunks';
 import type { AppDispatch, RootState } from '../store';
 import { flushWorkoutsFromStore } from '../workoutsSlice';
 import { fetchWorkoutsForUser } from '../workoutsSlice/thunks';
+import { flushImagesFromStore } from '../imagesSlice';
 
 export const removeCachedUser = createAsyncThunk<void, void>(
   'users/removeCachedUser',
@@ -36,6 +37,7 @@ export const flushData = createAsyncThunk<void, void, {dispatch: AppDispatch}>(
     dispatch(flushWorkoutsFromStore());
     dispatch(flushPostsFromStore());
     dispatch(flushPRsFromStore());
+    dispatch(flushImagesFromStore());
     // flush users in index.ts
   },
 );

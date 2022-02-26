@@ -4,7 +4,6 @@ import { ScrollView, View } from 'react-native';
 import {
   Button, Checkbox, Snackbar, Text,
 } from 'react-native-paper';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import tw from 'twrnc';
 import SignIn from '../../../../components/SignIn';
 import SignUp from '../../../../components/SignUp';
@@ -43,9 +42,8 @@ export default function LoginScreen() {
 
   return (
     <>
-      <ScrollView>
-        <View style={tw` items-center`}>
-          <Ionicons name="person-circle" size={100} color="gray" />
+      <ScrollView style={tw`pt-20`}>
+        <View style={tw`items-center`}>
           <Text style={tw`text-xl`}>Welcome to PR Club!</Text>
         </View>
         {

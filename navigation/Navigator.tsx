@@ -19,6 +19,8 @@ import { selectUpsertWorkoutResult } from '../state/workoutsSlice/selectors';
 import User from '../models/firestore/User';
 import AuthStack from './stacks/auth';
 import MainStack from './stacks/main';
+import { selectUploadImageResult } from '../state/imagesSlice/selectors';
+import { clearUploadImageResult } from '../state/imagesSlice';
 
 const Stack = createStackNavigator();
 
@@ -33,6 +35,7 @@ export default function Navigator() {
   const updateProfileResult = useAppSelector(selectUpdateProfileResult);
   const upsertPostResult = useAppSelector(selectUpsertPostResult);
   const upsertPRResult = useAppSelector(selectUpsertPRResult);
+  const uploadImageResult = useAppSelector(selectUploadImageResult);
 
   if (currentUserStatus === 'fetching') {
     return <ActivityIndicator />;
@@ -75,12 +78,18 @@ export default function Navigator() {
               && (
                 <>
                   <Snackbar
-                    visible={!!updateProfileResult}
+                    visible={!!updateProfileResult || !!uploadImageResult}
                     duration={3000}
-                    onDismiss={() => dispatch(clearUpdateProfileResult())}
+                    onDismiss={() => {
+                      dispatch(clearUpdateProfileResult());
+                      dispatch(clearUploadImageResult());
+                    }}
                     action={{
                       label: 'Dismiss',
-                      onPress: () => dispatch(clearUpdateProfileResult()),
+                      onPress: () => {
+                        dispatch(clearUpdateProfileResult());
+                        dispatch(clearUploadImageResult());
+                      },
                     }}
                     style={updateProfileResult && updateProfileResult.error ? tw`bg-red-500` : {}}
                   >

@@ -50,8 +50,24 @@ const postsSlice = createSlice({
         state.removePostResult = { success: false, error: action.error };
         state.status = 'loaded';
       })
-      .addCase(likePost.pending, (state) => {
+      .addCase(likePost.pending, (state, action) => {
+        const { post, userId } = action.meta.arg;
+        postsAdapter.upsertOne(state, {
+          ...post,
+          likedByIds: [...post.likedByIds, userId],
+        });
+
         state.status = 'interactingWithPost';
+      })
+      .addCase(likePost.rejected, (state, action) => {
+        const { post, userId } = action.meta.arg;
+
+        postsAdapter.upsertOne(state, {
+          ...post,
+          likedByIds: post.likedByIds.filter((i) => i !== userId),
+        });
+
+        state.status = 'loaded';
       })
       .addCase(
         likePost.fulfilled,
@@ -67,8 +83,25 @@ const postsSlice = createSlice({
           state.status = 'loaded';
         },
       )
-      .addCase(unlikePost.pending, (state) => {
+      .addCase(unlikePost.pending, (state, action) => {
+        const { post, userId } = action.meta.arg;
+
+        postsAdapter.upsertOne(state, {
+          ...post,
+          likedByIds: post.likedByIds.filter((i) => i !== userId),
+        });
+
         state.status = 'interactingWithPost';
+      })
+      .addCase(unlikePost.rejected, (state, action) => {
+        const { post, userId } = action.meta.arg;
+
+        postsAdapter.upsertOne(state, {
+          ...post,
+          likedByIds: [...post.likedByIds, userId],
+        });
+
+        state.status = 'loaded';
       })
       .addCase(
         unlikePost.fulfilled,

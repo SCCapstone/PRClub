@@ -1,16 +1,20 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { initialState, imageAdapter } from './state';
+import { imageAdapter, initialState } from './state';
 import { downloadImage, uploadImage } from './thunks';
 
 const imagesSlice = createSlice({
   name: 'images',
   initialState,
   reducers: {
+    clearUploadImageResult(state) {
+      state.uploadImageResult = null;
+    },
     flushImagesFromStore: imageAdapter.removeAll,
   },
   extraReducers(builder) {
     builder
       .addCase(uploadImage.fulfilled, (state) => {
+        state.uploadImageResult = { success: true };
         state.status = 'loaded';
       })
       .addCase(uploadImage.pending, (state) => {
@@ -33,6 +37,7 @@ const imagesSlice = createSlice({
 });
 
 export const {
+  clearUploadImageResult,
   flushImagesFromStore,
 } = imagesSlice.actions;
 
