@@ -52,16 +52,17 @@ const postsSlice = createSlice({
       })
       .addCase(likePost.pending, (state, action) => {
         const { post, userId } = action.meta.arg;
-        postsAdapter.upsertOne(state, {
-          ...post,
-          likedByIds: [...post.likedByIds, userId],
-        });
+        if (!post.likedByIds.includes(userId)) {
+          postsAdapter.upsertOne(state, {
+            ...post,
+            likedByIds: [...post.likedByIds, userId],
+          });
+        }
 
         state.status = 'interactingWithPost';
       })
       .addCase(likePost.rejected, (state, action) => {
         const { post, userId } = action.meta.arg;
-
         postsAdapter.upsertOne(state, {
           ...post,
           likedByIds: post.likedByIds.filter((i) => i !== userId),
@@ -85,7 +86,6 @@ const postsSlice = createSlice({
       )
       .addCase(unlikePost.pending, (state, action) => {
         const { post, userId } = action.meta.arg;
-
         postsAdapter.upsertOne(state, {
           ...post,
           likedByIds: post.likedByIds.filter((i) => i !== userId),
@@ -95,11 +95,12 @@ const postsSlice = createSlice({
       })
       .addCase(unlikePost.rejected, (state, action) => {
         const { post, userId } = action.meta.arg;
-
-        postsAdapter.upsertOne(state, {
-          ...post,
-          likedByIds: [...post.likedByIds, userId],
-        });
+        if (!post.likedByIds.includes(userId)) {
+          postsAdapter.upsertOne(state, {
+            ...post,
+            likedByIds: [...post.likedByIds, userId],
+          });
+        }
 
         state.status = 'loaded';
       })
@@ -107,12 +108,10 @@ const postsSlice = createSlice({
         unlikePost.fulfilled,
         (state, action: PayloadAction<{post: Post, userId: string}>) => {
           const { post, userId } = action.payload;
-          if (post.likedByIds.length > 0) {
-            postsAdapter.upsertOne(state, {
-              ...post,
-              likedByIds: post.likedByIds.filter((i) => i !== userId),
-            });
-          }
+          postsAdapter.upsertOne(state, {
+            ...post,
+            likedByIds: post.likedByIds.filter((i) => i !== userId),
+          });
 
           state.status = 'loaded';
         },
