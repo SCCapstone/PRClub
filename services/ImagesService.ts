@@ -4,7 +4,7 @@ import { storage } from '../firebase/index';
 
 export default {
   async uploadImage(
-    image: string, userId: string, isProfile: boolean, postId: string,
+    image: string, userId: string, isProfile: boolean, postId?: string,
   ): Promise<void> {
     const response = await fetch(image);
     const blob = await response.blob();
@@ -12,8 +12,10 @@ export default {
     let imgPath: string;
     if (isProfile) {
       imgPath = path.join(userId, 'profile');
-    } else {
+    } else if (!isProfile && postId) {
       imgPath = path.join(userId, 'posts', postId);
+    } else {
+      throw new Error('`postId` must be provided if `isProfile` is false!');
     }
 
     const reference = ref(storage, path.join('images', imgPath));
@@ -21,14 +23,17 @@ export default {
   },
 
   async downloadImage(
-    userId: string, isProfile: boolean, postId: string,
+    userId: string, isProfile: boolean, postId?: string,
   ): Promise<string> {
     let imgPath: string;
     if (isProfile) {
       imgPath = path.join(userId, 'profile');
-    } else {
+    } else if (!isProfile && postId) {
       imgPath = path.join(userId, 'posts', postId);
+    } else {
+      throw new Error('`postId` must be provided if `isProfile` is false!');
     }
+
     const storageRef = ref(storage, path.join('images', imgPath));
     const url = await getDownloadURL(storageRef);
     return url;

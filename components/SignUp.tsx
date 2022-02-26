@@ -73,11 +73,13 @@ export default function SignUp({ remember }: {remember: boolean}) {
             if (!submitIsDisabled) {
               dispatch(userSignUp({
                 name, username, email, password, remember,
-              })).then((res) => dispatch(uploadImage(
-                {
-                  image: PROFILE_IMG_URI, userId: res.payload.id, isProfile: true, postId: '',
-                },
-              )));
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              })).then((res: any) => dispatch(uploadImage({
+                image: PROFILE_IMG_URI,
+                userId: res.payload.id,
+                isProfile: true,
+                postId: '',
+              })));
             }
           }}
           disabled={submitIsDisabled}

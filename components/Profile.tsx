@@ -1,6 +1,6 @@
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import React, { useState } from 'react';
 import * as ImagePicker from 'expo-image-picker';
+import React, { useEffect, useState } from 'react';
 import { Button as ReactButton, Image, View } from 'react-native';
 import {
   ActivityIndicator, Button, Text, TextInput,
@@ -8,6 +8,8 @@ import {
 import tw from 'twrnc';
 import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
+import User from '../models/firestore/User';
+import { downloadImage, uploadImage } from '../state/imagesSlice/thunks';
 import { selectPostsSortedByMostRecentByUserId } from '../state/postsSlice/selectors';
 import { selectPRsSortedByMostRecentByUserId } from '../state/prsSlice/selectors';
 import { clearUpdateProfileResult } from '../state/userSlice';
@@ -18,14 +20,12 @@ import {
   followUser, unfollowUser, updateName, updateUsername,
 } from '../state/userSlice/thunks';
 import { selectWorkoutsSortedByMostRecentByUserId } from '../state/workoutsSlice/selectors';
-import User from '../models/firestore/User';
 import BackButton from './BackButton';
 import EditButton from './EditButton';
 import Followers from './Followers';
 import Posts from './Posts';
 import PRs from './PRs';
 import Workouts from './Workouts';
-import { downloadImage, uploadImage } from '../state/imagesSlice/thunks';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -46,13 +46,23 @@ export default function Profile({ user }: { user: User }) {
 
   const [profileUrl, setProfileUrl] = useState<string>('');
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
-  if (!isLoaded) {
-    const downloadProfileImage = dispatch(downloadImage({
-      userId: user.id, isProfile: true, postId: '',
-    }));
-    downloadProfileImage.then((res) => setProfileUrl(res.payload));
-    setIsLoaded(true);
-  }
+
+  useEffect(() => {
+    async function downloadProfileImage() {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const result: any = await dispatch(downloadImage({
+        userId: user.id, isProfile: true, postId: '',
+      }));
+
+      setProfileUrl(result.payload);
+      setIsLoaded(true);
+    }
+
+    if (!isLoaded) {
+      downloadProfileImage();
+    }
+  }, [isLoaded]);
+
   const [newName, setNewName] = useState<string>(user.name);
   const [newUsername, setNewUsername] = useState<string>(user.username);
   const [editingProfile, setEditingProfile] = useState<boolean>(false);
