@@ -1,7 +1,7 @@
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import * as ImagePicker from 'expo-image-picker';
 import React, { useEffect, useState } from 'react';
-import { Button as ReactButton, Image, View } from 'react-native';
+import { Image, View } from 'react-native';
 import {
   ActivityIndicator, Button, Text, TextInput,
 } from 'react-native-paper';
@@ -103,10 +103,12 @@ export default function Profile({ user }: { user: User }) {
                 ? <ActivityIndicator size="large" color="white" />
                 : <Image source={{ uri: newProfilePictureUri }} style={tw`w-25 h-25 rounded-full`} />
             }
-            <ReactButton
-              title="Choose Image"
+            <Button
+              mode="contained"
               onPress={browseImages}
-            />
+            >
+              Choose image
+            </Button>
           </View>
           <Text style={tw`text-base`}>Name</Text>
           <TextInput

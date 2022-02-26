@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import React, { useState } from 'react';
-import { View } from 'react-native';
+import { Image, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import {
   ActivityIndicator,
@@ -9,11 +9,12 @@ import {
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import tw from 'twrnc';
 import { v4 as uuidv4 } from 'uuid';
+import * as ImagePicker from 'expo-image-picker';
 import { POST_CHARACTER_LIMIT } from '../constants/posts';
 import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
-import { selectPostsStatus } from '../state/postsSlice/selectors';
-import { upsertPost } from '../state/postsSlice/thunks';
+import { selectPostsStatus, selectUploadedPostImageUri } from '../state/postsSlice/selectors';
+import { addImageToPost, upsertPost } from '../state/postsSlice/thunks';
 import { clearUpsertPRResult } from '../state/prsSlice';
 import { selectPRsStatus } from '../state/prsSlice/selectors';
 import { removePR } from '../state/prsSlice/thunks';
@@ -77,6 +78,19 @@ export default function PRs({ prs, forCurrentUser }: {prs: PR[], forCurrentUser:
 
   const dispatch = useAppDispatch();
 
+  const uploadedPostImageUri = useAppSelector(selectUploadedPostImageUri);
+  const browseImages = async (userId: string, postId: string) => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+    if (!result.cancelled) {
+      dispatch(addImageToPost({ image: result.uri, userId, postId }));
+    }
+  };
+
   if (prsStatus === 'idle') {
     return (
       <CenteredView>
@@ -103,6 +117,8 @@ export default function PRs({ prs, forCurrentUser }: {prs: PR[], forCurrentUser:
     }
 
     if (prToPost) {
+      let postId = uuidv4();
+
       return (
         <>
           <View style={tw`flex-1`}>
@@ -137,9 +153,26 @@ export default function PRs({ prs, forCurrentUser }: {prs: PR[], forCurrentUser:
               </View>
               <Button
                 mode="contained"
+                onPress={() => browseImages(prToPost.userId, postId)}
+              >
+                Choose image
+              </Button>
+              {
+                postsStatus === 'uploadingImage' && <ActivityIndicator size="large" />
+              }
+              {
+                uploadedPostImageUri
+                && (
+                  <View style={tw`items-center`}>
+                    <Image source={{ uri: uploadedPostImageUri }} style={tw`h-50 w-50`} />
+                  </View>
+                )
+              }
+              <Button
+                mode="contained"
                 onPress={() => {
-                  const post: Post = {
-                    id: uuidv4(),
+                  let post: Post = {
+                    id: postId,
                     userId: prToPost.userId,
                     username: prToPost.username,
                     workoutId: prToPost.id,
@@ -150,9 +183,15 @@ export default function PRs({ prs, forCurrentUser }: {prs: PR[], forCurrentUser:
                     prId: prToPost.id,
                   };
 
+                  if (uploadedPostImageUri) {
+                    post = { ...post, image: uploadedPostImageUri };
+                  }
+
                   dispatch(upsertPost(post));
 
                   setPostCaption('');
+
+                  postId = uuidv4();
                 }}
                 disabled={
                   postCaption.length < 1

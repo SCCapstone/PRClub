@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import Post from '../../models/firestore/Post';
 import { initialState, postsAdapter } from './state';
 import {
+  addImageToPost,
   fetchPostsForUser, likePost, removePost, unlikePost, upsertPost,
 } from './thunks';
 
@@ -14,6 +15,9 @@ const postsSlice = createSlice({
     },
     clearRemovePostResult(state) {
       state.removePostResult = null;
+    },
+    clearUploadedImageUri(state) {
+      state.uploadedImageUri = null;
     },
     flushPostsFromStore: postsAdapter.removeAll,
   },
@@ -115,13 +119,21 @@ const postsSlice = createSlice({
 
           state.status = 'loaded';
         },
-      );
+      )
+      .addCase(addImageToPost.pending, (state) => {
+        state.status = 'uploadingImage';
+      })
+      .addCase(addImageToPost.fulfilled, (state, action: PayloadAction<string>) => {
+        state.uploadedImageUri = action.payload;
+        state.status = 'loaded';
+      });
   },
 });
 
 export const {
   clearUpsertPostResult,
   clearRemovePostResult,
+  clearUploadedImageUri,
   flushPostsFromStore,
 } = postsSlice.actions;
 

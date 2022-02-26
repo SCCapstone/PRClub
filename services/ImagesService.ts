@@ -18,8 +18,8 @@ export default {
       throw new Error('`postId` must be provided if `isProfile` is false!');
     }
 
-    const reference = ref(storage, path.join('images', imgPath));
-    await uploadBytesResumable(reference, blob);
+    const storageRef = ref(storage, path.join('images', imgPath));
+    await uploadBytesResumable(storageRef, blob);
   },
 
   async downloadImage(

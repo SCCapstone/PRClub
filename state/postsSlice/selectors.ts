@@ -39,3 +39,7 @@ export function selectUpsertPostResult(state: RootState) {
 export function selectRemovePostResult(state: RootState) {
   return state.posts.removePostResult;
 }
+
+export function selectUploadedPostImageUri(state: RootState) {
+  return state.posts.uploadedImageUri;
+}

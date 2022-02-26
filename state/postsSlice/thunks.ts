@@ -1,6 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import PostsService from '../../services/PostsService';
 import Post from '../../models/firestore/Post';
+import ImagesService from '../../services/ImagesService';
 
 export const fetchPostsForUser = createAsyncThunk<Post[], string>(
   'posts/fetchPostsForUser',
@@ -44,5 +45,22 @@ export const unlikePost = createAsyncThunk<
   async ({ post, userId }): Promise<{ post: Post, userId: string }> => {
     await PostsService.unlikePost(post, userId);
     return { post, userId };
+  },
+);
+
+export const addImageToPost = createAsyncThunk<
+  string,
+  {image: string | undefined, userId: string, postId: string}
+>(
+  'posts/addImageToPost',
+  async ({
+    image, userId, postId,
+  }): Promise<string> => {
+    if (image) {
+      await ImagesService.uploadImage(image, userId, false, postId);
+      return ImagesService.downloadImage(userId, false, postId);
+    }
+
+    throw new Error('Image cannot be undefined!');
   },
 );

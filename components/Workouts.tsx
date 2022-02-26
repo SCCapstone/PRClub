@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
-import { ScrollView, View } from 'react-native';
+import { Image, ScrollView, View } from 'react-native';
 import {
   ActivityIndicator, Button, Text, TextInput,
 } from 'react-native-paper';
 import tw from 'twrnc';
 import { v4 as uuidv4 } from 'uuid';
+import * as ImagePicker from 'expo-image-picker';
 import { POST_CHARACTER_LIMIT } from '../constants/posts';
 import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
 import { clearUpsertPostResult } from '../state/postsSlice';
-import { selectPostsStatus } from '../state/postsSlice/selectors';
-import { upsertPost } from '../state/postsSlice/thunks';
+import { selectPostsStatus, selectUploadedPostImageUri } from '../state/postsSlice/selectors';
+import { addImageToPost, upsertPost } from '../state/postsSlice/thunks';
 import { selectWorkoutsStatus } from '../state/workoutsSlice/selectors';
 import { removeWorkout } from '../state/workoutsSlice/thunks';
 import Post from '../models/firestore/Post';
@@ -33,6 +34,19 @@ export default function Workouts(
 
   const [workoutToPost, setWorkoutToPost] = useState<Workout | null>(null);
   const [postCaption, setPostCaption] = useState<string>('');
+
+  const uploadedPostImageUri = useAppSelector(selectUploadedPostImageUri);
+  const browseImages = async (userId: string, postId: string) => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+    if (!result.cancelled) {
+      dispatch(addImageToPost({ image: result.uri, userId, postId }));
+    }
+  };
 
   if (workoutsStatus === 'idle') {
     return (
@@ -74,6 +88,8 @@ export default function Workouts(
     }
 
     if (workoutsState === 'sharing' && workoutToPost) {
+      let postId = uuidv4();
+
       return (
         <>
           <View style={tw`flex-1`}>
@@ -108,9 +124,26 @@ export default function Workouts(
               </View>
               <Button
                 mode="contained"
+                onPress={() => browseImages(workoutToPost.userId, postId)}
+              >
+                Choose image
+              </Button>
+              {
+                postsStatus === 'uploadingImage' && <ActivityIndicator size="large" />
+              }
+              {
+                uploadedPostImageUri
+                && (
+                  <View style={tw`items-center`}>
+                    <Image source={{ uri: uploadedPostImageUri || undefined }} style={tw`h-50 w-50`} />
+                  </View>
+                )
+              }
+              <Button
+                mode="contained"
                 onPress={() => {
-                  const post: Post = {
-                    id: uuidv4(),
+                  let post: Post = {
+                    id: postId,
                     userId: workoutToPost.userId,
                     username: workoutToPost.username,
                     workoutId: workoutToPost.id,
@@ -120,9 +153,15 @@ export default function Workouts(
                     likedByIds: [],
                   };
 
+                  if (uploadedPostImageUri) {
+                    post = { ...post, image: uploadedPostImageUri };
+                  }
+
                   dispatch(upsertPost(post));
 
                   setPostCaption('');
+
+                  postId = uuidv4();
                 }}
                 disabled={
                   postCaption.length < 1
