@@ -16,7 +16,7 @@ const postsSlice = createSlice({
     clearRemovePostResult(state) {
       state.removePostResult = null;
     },
-    clearUploadedImageUri(state) {
+    clearUploadedPostImageUri(state) {
       state.uploadedImageUri = null;
     },
     flushPostsFromStore: postsAdapter.removeAll,
@@ -133,7 +133,7 @@ const postsSlice = createSlice({
 export const {
   clearUpsertPostResult,
   clearRemovePostResult,
-  clearUploadedImageUri,
+  clearUploadedPostImageUri,
   flushPostsFromStore,
 } = postsSlice.actions;
 

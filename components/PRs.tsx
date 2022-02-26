@@ -22,6 +22,7 @@ import Post from '../models/firestore/Post';
 import PR from '../models/firestore/PR';
 import BackButton from './BackButton';
 import CenteredView from './CenteredView';
+import { clearUploadedPostImageUri } from '../state/postsSlice';
 
 function PRsByExerciseListItem({
   pr, onDelete, onPost,
@@ -121,88 +122,88 @@ export default function PRs({ prs, forCurrentUser }: {prs: PR[], forCurrentUser:
 
       return (
         <>
-          <View style={tw`flex-1`}>
-            <ScrollView style={tw`h-130 w-full`}>
-              <View style={tw`bg-gray-100`}>
-                <View style={tw`flex flex-row p-3`}>
-                  <View style={tw`flex flex-1`}>
-                    <BackButton
-                      onPress={() => {
-                        dispatch(clearUpsertPRResult());
-                        setPRToPost(null);
-                      }}
-                    />
-                  </View>
-                  <View style={tw`flex flex-3`}>
-                    <Text style={tw`text-xl text-center font-bold`}>{`Sharing PR for "${prToPost.exerciseName}"`}</Text>
-                  </View>
-                  <View style={tw`flex flex-1`} />
+          <ScrollView>
+            <View style={tw`bg-gray-100`}>
+              <View style={tw`flex flex-row p-3`}>
+                <View style={tw`flex flex-1`}>
+                  <BackButton
+                    onPress={() => {
+                      dispatch(clearUpsertPRResult());
+                      setPRToPost(null);
+                    }}
+                  />
                 </View>
+                <View style={tw`flex flex-3`}>
+                  <Text style={tw`text-xl text-center font-bold`}>{`Sharing PR for "${prToPost.exerciseName}"`}</Text>
+                </View>
+                <View style={tw`flex flex-1`} />
               </View>
-              <TextInput
-                onChangeText={setPostCaption}
-                placeholder="add a caption..."
-                multiline
-              />
-              <View style={tw`p-1`}>
-                <Text style={postCaption.length > POST_CHARACTER_LIMIT ? tw`text-right text-red-500` : tw`text-right`}>
-                  {postCaption.length}
-                  /
-                  {POST_CHARACTER_LIMIT}
-                </Text>
-              </View>
-              <Button
-                mode="contained"
-                onPress={() => browseImages(prToPost.userId, postId)}
-              >
-                Choose image
-              </Button>
-              {
-                postsStatus === 'uploadingImage' && <ActivityIndicator size="large" />
-              }
-              {
-                uploadedPostImageUri
+            </View>
+            <TextInput
+              onChangeText={setPostCaption}
+              placeholder="add a caption..."
+              multiline
+            />
+            <View style={tw`p-1`}>
+              <Text style={postCaption.length > POST_CHARACTER_LIMIT ? tw`text-right text-red-500` : tw`text-right`}>
+                {postCaption.length}
+                /
+                {POST_CHARACTER_LIMIT}
+              </Text>
+            </View>
+            <Button
+              mode="contained"
+              onPress={() => browseImages(prToPost.userId, postId)}
+            >
+              Choose image
+            </Button>
+            {
+              postsStatus === 'uploadingImage' && <ActivityIndicator size="large" />
+            }
+            {
+              uploadedPostImageUri
                 && (
                   <View style={tw`items-center`}>
                     <Image source={{ uri: uploadedPostImageUri }} style={tw`h-50 w-50`} />
                   </View>
                 )
+            }
+            <View style={tw`h-100`} />
+          </ScrollView>
+          <Button
+            mode="contained"
+            onPress={() => {
+              let post: Post = {
+                id: postId,
+                userId: prToPost.userId,
+                username: prToPost.username,
+                workoutId: prToPost.id,
+                createdDate: new Date().toString(),
+                caption: postCaption,
+                commentIds: [],
+                likedByIds: [],
+                prId: prToPost.id,
+              };
+
+              if (uploadedPostImageUri) {
+                post = { ...post, image: uploadedPostImageUri };
               }
-              <Button
-                mode="contained"
-                onPress={() => {
-                  let post: Post = {
-                    id: postId,
-                    userId: prToPost.userId,
-                    username: prToPost.username,
-                    workoutId: prToPost.id,
-                    createdDate: new Date().toString(),
-                    caption: postCaption,
-                    commentIds: [],
-                    likedByIds: [],
-                    prId: prToPost.id,
-                  };
 
-                  if (uploadedPostImageUri) {
-                    post = { ...post, image: uploadedPostImageUri };
-                  }
+              dispatch(upsertPost(post));
+              dispatch(clearUploadedPostImageUri());
 
-                  dispatch(upsertPost(post));
+              setPostCaption('');
 
-                  setPostCaption('');
-
-                  postId = uuidv4();
-                }}
-                disabled={
-                  postCaption.length < 1
+              postId = uuidv4();
+            }}
+            disabled={
+              postCaption.length < 1
                 || postCaption.length > POST_CHARACTER_LIMIT
                 || postsStatus === 'callingService'
-                }
-              >
-                {postsStatus === 'callingService' ? <ActivityIndicator /> : 'Post'}
-              </Button>
-            </ScrollView>
-          </View>
+            }
+          >
+            {postsStatus === 'callingService' ? <ActivityIndicator /> : 'Post'}
+          </Button>
         </>
       );
     }

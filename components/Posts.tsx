@@ -2,6 +2,7 @@ import React from 'react';
 import { ScrollView } from 'react-native-gesture-handler';
 import { ActivityIndicator, Text } from 'react-native-paper';
 import tw from 'twrnc';
+import { View } from 'react-native';
 import useAppSelector from '../hooks/useAppSelector';
 import { selectPostsStatus } from '../state/postsSlice/selectors';
 import Post from '../models/firestore/Post';
@@ -32,6 +33,7 @@ export default function Posts(
 
           return <WorkoutPost post={p} key={p.id} forCurrentUser={forCurrentUser} />;
         })}
+        <View style={tw`h-100`} />
       </ScrollView>
     );
   }

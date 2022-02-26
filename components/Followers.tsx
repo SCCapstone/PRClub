@@ -2,6 +2,7 @@ import React from 'react';
 import { View } from 'react-native';
 import { ActivityIndicator, Button, Text } from 'react-native-paper';
 import tw from 'twrnc';
+import { ScrollView } from 'react-native-gesture-handler';
 import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
 import {
@@ -27,7 +28,7 @@ export default function Followers({ user }: { user: User }) {
   }
 
   return (
-    <>
+    <ScrollView>
       {
         followers.length === 0 ? (
           <>
@@ -82,6 +83,7 @@ export default function Followers({ user }: { user: User }) {
             </View>
           ))
       }
-    </>
+      <View style={tw`h-100`} />
+    </ScrollView>
   );
 }
