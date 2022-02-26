@@ -7,11 +7,18 @@ import Post from '../models/firestore/Post';
 import { Comment as CommentType } from '../models/firestore/Comment';
 import useAppDispatch from '../hooks/useAppDispatch';
 import { removeComment } from '../state/postsSlice/thunks';
+import useAppSelector from '../hooks/useAppSelector';
+import { selectCurrentUser } from '../state/userSlice/selectors';
 
-export default function Comment({ post, thisComment, forCurrentUser }:
-{post: Post, thisComment : CommentType, forCurrentUser: boolean }) {
+export default function Comment({ post, thisComment }:
+{post: Post, thisComment : CommentType}) {
   const [menuIsVisible, setMenuIsVisible] = useState<boolean>(false);
   const dispatch = useAppDispatch();
+  const currentUser = useAppSelector(selectCurrentUser);
+
+  if (!currentUser) {
+    throw new Error('Current user cannot be null!');
+  }
   return (
     <View style={tw`flex-row`}>
       <Text>{thisComment.username}</Text>
@@ -21,7 +28,7 @@ export default function Comment({ post, thisComment, forCurrentUser }:
         {thisComment.body}
       </Text>
       {
-        forCurrentUser && (
+        currentUser.id === thisComment.userId && (
           <View>
             <Menu
               visible={menuIsVisible}

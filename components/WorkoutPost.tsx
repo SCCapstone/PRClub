@@ -124,7 +124,7 @@ export default function WorkoutPost(
           {post.caption}
         </Text>
       </Text>
-      <Comments post={post} forCurrentUser={forCurrentUser} />
+      <Comments post={post} />
       <CommentForm post={post} />
     </View>
   );

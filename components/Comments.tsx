@@ -3,15 +3,13 @@ import React, { useState, useEffect } from 'react';
 import {
   View, Text,
 } from 'react-native';
-import tw from 'twrnc';
-import { selectCurrentUser } from '../state/userSlice/selectors';
 import Post from '../models/firestore/Post';
 import { Comment as CommentType } from '../models/firestore/Comment';
 import Comment from './Comment';
 import useAppDispatch from '../hooks/useAppDispatch';
 import { fetchCommentsForPost } from '../state/postsSlice/thunks';
 
-export default function Comments({ post, forCurrentUser } : { post:Post, forCurrentUser:boolean }) {
+export default function Comments({ post } : { post:Post }) {
   const dispatch = useAppDispatch();
   const [comments, setComments] = useState<CommentType[]>([]);
   useEffect(() => {
@@ -29,7 +27,6 @@ export default function Comments({ post, forCurrentUser } : { post:Post, forCurr
           <Comment
             post={post}
             thisComment={c}
-            forCurrentUser={forCurrentUser}
             key={c.id}
           />
         ))}
