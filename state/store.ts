@@ -3,6 +3,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import exerciseInfosReducer from './exerciseInfosSlice';
 import { fetchExerciseInfos, syncExerciseInfos } from './exerciseInfosSlice/thunks';
 import postsReducer from './postsSlice';
+import imagesReducer from './imagesSlice';
 import prsReducer from './prsSlice';
 import searchReducer from './searchSlice';
 import userReducer, { registerAuthStateListener } from './userSlice';
@@ -15,6 +16,7 @@ export const store = configureStore({
     exerciseInfos: exerciseInfosReducer,
     users: userReducer,
     posts: postsReducer,
+    images: imagesReducer,
     prs: prsReducer,
     search: searchReducer,
   },

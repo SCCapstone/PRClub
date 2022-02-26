@@ -1,6 +1,7 @@
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import React, { useState } from 'react';
-import { Image, View } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
+import { Button as ReactButton, Image, View } from 'react-native';
 import {
   ActivityIndicator, Button, Text, TextInput,
 } from 'react-native-paper';
@@ -24,6 +25,7 @@ import Followers from './Followers';
 import Posts from './Posts';
 import PRs from './PRs';
 import Workouts from './Workouts';
+import { downloadImage, uploadImage } from '../state/imagesSlice/thunks';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -42,11 +44,32 @@ export default function Profile({ user }: { user: User }) {
     (state) => selectPRsSortedByMostRecentByUserId(state, user.id),
   );
 
+  const [profileUrl, setProfileUrl] = useState<string>('');
+  const [isLoaded, setIsLoaded] = useState<boolean>(false);
+  if (!isLoaded) {
+    const downloadProfileImage = dispatch(downloadImage({
+      userId: user.id, isProfile: true, postId: '',
+    }));
+    downloadProfileImage.then((res) => setProfileUrl(res.payload));
+    setIsLoaded(true);
+  }
   const [newName, setNewName] = useState<string>(user.name);
   const [newUsername, setNewUsername] = useState<string>(user.username);
   const [editingProfile, setEditingProfile] = useState<boolean>(false);
-
+  const [newProfilePicture, setNewProfilePicture] = useState<string>(profileUrl);
   const forCurrentUser = currentUser ? (user.id === currentUser.id) : false;
+
+  const browseImages = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+    if (!result.cancelled) {
+      setNewProfilePicture(result.uri);
+    }
+  };
 
   if (editingProfile) {
     return (
@@ -58,8 +81,16 @@ export default function Profile({ user }: { user: User }) {
               setEditingProfile(false);
               setNewName(user.name);
               setNewUsername(user.username);
+              setNewProfilePicture(profileUrl);
             }}
           />
+          <View style={tw`items-center`}>
+            <Image source={{ uri: newProfilePicture }} style={tw`w-25 h-25 rounded-full`} />
+            <ReactButton
+              title="Choose Image"
+              onPress={browseImages}
+            />
+          </View>
           <Text style={tw`text-base`}>Name</Text>
           <TextInput
             style={tw`text-lg border-solid border-gray-500 border-b`}
@@ -81,12 +112,25 @@ export default function Profile({ user }: { user: User }) {
               if (newUsername !== user.username) {
                 dispatch(updateUsername(newUsername));
               }
+              if (newProfilePicture) {
+                dispatch(uploadImage({
+                  image: newProfilePicture,
+                  userId: user.id,
+                  isProfile: true,
+                  postId: '',
+                }));
+                setProfileUrl(newProfilePicture);
+              }
             }}
             disabled={
               currentUserStatus === 'updatingProfile'
               || newName.length === 0
               || newUsername.length === 0
-              || (newName === user.name && newUsername === user.username)
+              || (
+                newName === user.name
+                && newUsername === user.username
+                && newProfilePicture === null
+              )
             }
           >
             {
@@ -105,7 +149,7 @@ export default function Profile({ user }: { user: User }) {
       <View style={tw`flex flex-row h-35 bg-gray-800 items-center justify-center`}>
         <View style={tw`flex flex-1`} />
         <View style={tw`flex flex-2`}>
-          <Image source={{ uri: 'https://picsum.photos/id/1005/300/300' }} style={tw`w-25 h-25 rounded-full`} />
+          <Image source={{ uri: profileUrl }} style={tw`w-25 h-25 rounded-full`} />
         </View>
         <View style={tw`flex flex-2`}>
           <Text style={tw`text-xl font-bold text-white text-left`}>{user && user.name}</Text>
@@ -118,7 +162,13 @@ export default function Profile({ user }: { user: User }) {
       </View>
       {
         forCurrentUser
-          ? <EditButton onPress={() => setEditingProfile(true)} />
+          ? (
+            <EditButton onPress={() => {
+              setEditingProfile(true);
+              if (profileUrl !== newProfilePicture) { setNewProfilePicture(profileUrl); }
+            }}
+            />
+          )
           : (
             currentUser.followingIds.includes(user.id)
               ? (
