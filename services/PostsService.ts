@@ -1,10 +1,11 @@
 import {
   arrayRemove, arrayUnion, deleteDoc, doc, getDoc, setDoc, updateDoc,
 } from '@firebase/firestore';
-import { POSTS_COLLECTION, USERS_COLLECTION } from '../constants/firestore';
+import { COMMENTS_COLLECTION, POSTS_COLLECTION, USERS_COLLECTION } from '../constants/firestore';
 import { db } from '../firebase';
 import Post from '../models/firestore/Post';
 import User from '../models/firestore/User';
+import Comment from '../models/firestore/Comment';
 import { queryCollectionById } from '../utils/firestore';
 
 export default {
@@ -74,5 +75,29 @@ export default {
         likedPostIds: arrayRemove(post.id),
       });
     }
+  },
+
+  async fetchCommentsForPost(postId: string): Promise<Comment[]> {
+    const docSnap = await getDoc(doc(db, POSTS_COLLECTION, postId));
+    const post = docSnap.data() as Post;
+    return queryCollectionById(COMMENTS_COLLECTION, post.commentIds);
+  },
+
+  async addComment(post: Post, comment: Comment): Promise<void> {
+    // add comment to comments collection
+    await setDoc(doc(db, COMMENTS_COLLECTION, comment.id), comment);
+    // add comment id to commentIds
+    await updateDoc(doc(db, POSTS_COLLECTION, post.id), {
+      commentIds: arrayUnion(comment.id),
+    });
+  },
+
+  async removeComment(post: Post, comment: Comment): Promise<void> {
+    // remove comment from comments collection
+    await deleteDoc(doc(db, COMMENTS_COLLECTION, comment.id));
+    // remove comment id from commentIds
+    await updateDoc(doc(db, POSTS_COLLECTION, post.id), {
+      commentIds: arrayRemove(comment.id),
+    });
   },
 };
