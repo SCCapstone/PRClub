@@ -14,7 +14,7 @@ export default function Comments({ post } : { post:Post }) {
   const [comments, setComments] = useState<CommentType[]>([]);
   useEffect(() => {
     async function fetchComments() {
-      const result: any = await dispatch(fetchCommentsForPost(post.id));
+      const result: unknown = await dispatch(fetchCommentsForPost(post.id));
       setComments(result.payload);
     }
     fetchComments();
