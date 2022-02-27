@@ -93,7 +93,7 @@ export default function PRPost({ post, forCurrentUser }: {post: Post, forCurrent
           ? () => dispatch(unlikePost({ post, userId: currentUser.id }))
           : () => dispatch(likePost({ post, userId: currentUser.id }))}
       />
-      <Text>
+      <Text style={tw`text-sm`}>
         <Text style={tw`font-bold`}>
           @
           {post.username}

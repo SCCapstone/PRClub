@@ -1,5 +1,6 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React from 'react';
+import { Button } from 'react-native-paper';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import useAppDispatch from '../../../hooks/useAppDispatch';
 import useAppSelector from '../../../hooks/useAppSelector';
@@ -14,8 +15,8 @@ import SettingsScreen from './screens/SettingsScreen';
 const Tab = createBottomTabNavigator();
 
 export default function MainStack() {
-  const dispatch = useAppDispatch();
   const currentUser = useAppSelector(selectCurrentUser);
+  const dispatch = useAppDispatch();
 
   if (!currentUser) {
     throw new Error('Current user cannot be null!');
@@ -48,52 +49,36 @@ export default function MainStack() {
       <Tab.Screen
         name="Home"
         component={HomeScreen}
-        options={{ tabBarShowLabel: false }}
-        listeners={{
-          tabPress() {
-            dispatch(loadData(currentUser.id));
-          },
+        options={{
+          tabBarShowLabel: false,
+          headerRight: () => (
+            <Button
+              onPress={() => dispatch(loadData(currentUser.id))}
+            >
+              <Ionicons name="refresh" color="black" size={30} />
+            </Button>
+          ),
         }}
       />
       <Tab.Screen
         name="Search"
         component={SearchScreen}
         options={{ tabBarShowLabel: false }}
-        listeners={{
-          tabPress() {
-            dispatch(loadData(currentUser.id));
-          },
-        }}
       />
       <Tab.Screen
         name="Create Workout"
         component={CreateWorkoutScreen}
         options={{ tabBarShowLabel: false }}
-        listeners={{
-          tabPress() {
-            dispatch(loadData(currentUser.id));
-          },
-        }}
       />
       <Tab.Screen
         name="Profile"
         component={ProfileScreen}
         options={{ tabBarShowLabel: false }}
-        listeners={{
-          tabPress() {
-            dispatch(loadData(currentUser.id));
-          },
-        }}
       />
       <Tab.Screen
         name="Settings"
         component={SettingsScreen}
         options={{ tabBarShowLabel: false }}
-        listeners={{
-          tabPress() {
-            dispatch(loadData(currentUser.id));
-          },
-        }}
       />
     </Tab.Navigator>
   );

@@ -15,7 +15,6 @@ import {
 // @ts-ignore
 } from '@env';
 
-/*
 export const app = initializeApp({
   apiKey: FIREBASE_API_KEY,
   authDomain: FIREBASE_AUTH_DOMAIN,
@@ -24,17 +23,6 @@ export const app = initializeApp({
   messagingSenderId: FIREBASE_MESSAGING_SENDER_ID,
   appId: FIREBASE_APP_ID,
   measurementId: FIREBASE_MEASUREMENT_ID,
-});
-*/
-
-export const app = initializeApp({
-  apiKey: 'AIzaSyAAVQd1H3QrQbrSXioon-Rr9OTR1_opb8Y',
-  authDomain: 'prclub-f4e2e.firebaseapp.com',
-  projectId: 'prclub-f4e2e',
-  storageBucket: 'prclub-f4e2e.appspot.com',
-  messagingSenderId: '387696645596',
-  appId: '1:387696645596:web:ec8e38df26a0ed1a45eb19',
-  measurementId: 'G-TEQ56GBJEG',
 });
 
 export const db = getFirestore(app);

@@ -24,7 +24,7 @@ export default function Comments({ post } : { post:Post }) {
   }
   return (
     <View>
-      <Text>No comments.</Text>
+      <Text style={{ color: 'grey' }}>no comments</Text>
     </View>
   );
 }
