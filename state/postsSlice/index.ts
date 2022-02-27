@@ -154,7 +154,6 @@ const postsSlice = createSlice({
             state.comments = [...state.comments, comment];
           }
 
-          state.upsertPostResult = { success: true };
           state.status = 'loaded';
         },
       )
