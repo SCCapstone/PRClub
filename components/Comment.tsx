@@ -21,7 +21,10 @@ export default function Comment({ post, thisComment }:
   }
   return (
     <View style={tw`flex-row`}>
-      <Text>{thisComment.username}</Text>
+      <Text style={tw`font-bold`}>
+        @
+        {thisComment.username}
+      </Text>
       <Text>:</Text>
       <Text>
         {' '}

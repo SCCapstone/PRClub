@@ -2,17 +2,19 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import _ from 'lodash';
 import { CURRENT_USER_KEY } from '../../constants/async-storage';
+import { PROFILE_IMG_URI } from '../../constants/profile';
+import User from '../../models/firestore/User';
 import AuthService from '../../services/AuthService';
 import UsersService from '../../services/UsersService';
-import User from '../../models/firestore/User';
+import { flushImagesFromStore } from '../imagesSlice';
+import { uploadImage } from '../imagesSlice/thunks';
 import { flushCommentsFromStore, flushPostsFromStore } from '../postsSlice';
-import { fetchCommentsForPost, fetchPostsForUser } from '../postsSlice/thunks';
+import { fetchPostsForUser } from '../postsSlice/thunks';
 import { flushPRsFromStore } from '../prsSlice';
 import { fetchPRsForUser } from '../prsSlice/thunks';
 import type { AppDispatch, RootState } from '../store';
 import { flushWorkoutsFromStore } from '../workoutsSlice';
 import { fetchWorkoutsForUser } from '../workoutsSlice/thunks';
-import { flushImagesFromStore } from '../imagesSlice';
 
 export const removeCachedUser = createAsyncThunk<void, void>(
   'users/removeCachedUser',
@@ -27,14 +29,11 @@ export const loadData = createAsyncThunk<
   {state: RootState, dispatch: AppDispatch}
 >(
   'users/loadData',
-  async (userId: string, { getState, dispatch }): Promise<void> => {
+  async (userId: string, { dispatch }): Promise<void> => {
     dispatch(fetchWorkoutsForUser(userId));
     dispatch(fetchPRsForUser(userId));
+    dispatch(fetchPostsForUser(userId));
     dispatch(fetchFollowingForUser(userId));
-
-    await dispatch(fetchPostsForUser(userId));
-    const postIds = getState().posts.ids as string[];
-    postIds.forEach((postId) => dispatch(fetchCommentsForPost(postId)));
   },
 );
 
@@ -105,15 +104,28 @@ interface SignUpThunkArgs {
   remember: boolean;
 }
 
-export const userSignUp = createAsyncThunk<User, SignUpThunkArgs>(
+export const userSignUp = createAsyncThunk<
+  User,
+  SignUpThunkArgs,
+  {dispatch: AppDispatch}
+>(
   'users/signUp',
   async ({
     name, username, email, password, remember,
-  }: SignUpThunkArgs): Promise<User> => {
+  }: SignUpThunkArgs, { dispatch }): Promise<User> => {
     const user = await AuthService.signUp(name, username, email, password);
+
+    dispatch(uploadImage({
+      image: PROFILE_IMG_URI,
+      userId: user.id,
+      isProfile: true,
+      postId: '',
+    }));
+
     if (remember) {
       await AsyncStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
     }
+
     return user;
   },
 );

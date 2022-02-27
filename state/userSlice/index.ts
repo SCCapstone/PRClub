@@ -50,6 +50,9 @@ const userSlice = createSlice({
       .addCase(loadData.pending, (state) => {
         state.status = 'fetching';
       })
+      .addCase(loadData.fulfilled, (state) => {
+        state.status = 'loaded';
+      })
       .addCase(flushData.fulfilled, (state) => {
         usersAdapter.removeAll(state);
       })

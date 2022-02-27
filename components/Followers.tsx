@@ -8,7 +8,7 @@ import useAppSelector from '../hooks/useAppSelector';
 import {
   selectCurrentUser, selectUsersByIds, selectUsersStatus,
 } from '../state/userSlice/selectors';
-import { followUser, unfollowUser } from '../state/userSlice/thunks';
+import { followUser, loadData, unfollowUser } from '../state/userSlice/thunks';
 import User from '../models/firestore/User';
 import CenteredView from './CenteredView';
 
@@ -72,6 +72,7 @@ export default function Followers({ user }: { user: User }) {
                             style={tw`bg-blue-500`}
                             onPress={() => {
                               dispatch(followUser(follower.id));
+                              dispatch(loadData(follower.id));
                             }}
                           >
                             <Text style={tw`text-white`}>Follow</Text>

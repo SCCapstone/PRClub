@@ -3,10 +3,19 @@ import PostsService from '../../services/PostsService';
 import Post from '../../models/firestore/Post';
 import ImagesService from '../../services/ImagesService';
 import Comment from '../../models/firestore/Comment';
+import type { AppDispatch } from '../store';
 
-export const fetchPostsForUser = createAsyncThunk<Post[], string>(
+export const fetchPostsForUser = createAsyncThunk<
+  Post[],
+  string,
+  {dispatch: AppDispatch}
+>(
   'posts/fetchPostsForUser',
-  async (userId: string): Promise<Post[]> => PostsService.fetchPostsForUser(userId),
+  async (userId: string, { dispatch }): Promise<Post[]> => {
+    const posts = await PostsService.fetchPostsForUser(userId);
+    posts.forEach((post) => dispatch(fetchCommentsForPost(post.id)));
+    return posts;
+  },
 );
 
 export const upsertPost = createAsyncThunk<Post, Post>(

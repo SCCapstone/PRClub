@@ -5,13 +5,13 @@ interface UploadImageThunkArgs {
   image: string,
   userId: string,
   isProfile: boolean,
-  postId: string,
+  postId?: string,
 }
 
 interface DownloadImageThunkArgs {
   userId: string,
   isProfile: boolean,
-  postId: string,
+  postId?: string,
 }
 
 export const uploadImage = createAsyncThunk<void, UploadImageThunkArgs>(
