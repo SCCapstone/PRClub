@@ -6,15 +6,24 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import tw from 'twrnc';
 import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
-import { removePost } from '../state/postsSlice/thunks';
+import { likePost, removePost, unlikePost } from '../state/postsSlice/thunks';
 import { selectWorkoutById } from '../state/workoutsSlice/selectors';
 import Post from '../models/firestore/Post';
 import BackButton from './BackButton';
 import WorkoutItem from './WorkoutItem';
+import { selectCurrentUser } from '../state/userSlice/selectors';
+import CommentForm from './CommentForm';
+import Comments from './Comments';
 
 export default function WorkoutPost(
   { post, forCurrentUser }: { post: Post, forCurrentUser: boolean },
 ) {
+  const currentUser = useAppSelector(selectCurrentUser);
+
+  if (!currentUser) {
+    throw new Error('Current user cannot be null!');
+  }
+
   const dispatch = useAppDispatch();
 
   if (!post.workoutId) {
@@ -22,6 +31,8 @@ export default function WorkoutPost(
   }
 
   const workout = useAppSelector((state) => selectWorkoutById(state, post.workoutId));
+
+  const isLiked = post.likedByIds.includes(currentUser.id);
 
   const [viewingDetails, setViewingDetails] = useState<boolean>(false);
 
@@ -93,6 +104,15 @@ export default function WorkoutPost(
             )
         }
       </View>
+      <Text style={tw`font-bold`}>{`${post.likedByIds.length} like${post.likedByIds.length !== 1 ? 's' : ''}`}</Text>
+      <Ionicons
+        name={isLiked ? 'heart' : 'heart-outline'}
+        size={24}
+        style={isLiked ? tw`text-red-500` : tw`text-black`}
+        onPress={isLiked
+          ? () => dispatch(unlikePost({ post, userId: currentUser.id }))
+          : () => dispatch(likePost({ post, userId: currentUser.id }))}
+      />
       <Text>
         <Text style={tw`font-bold`}>
           @
@@ -104,6 +124,8 @@ export default function WorkoutPost(
           {post.caption}
         </Text>
       </Text>
+      <Comments post={post} />
+      <CommentForm post={post} />
     </View>
   );
 }

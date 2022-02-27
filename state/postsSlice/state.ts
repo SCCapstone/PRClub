@@ -4,7 +4,7 @@ import { ServiceCallResult } from '../../models/state/ServiceCallResult';
 import { SliceStatus } from '../../models/state/SliceStatus';
 
 interface PostsInitialState {
-  status: SliceStatus | 'callingService',
+  status: SliceStatus | 'callingService' | 'interactingWithPost',
   upsertPostResult: ServiceCallResult | null,
   removePostResult: ServiceCallResult | null,
 }

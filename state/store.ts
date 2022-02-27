@@ -6,9 +6,7 @@ import postsReducer from './postsSlice';
 import prsReducer from './prsSlice';
 import searchReducer from './searchSlice';
 import userReducer, { registerAuthStateListener } from './userSlice';
-import {
-  fetchCurrentUserFromAsyncStorage, flushData, loadData,
-} from './userSlice/thunks';
+import { flushData, loadData, removeCachedUser } from './userSlice/thunks';
 import workoutsReducer from './workoutsSlice';
 
 export const store = configureStore({
@@ -25,7 +23,9 @@ export const store = configureStore({
   }),
 });
 
-store.dispatch(fetchCurrentUserFromAsyncStorage());
+// caching current user is current broken, remove when fixed
+store.dispatch(removeCachedUser());
+// store.dispatch(fetchCurrentUserFromAsyncStorage());
 
 store.dispatch(fetchExerciseInfos());
 store.dispatch(syncExerciseInfos());

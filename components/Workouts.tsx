@@ -117,6 +117,7 @@ export default function Workouts(
                     createdDate: new Date().toString(),
                     caption: postCaption,
                     commentIds: [],
+                    likedByIds: [],
                   };
 
                   dispatch(upsertPost(post));

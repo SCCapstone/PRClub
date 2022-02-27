@@ -146,6 +146,7 @@ export default function PRs({ prs, forCurrentUser }: {prs: PR[], forCurrentUser:
                     createdDate: new Date().toString(),
                     caption: postCaption,
                     commentIds: [],
+                    likedByIds: [],
                     prId: prToPost.id,
                   };
 

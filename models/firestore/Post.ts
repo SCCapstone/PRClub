@@ -6,6 +6,7 @@ export default interface Post {
   createdDate: string;
   caption: string;
   commentIds: string[];
+  likedByIds: string[];
   prId?: string;
   image?: string;
 }
