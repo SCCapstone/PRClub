@@ -5,7 +5,7 @@ import { initialState, postsAdapter } from './state';
 import {
   addImageToPost,
   addComment, removeComment,
-  fetchPostsForUser, likePost, removePost, unlikePost, upsertPost,
+  fetchPostsForUser, likePost, removePost, unlikePost, upsertPost, fetchCommentsForPost,
 } from './thunks';
 
 const postsSlice = createSlice({
@@ -22,6 +22,9 @@ const postsSlice = createSlice({
       state.uploadedImageUri = null;
     },
     flushPostsFromStore: postsAdapter.removeAll,
+    flushCommentsFromStore(state) {
+      state.comments = [];
+    },
   },
   extraReducers(builder) {
     builder
@@ -129,6 +132,13 @@ const postsSlice = createSlice({
         state.uploadedImageUri = action.payload;
         state.status = 'loaded';
       })
+      .addCase(fetchCommentsForPost.pending, (state) => {
+        state.status = 'fetching';
+      })
+      .addCase(fetchCommentsForPost.fulfilled, (state, action: PayloadAction<Comment[]>) => {
+        state.comments = action.payload;
+        state.status = 'loaded';
+      })
       .addCase(
         addComment.fulfilled,
         (state, action: PayloadAction<{post: Post, comment: Comment}>) => {
@@ -139,6 +149,11 @@ const postsSlice = createSlice({
               commentIds: [...post.commentIds, comment.id],
             });
           }
+
+          if (!state.comments.map((c) => c.id).includes(comment.id)) {
+            state.comments = [...state.comments, comment];
+          }
+
           state.upsertPostResult = { success: true };
           state.status = 'loaded';
         },
@@ -155,6 +170,9 @@ const postsSlice = createSlice({
             ...post,
             commentIds: post.commentIds.filter((i) => i !== comment.id),
           });
+
+          state.comments = state.comments.filter((c) => c.id !== comment.id);
+
           state.status = 'loaded';
         },
       )
@@ -170,6 +188,7 @@ export const {
   clearRemovePostResult,
   clearUploadedPostImageUri,
   flushPostsFromStore,
+  flushCommentsFromStore,
 } = postsSlice.actions;
 
 export default postsSlice.reducer;

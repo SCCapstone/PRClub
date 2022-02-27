@@ -7,7 +7,8 @@ import User from '../../models/firestore/User';
 import { initialState, usersAdapter } from './state';
 import {
   fetchCurrentUserFromAsyncStorage, fetchFollowersForUser, fetchFollowingForUser, flushData,
-  followUser, unfollowUser, updateName, updateUsername, userLogOut, userSignIn, userSignUp,
+  followUser, loadData, unfollowUser, updateName, updateUsername, userLogOut, userSignIn,
+  userSignUp,
 } from './thunks';
 
 const userSlice = createSlice({
@@ -46,6 +47,9 @@ const userSlice = createSlice({
   },
   extraReducers(builder) {
     builder
+      .addCase(loadData.pending, (state) => {
+        state.status = 'fetching';
+      })
       .addCase(flushData.fulfilled, (state) => {
         usersAdapter.removeAll(state);
       })

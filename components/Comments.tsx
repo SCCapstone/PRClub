@@ -1,25 +1,12 @@
-/* eslint-disable react/destructuring-assignment */
-import React, { useState, useEffect } from 'react';
-import {
-  View, Text,
-} from 'react-native';
+import React from 'react';
+import { Text, View } from 'react-native';
+import useAppSelector from '../hooks/useAppSelector';
 import Post from '../models/firestore/Post';
-import CommentType from '../models/firestore/Comment';
+import { selectCommentsForPost } from '../state/postsSlice/selectors';
 import Comment from './Comment';
-import useAppDispatch from '../hooks/useAppDispatch';
-import { fetchCommentsForPost } from '../state/postsSlice/thunks';
 
 export default function Comments({ post } : { post:Post }) {
-  const dispatch = useAppDispatch();
-  const [comments, setComments] = useState<CommentType[]>([]);
-  useEffect(() => {
-    async function fetchComments() {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const result: any = await dispatch(fetchCommentsForPost(post.id));
-      setComments(result.payload);
-    }
-    fetchComments();
-  }, []);
+  const comments = useAppSelector((state) => selectCommentsForPost(state, post.id));
 
   if (comments && comments.length > 0) {
     return (

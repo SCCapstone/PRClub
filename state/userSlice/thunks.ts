@@ -5,8 +5,8 @@ import { CURRENT_USER_KEY } from '../../constants/async-storage';
 import AuthService from '../../services/AuthService';
 import UsersService from '../../services/UsersService';
 import User from '../../models/firestore/User';
-import { flushPostsFromStore } from '../postsSlice';
-import { fetchPostsForUser } from '../postsSlice/thunks';
+import { flushCommentsFromStore, flushPostsFromStore } from '../postsSlice';
+import { fetchCommentsForPost, fetchPostsForUser } from '../postsSlice/thunks';
 import { flushPRsFromStore } from '../prsSlice';
 import { fetchPRsForUser } from '../prsSlice/thunks';
 import type { AppDispatch, RootState } from '../store';
@@ -21,13 +21,20 @@ export const removeCachedUser = createAsyncThunk<void, void>(
   },
 );
 
-export const loadData = createAsyncThunk<void, string, {dispatch: AppDispatch}>(
+export const loadData = createAsyncThunk<
+  void,
+  string,
+  {state: RootState, dispatch: AppDispatch}
+>(
   'users/loadData',
-  (userId: string, { dispatch }): void => {
+  async (userId: string, { getState, dispatch }): Promise<void> => {
     dispatch(fetchWorkoutsForUser(userId));
-    dispatch(fetchPostsForUser(userId));
     dispatch(fetchPRsForUser(userId));
     dispatch(fetchFollowingForUser(userId));
+
+    await dispatch(fetchPostsForUser(userId));
+    const postIds = getState().posts.ids as string[];
+    postIds.forEach((postId) => dispatch(fetchCommentsForPost(postId)));
   },
 );
 
@@ -38,6 +45,7 @@ export const flushData = createAsyncThunk<void, void, {dispatch: AppDispatch}>(
     dispatch(flushPostsFromStore());
     dispatch(flushPRsFromStore());
     dispatch(flushImagesFromStore());
+    dispatch(flushCommentsFromStore());
     // flush users in index.ts
   },
 );
