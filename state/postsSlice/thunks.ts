@@ -2,6 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import PostsService from '../../services/PostsService';
 import Post from '../../models/firestore/Post';
 import ImagesService from '../../services/ImagesService';
+import Comment from '../../models/firestore/Comment';
 
 export const fetchPostsForUser = createAsyncThunk<Post[], string>(
   'posts/fetchPostsForUser',
@@ -62,5 +63,32 @@ export const addImageToPost = createAsyncThunk<
     }
 
     throw new Error('Image cannot be undefined!');
+  },
+);
+
+export const fetchCommentsForPost = createAsyncThunk<Comment[], string>(
+  'posts/fetchCommentsForPost',
+  async (postId: string): Promise<Comment[]> => PostsService.fetchCommentsForPost(postId),
+);
+
+export const addComment = createAsyncThunk<
+  {post: Post, comment: Comment},
+  {post: Post, comment: Comment}
+>(
+  'posts/addComment',
+  async ({ post, comment }): Promise<{ post: Post, comment: Comment }> => {
+    await PostsService.addComment(post, comment);
+    return { post, comment };
+  },
+);
+
+export const removeComment = createAsyncThunk<
+  {post: Post, comment: Comment},
+  {post: Post, comment: Comment}
+>(
+  'posts/removeComment',
+  async ({ post, comment }): Promise<{ post: Post, comment: Comment }> => {
+    await PostsService.removeComment(post, comment);
+    return { post, comment };
   },
 );

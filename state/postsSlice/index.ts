@@ -1,8 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import Post from '../../models/firestore/Post';
+import Comment from '../../models/firestore/Comment';
 import { initialState, postsAdapter } from './state';
 import {
   addImageToPost,
+  addComment, removeComment,
   fetchPostsForUser, likePost, removePost, unlikePost, upsertPost,
 } from './thunks';
 
@@ -126,7 +128,40 @@ const postsSlice = createSlice({
       .addCase(addImageToPost.fulfilled, (state, action: PayloadAction<string>) => {
         state.uploadedImageUri = action.payload;
         state.status = 'loaded';
-      });
+      })
+      .addCase(
+        addComment.fulfilled,
+        (state, action: PayloadAction<{post: Post, comment: Comment}>) => {
+          const { post, comment } = action.payload;
+          if (!post.commentIds.includes(comment.id)) {
+            postsAdapter.upsertOne(state, {
+              ...post,
+              commentIds: [...post.commentIds, comment.id],
+            });
+          }
+          state.upsertPostResult = { success: true };
+          state.status = 'loaded';
+        },
+      )
+      .addCase(addComment.pending,
+        (state) => {
+          state.status = 'interactingWithPost';
+        })
+      .addCase(
+        removeComment.fulfilled,
+        (state, action: PayloadAction<{post: Post, comment: Comment}>) => {
+          const { post, comment } = action.payload;
+          postsAdapter.upsertOne(state, {
+            ...post,
+            commentIds: post.commentIds.filter((i) => i !== comment.id),
+          });
+          state.status = 'loaded';
+        },
+      )
+      .addCase(removeComment.pending,
+        (state) => {
+          state.status = 'interactingWithPost';
+        });
   },
 });
 

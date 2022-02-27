@@ -6,6 +6,8 @@ import tw from 'twrnc';
 import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
 import Post from '../models/firestore/Post';
+import Comments from './Comments';
+import CommentForm from './CommentForm';
 import { likePost, removePost, unlikePost } from '../state/postsSlice/thunks';
 import { selectPRById } from '../state/prsSlice/selectors';
 import { selectCurrentUser } from '../state/userSlice/selectors';
@@ -102,6 +104,8 @@ export default function PRPost({ post, forCurrentUser }: {post: Post, forCurrent
           {post.caption}
         </Text>
       </Text>
+      <Comments post={post} />
+      <CommentForm post={post} />
     </View>
   );
 }

@@ -12,6 +12,8 @@ import Post from '../models/firestore/Post';
 import BackButton from './BackButton';
 import WorkoutItem from './WorkoutItem';
 import { selectCurrentUser } from '../state/userSlice/selectors';
+import CommentForm from './CommentForm';
+import Comments from './Comments';
 
 export default function WorkoutPost(
   { post, forCurrentUser }: { post: Post, forCurrentUser: boolean },
@@ -130,6 +132,8 @@ export default function WorkoutPost(
           {post.caption}
         </Text>
       </Text>
+      <Comments post={post} />
+      <CommentForm post={post} />
     </View>
   );
 }
