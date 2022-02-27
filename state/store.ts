@@ -35,8 +35,6 @@ store.dispatch(syncExerciseInfos());
 store.dispatch(registerAuthStateListener(async (user: FirebaseUser | null) => {
   if (user && user.uid) {
     store.dispatch(loadData(user.uid));
-  } else {
-    store.dispatch(flushData());
   }
 }));
 

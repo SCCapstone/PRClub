@@ -5,8 +5,11 @@ import Post from '../models/firestore/Post';
 import { selectCommentsForPost } from '../state/postsSlice/selectors';
 import Comment from './Comment';
 
-export default function Comments({ post } : { post:Post }) {
-  const comments = useAppSelector((state) => selectCommentsForPost(state, post.id));
+export default function Comments({ post } : { post: Post }) {
+  const comments = useAppSelector((state) => (
+    selectCommentsForPost(state, post.id)
+      .sort((a, b) => (new Date(b.date) > new Date(a.date) ? 1 : -1))
+  ));
 
   if (comments && comments.length > 0) {
     return (

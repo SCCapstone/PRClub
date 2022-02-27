@@ -65,7 +65,7 @@ export default function Profile({ user }: { user: User }) {
     if (!isLoaded) {
       downloadProfileImage();
     }
-  }, [isLoaded]);
+  }, []);
 
   const [newName, setNewName] = useState<string>(user.name);
   const [newUsername, setNewUsername] = useState<string>(user.username);

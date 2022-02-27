@@ -19,7 +19,7 @@ export default function MainStack() {
   const dispatch = useAppDispatch();
 
   if (!currentUser) {
-    throw new Error('Current user cannot be null!');
+    return <></>;
   }
 
   return (

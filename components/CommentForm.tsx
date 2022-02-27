@@ -41,7 +41,7 @@ export default function CommentForm({ post } : { post: Post }) {
             username: currentUser.username,
             postId: post.id,
             body: commentText,
-
+            date: new Date().toISOString(),
           };
           dispatch(addComment({ post, comment }));
           setCommentText('');
