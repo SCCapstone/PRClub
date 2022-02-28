@@ -12,7 +12,7 @@ import User from '../models/firestore/User';
 import { downloadImage, uploadImage } from '../state/imagesSlice/thunks';
 import { selectPostsSortedByMostRecentByUserId } from '../state/postsSlice/selectors';
 import { selectPRsSortedByMostRecentByUserId } from '../state/prsSlice/selectors';
-import { clearUpdateProfileResult } from '../state/userSlice';
+import { clearUpdateProfileResult, setUpdateProfileResultSuccess } from '../state/userSlice';
 import {
   selectCurrentUser, selectCurrentUserStatus,
 } from '../state/userSlice/selectors';
@@ -30,47 +30,46 @@ import Workouts from './Workouts';
 const Tab = createMaterialTopTabNavigator();
 
 export default function Profile({ user }: { user: User }) {
+  const [profileBeingViewed, setProfileBeingViewed] = useState<User>(user);
+
   const dispatch = useAppDispatch();
 
   const currentUser = useAppSelector(selectCurrentUser);
   const currentUserStatus = useAppSelector(selectCurrentUserStatus);
   const workouts = useAppSelector(
-    (state) => selectWorkoutsSortedByMostRecentByUserId(state, user.id),
+    (state) => selectWorkoutsSortedByMostRecentByUserId(state, profileBeingViewed.id),
   );
   const posts = useAppSelector(
-    (state) => selectPostsSortedByMostRecentByUserId(state, user.id),
+    (state) => selectPostsSortedByMostRecentByUserId(state, profileBeingViewed.id),
   );
   const prs = useAppSelector(
-    (state) => selectPRsSortedByMostRecentByUserId(state, user.id),
+    (state) => selectPRsSortedByMostRecentByUserId(state, profileBeingViewed.id),
   );
 
   const [profilePictureUri, setProfilePictureUri] = useState<string | undefined>(undefined);
   const [
     newProfilePictureUri,
     setNewProfilePictureUri,
-  ] = useState<string | undefined>(profilePictureUri);
-  const [isLoaded, setIsLoaded] = useState<boolean>(false);
+  ] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     async function downloadProfileImage() {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const result: any = await dispatch(downloadImage({
-        userId: user.id, isProfile: true, postId: '',
+        userId: profileBeingViewed.id, isProfile: true, postId: '',
       }));
 
       setProfilePictureUri(result.payload);
-      setIsLoaded(true);
     }
 
-    if (!isLoaded) {
-      downloadProfileImage();
-    }
-  }, []);
+    downloadProfileImage();
+  }, [profileBeingViewed]);
 
-  const [newName, setNewName] = useState<string>(user.name);
-  const [newUsername, setNewUsername] = useState<string>(user.username);
+  const [newName, setNewName] = useState<string>(profileBeingViewed.name);
+  const [newUsername, setNewUsername] = useState<string>(profileBeingViewed.username);
   const [editingProfile, setEditingProfile] = useState<boolean>(false);
-  const forCurrentUser = currentUser ? (user.id === currentUser.id) : false;
+
+  const forCurrentUser = currentUser ? (profileBeingViewed.id === currentUser.id) : false;
 
   const browseImages = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -92,17 +91,13 @@ export default function Profile({ user }: { user: User }) {
             onPress={() => {
               dispatch(clearUpdateProfileResult());
               setEditingProfile(false);
-              setNewName(user.name);
-              setNewUsername(user.username);
+              setNewName(profileBeingViewed.name);
+              setNewUsername(profileBeingViewed.username);
               setNewProfilePictureUri(profilePictureUri);
             }}
           />
           <View style={tw`items-center`}>
-            {
-              !isLoaded
-                ? <ActivityIndicator size="large" color="white" />
-                : <Image source={{ uri: newProfilePictureUri }} style={tw`w-25 h-25 rounded-full`} />
-            }
+            <Image source={{ uri: newProfilePictureUri }} style={tw`w-25 h-25 rounded-full`} />
             <Button
               mode="contained"
               onPress={browseImages}
@@ -125,20 +120,21 @@ export default function Profile({ user }: { user: User }) {
           <Button
             mode="contained"
             onPress={() => {
-              if (newName !== user.name) {
+              if (newName !== profileBeingViewed.name) {
                 dispatch(updateName(newName));
               }
-              if (newUsername !== user.username) {
+              if (newUsername !== profileBeingViewed.username) {
                 dispatch(updateUsername(newUsername));
               }
               if (newProfilePictureUri) {
                 dispatch(uploadImage({
                   image: newProfilePictureUri,
-                  userId: user.id,
+                  userId: profileBeingViewed.id,
                   isProfile: true,
                   postId: '',
                 }));
                 setProfilePictureUri(newProfilePictureUri);
+                dispatch(setUpdateProfileResultSuccess());
               }
             }}
             disabled={
@@ -146,9 +142,9 @@ export default function Profile({ user }: { user: User }) {
               || newName.length === 0
               || newUsername.length === 0
               || (
-                newName === user.name
-                && newUsername === user.username
-                && newProfilePictureUri === null
+                newName === profileBeingViewed.name
+                && newUsername === profileBeingViewed.username
+                && profilePictureUri === newProfilePictureUri
               )
             }
           >
@@ -163,18 +159,34 @@ export default function Profile({ user }: { user: User }) {
     );
   }
 
-  return currentUser && (
+  return currentUser ? (
     <>
-      <View style={tw`flex flex-row h-35 bg-gray-800 items-center justify-center`}>
+      {
+        profileBeingViewed.id !== currentUser.id
+          ? (
+            <Button
+              mode="contained"
+              onPress={() => {
+                setProfileBeingViewed(currentUser);
+              }}
+            >
+              Back to your profile
+            </Button>
+          )
+          : <></>
+      }
+      <View style={tw`flex flex-row py-10 bg-gray-800 items-center justify-center`}>
         <View style={tw`flex flex-1`} />
         <View style={tw`flex flex-2`}>
-          <Image source={{ uri: profilePictureUri }} style={tw`w-25 h-25 rounded-full`} />
+          {!profilePictureUri
+            ? <ActivityIndicator size="large" color="white" />
+            : <Image source={{ uri: profilePictureUri }} style={tw`w-25 h-25 rounded-full`} />}
         </View>
         <View style={tw`flex flex-2`}>
-          <Text style={tw`text-xl font-bold text-white text-left`}>{user && user.name}</Text>
+          <Text style={tw`text-xl font-bold text-white text-left`}>{profileBeingViewed && profileBeingViewed.name}</Text>
           <Text style={tw`text-lg text-white text-left`}>
             @
-            {user && user.username}
+            {profileBeingViewed && profileBeingViewed.username}
           </Text>
         </View>
         <View style={tw`flex flex-1`} />
@@ -191,12 +203,12 @@ export default function Profile({ user }: { user: User }) {
             />
           )
           : (
-            currentUser.followingIds.includes(user.id)
+            currentUser.followingIds.includes(profileBeingViewed.id)
               ? (
                 <Button
                   style={tw`bg-blue-200`}
                   onPress={() => {
-                    dispatch(unfollowUser(user.id));
+                    dispatch(unfollowUser(profileBeingViewed.id));
                   }}
                 >
                   {
@@ -210,7 +222,7 @@ export default function Profile({ user }: { user: User }) {
                 <Button
                   style={tw`bg-blue-500`}
                   onPress={() => {
-                    dispatch(followUser(user.id));
+                    dispatch(followUser(profileBeingViewed.id));
                   }}
                 >
                   {
@@ -233,9 +245,16 @@ export default function Profile({ user }: { user: User }) {
           {() => <PRs prs={prs} forCurrentUser={forCurrentUser} />}
         </Tab.Screen>
         <Tab.Screen name="Followers">
-          {() => <Followers user={user} />}
+          {() => (
+            <Followers
+              user={profileBeingViewed}
+              onFollowerPress={(follower) => {
+                setProfileBeingViewed(follower);
+              }}
+            />
+          )}
         </Tab.Screen>
       </Tab.Navigator>
     </>
-  );
+  ) : <></>;
 }

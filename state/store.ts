@@ -2,12 +2,12 @@ import { User as FirebaseUser } from '@firebase/auth';
 import { configureStore } from '@reduxjs/toolkit';
 import exerciseInfosReducer from './exerciseInfosSlice';
 import { fetchExerciseInfos, syncExerciseInfos } from './exerciseInfosSlice/thunks';
-import postsReducer from './postsSlice';
 import imagesReducer from './imagesSlice';
+import postsReducer from './postsSlice';
 import prsReducer from './prsSlice';
 import searchReducer from './searchSlice';
 import userReducer, { registerAuthStateListener } from './userSlice';
-import { flushData, loadData, removeCachedUser } from './userSlice/thunks';
+import { loadData, removeCachedUser } from './userSlice/thunks';
 import workoutsReducer from './workoutsSlice';
 
 export const store = configureStore({
