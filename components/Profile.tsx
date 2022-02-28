@@ -1,5 +1,6 @@
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import React, { useState } from 'react';
+import * as ImagePicker from 'expo-image-picker';
+import React, { useEffect, useState } from 'react';
 import { Image, View } from 'react-native';
 import {
   ActivityIndicator, Button, Text, TextInput,
@@ -7,6 +8,8 @@ import {
 import tw from 'twrnc';
 import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
+import User from '../models/firestore/User';
+import { downloadImage, uploadImage } from '../state/imagesSlice/thunks';
 import { selectPostsSortedByMostRecentByUserId } from '../state/postsSlice/selectors';
 import { selectPRsSortedByMostRecentByUserId } from '../state/prsSlice/selectors';
 import { clearUpdateProfileResult } from '../state/userSlice';
@@ -17,7 +20,6 @@ import {
   followUser, unfollowUser, updateName, updateUsername,
 } from '../state/userSlice/thunks';
 import { selectWorkoutsSortedByMostRecentByUserId } from '../state/workoutsSlice/selectors';
-import User from '../models/firestore/User';
 import BackButton from './BackButton';
 import EditButton from './EditButton';
 import Followers from './Followers';
@@ -42,11 +44,45 @@ export default function Profile({ user }: { user: User }) {
     (state) => selectPRsSortedByMostRecentByUserId(state, user.id),
   );
 
+  const [profilePictureUri, setProfilePictureUri] = useState<string | undefined>(undefined);
+  const [
+    newProfilePictureUri,
+    setNewProfilePictureUri,
+  ] = useState<string | undefined>(profilePictureUri);
+  const [isLoaded, setIsLoaded] = useState<boolean>(false);
+
+  useEffect(() => {
+    async function downloadProfileImage() {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const result: any = await dispatch(downloadImage({
+        userId: user.id, isProfile: true, postId: '',
+      }));
+
+      setProfilePictureUri(result.payload);
+      setIsLoaded(true);
+    }
+
+    if (!isLoaded) {
+      downloadProfileImage();
+    }
+  }, []);
+
   const [newName, setNewName] = useState<string>(user.name);
   const [newUsername, setNewUsername] = useState<string>(user.username);
   const [editingProfile, setEditingProfile] = useState<boolean>(false);
-
   const forCurrentUser = currentUser ? (user.id === currentUser.id) : false;
+
+  const browseImages = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+    if (!result.cancelled) {
+      setNewProfilePictureUri(result.uri);
+    }
+  };
 
   if (editingProfile) {
     return (
@@ -58,8 +94,22 @@ export default function Profile({ user }: { user: User }) {
               setEditingProfile(false);
               setNewName(user.name);
               setNewUsername(user.username);
+              setNewProfilePictureUri(profilePictureUri);
             }}
           />
+          <View style={tw`items-center`}>
+            {
+              !isLoaded
+                ? <ActivityIndicator size="large" color="white" />
+                : <Image source={{ uri: newProfilePictureUri }} style={tw`w-25 h-25 rounded-full`} />
+            }
+            <Button
+              mode="contained"
+              onPress={browseImages}
+            >
+              Choose image
+            </Button>
+          </View>
           <Text style={tw`text-base`}>Name</Text>
           <TextInput
             style={tw`text-lg border-solid border-gray-500 border-b`}
@@ -81,12 +131,25 @@ export default function Profile({ user }: { user: User }) {
               if (newUsername !== user.username) {
                 dispatch(updateUsername(newUsername));
               }
+              if (newProfilePictureUri) {
+                dispatch(uploadImage({
+                  image: newProfilePictureUri,
+                  userId: user.id,
+                  isProfile: true,
+                  postId: '',
+                }));
+                setProfilePictureUri(newProfilePictureUri);
+              }
             }}
             disabled={
               currentUserStatus === 'updatingProfile'
               || newName.length === 0
               || newUsername.length === 0
-              || (newName === user.name && newUsername === user.username)
+              || (
+                newName === user.name
+                && newUsername === user.username
+                && newProfilePictureUri === null
+              )
             }
           >
             {
@@ -105,7 +168,7 @@ export default function Profile({ user }: { user: User }) {
       <View style={tw`flex flex-row h-35 bg-gray-800 items-center justify-center`}>
         <View style={tw`flex flex-1`} />
         <View style={tw`flex flex-2`}>
-          <Image source={{ uri: 'https://picsum.photos/id/1005/300/300' }} style={tw`w-25 h-25 rounded-full`} />
+          <Image source={{ uri: profilePictureUri }} style={tw`w-25 h-25 rounded-full`} />
         </View>
         <View style={tw`flex flex-2`}>
           <Text style={tw`text-xl font-bold text-white text-left`}>{user && user.name}</Text>
@@ -118,7 +181,15 @@ export default function Profile({ user }: { user: User }) {
       </View>
       {
         forCurrentUser
-          ? <EditButton onPress={() => setEditingProfile(true)} />
+          ? (
+            <EditButton onPress={() => {
+              setEditingProfile(true);
+              if (profilePictureUri !== newProfilePictureUri) {
+                setNewProfilePictureUri(profilePictureUri);
+              }
+            }}
+            />
+          )
           : (
             currentUser.followingIds.includes(user.id)
               ? (

@@ -41,7 +41,7 @@ export default {
     await deleteDoc(doc(db, PRS_COLLECTION, pr.id));
 
     await updateDoc(doc(db, USERS_COLLECTION, pr.userId), {
-      postIds: arrayRemove(pr.id),
+      prIds: arrayRemove(pr.id),
     });
   },
 

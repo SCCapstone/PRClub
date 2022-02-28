@@ -2,12 +2,13 @@ import React from 'react';
 import { View } from 'react-native';
 import { ActivityIndicator, Button, Text } from 'react-native-paper';
 import tw from 'twrnc';
+import { ScrollView } from 'react-native-gesture-handler';
 import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
 import {
   selectCurrentUser, selectUsersByIds, selectUsersStatus,
 } from '../state/userSlice/selectors';
-import { followUser, unfollowUser } from '../state/userSlice/thunks';
+import { followUser, loadData, unfollowUser } from '../state/userSlice/thunks';
 import User from '../models/firestore/User';
 import CenteredView from './CenteredView';
 
@@ -27,7 +28,7 @@ export default function Followers({ user }: { user: User }) {
   }
 
   return (
-    <>
+    <ScrollView>
       {
         followers.length === 0 ? (
           <>
@@ -71,6 +72,7 @@ export default function Followers({ user }: { user: User }) {
                             style={tw`bg-blue-500`}
                             onPress={() => {
                               dispatch(followUser(follower.id));
+                              dispatch(loadData(follower.id));
                             }}
                           >
                             <Text style={tw`text-white`}>Follow</Text>
@@ -82,6 +84,7 @@ export default function Followers({ user }: { user: User }) {
             </View>
           ))
       }
-    </>
+      <View style={tw`h-100`} />
+    </ScrollView>
   );
 }

@@ -1,11 +1,21 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import PostsService from '../../services/PostsService';
 import Post from '../../models/firestore/Post';
+import ImagesService from '../../services/ImagesService';
 import Comment from '../../models/firestore/Comment';
+import type { AppDispatch } from '../store';
 
-export const fetchPostsForUser = createAsyncThunk<Post[], string>(
+export const fetchPostsForUser = createAsyncThunk<
+  Post[],
+  string,
+  {dispatch: AppDispatch}
+>(
   'posts/fetchPostsForUser',
-  async (userId: string): Promise<Post[]> => PostsService.fetchPostsForUser(userId),
+  async (userId: string, { dispatch }): Promise<Post[]> => {
+    const posts = await PostsService.fetchPostsForUser(userId);
+    posts.forEach((post) => dispatch(fetchCommentsForPost(post.id)));
+    return posts;
+  },
 );
 
 export const upsertPost = createAsyncThunk<Post, Post>(
@@ -45,6 +55,23 @@ export const unlikePost = createAsyncThunk<
   async ({ post, userId }): Promise<{ post: Post, userId: string }> => {
     await PostsService.unlikePost(post, userId);
     return { post, userId };
+  },
+);
+
+export const addImageToPost = createAsyncThunk<
+  string,
+  {image: string | undefined, userId: string, postId: string}
+>(
+  'posts/addImageToPost',
+  async ({
+    image, userId, postId,
+  }): Promise<string> => {
+    if (image) {
+      await ImagesService.uploadImage(image, userId, false, postId);
+      return ImagesService.downloadImage(userId, false, postId);
+    }
+
+    throw new Error('Image cannot be undefined!');
   },
 );
 

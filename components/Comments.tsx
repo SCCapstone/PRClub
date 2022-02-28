@@ -1,24 +1,15 @@
-/* eslint-disable react/destructuring-assignment */
-import React, { useState, useEffect } from 'react';
-import {
-  View, Text,
-} from 'react-native';
+import React from 'react';
+import { Text, View } from 'react-native';
+import useAppSelector from '../hooks/useAppSelector';
 import Post from '../models/firestore/Post';
-import { Comment as CommentType } from '../models/firestore/Comment';
+import { selectCommentsForPost } from '../state/postsSlice/selectors';
 import Comment from './Comment';
-import useAppDispatch from '../hooks/useAppDispatch';
-import { fetchCommentsForPost } from '../state/postsSlice/thunks';
 
-export default function Comments({ post } : { post:Post }) {
-  const dispatch = useAppDispatch();
-  const [comments, setComments] = useState<CommentType[]>([]);
-  useEffect(() => {
-    async function fetchComments() {
-      const result: unknown = await dispatch(fetchCommentsForPost(post.id));
-      setComments(result.payload);
-    }
-    fetchComments();
-  });
+export default function Comments({ post } : { post: Post }) {
+  const comments = useAppSelector((state) => (
+    selectCommentsForPost(state, post.id)
+      .sort((a, b) => (new Date(b.date) > new Date(a.date) ? 1 : -1))
+  ));
 
   if (comments && comments.length > 0) {
     return (
@@ -36,7 +27,7 @@ export default function Comments({ post } : { post:Post }) {
   }
   return (
     <View>
-      <Text>No comments.</Text>
+      <Text style={{ color: 'grey' }}>no comments</Text>
     </View>
   );
 }

@@ -4,4 +4,5 @@ export default interface Comment {
   username: string;
   postId: string;
   body: string;
+  date: string;
 }

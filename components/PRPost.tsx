@@ -1,5 +1,5 @@
 import React from 'react';
-import { View } from 'react-native';
+import { Image, View } from 'react-native';
 import { Button, Text } from 'react-native-paper';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import tw from 'twrnc';
@@ -52,6 +52,14 @@ export default function PRPost({ post, forCurrentUser }: {post: Post, forCurrent
           }
         </View>
       </View>
+      {
+        pr && post.image
+          && (
+            <View style={tw`items-center p-2`}>
+              <Image source={{ uri: post.image }} style={tw`h-50 w-50`} />
+            </View>
+          )
+      }
       <View style={tw`bg-gray-300 p-3`}>
         {pr
           ? (
@@ -85,7 +93,7 @@ export default function PRPost({ post, forCurrentUser }: {post: Post, forCurrent
           ? () => dispatch(unlikePost({ post, userId: currentUser.id }))
           : () => dispatch(likePost({ post, userId: currentUser.id }))}
       />
-      <Text>
+      <Text style={tw`text-sm`}>
         <Text style={tw`font-bold`}>
           @
           {post.username}

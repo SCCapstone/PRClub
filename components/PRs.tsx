@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import React, { useState } from 'react';
-import { View } from 'react-native';
+import { Image, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import {
   ActivityIndicator,
@@ -9,11 +9,12 @@ import {
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import tw from 'twrnc';
 import { v4 as uuidv4 } from 'uuid';
+import * as ImagePicker from 'expo-image-picker';
 import { POST_CHARACTER_LIMIT } from '../constants/posts';
 import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
-import { selectPostsStatus } from '../state/postsSlice/selectors';
-import { upsertPost } from '../state/postsSlice/thunks';
+import { selectPostsStatus, selectUploadedPostImageUri } from '../state/postsSlice/selectors';
+import { addImageToPost, upsertPost } from '../state/postsSlice/thunks';
 import { clearUpsertPRResult } from '../state/prsSlice';
 import { selectPRsStatus } from '../state/prsSlice/selectors';
 import { removePR } from '../state/prsSlice/thunks';
@@ -21,6 +22,7 @@ import Post from '../models/firestore/Post';
 import PR from '../models/firestore/PR';
 import BackButton from './BackButton';
 import CenteredView from './CenteredView';
+import { clearUploadedPostImageUri } from '../state/postsSlice';
 
 function PRsByExerciseListItem({
   pr, onDelete, onPost,
@@ -77,6 +79,19 @@ export default function PRs({ prs, forCurrentUser }: {prs: PR[], forCurrentUser:
 
   const dispatch = useAppDispatch();
 
+  const uploadedPostImageUri = useAppSelector(selectUploadedPostImageUri);
+  const browseImages = async (userId: string, postId: string) => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+    if (!result.cancelled) {
+      dispatch(addImageToPost({ image: result.uri, userId, postId }));
+    }
+  };
+
   if (prsStatus === 'idle') {
     return (
       <CenteredView>
@@ -103,67 +118,93 @@ export default function PRs({ prs, forCurrentUser }: {prs: PR[], forCurrentUser:
     }
 
     if (prToPost) {
+      let postId = uuidv4();
+
       return (
         <>
-          <View style={tw`flex-1`}>
-            <ScrollView style={tw`h-130 w-full`}>
-              <View style={tw`bg-gray-100`}>
-                <View style={tw`flex flex-row p-3`}>
-                  <View style={tw`flex flex-1`}>
-                    <BackButton
-                      onPress={() => {
-                        dispatch(clearUpsertPRResult());
-                        setPRToPost(null);
-                      }}
-                    />
-                  </View>
-                  <View style={tw`flex flex-3`}>
-                    <Text style={tw`text-xl text-center font-bold`}>{`Sharing PR for "${prToPost.exerciseName}"`}</Text>
-                  </View>
-                  <View style={tw`flex flex-1`} />
+          <ScrollView>
+            <View style={tw`bg-gray-100`}>
+              <View style={tw`flex flex-row p-3`}>
+                <View style={tw`flex flex-1`}>
+                  <BackButton
+                    onPress={() => {
+                      dispatch(clearUpsertPRResult());
+                      setPRToPost(null);
+                    }}
+                  />
                 </View>
+                <View style={tw`flex flex-3`}>
+                  <Text style={tw`text-xl text-center font-bold`}>{`Sharing PR for "${prToPost.exerciseName}"`}</Text>
+                </View>
+                <View style={tw`flex flex-1`} />
               </View>
-              <TextInput
-                onChangeText={setPostCaption}
-                placeholder="add a caption..."
-                multiline
-              />
-              <View style={tw`p-1`}>
-                <Text style={postCaption.length > POST_CHARACTER_LIMIT ? tw`text-right text-red-500` : tw`text-right`}>
-                  {postCaption.length}
-                  /
-                  {POST_CHARACTER_LIMIT}
-                </Text>
-              </View>
-              <Button
-                mode="contained"
-                onPress={() => {
-                  const post: Post = {
-                    id: uuidv4(),
-                    userId: prToPost.userId,
-                    username: prToPost.username,
-                    workoutId: prToPost.id,
-                    createdDate: new Date().toString(),
-                    caption: postCaption,
-                    commentIds: [],
-                    likedByIds: [],
-                    prId: prToPost.id,
-                  };
+            </View>
+            <TextInput
+              onChangeText={setPostCaption}
+              placeholder="add a caption..."
+              multiline
+            />
+            <View style={tw`p-1`}>
+              <Text style={postCaption.length > POST_CHARACTER_LIMIT ? tw`text-right text-red-500` : tw`text-right`}>
+                {postCaption.length}
+                /
+                {POST_CHARACTER_LIMIT}
+              </Text>
+            </View>
+            <Button
+              mode="contained"
+              onPress={() => browseImages(prToPost.userId, postId)}
+            >
+              Choose image
+            </Button>
+            {
+              postsStatus === 'uploadingImage' && <ActivityIndicator size="large" />
+            }
+            {
+              uploadedPostImageUri
+                && (
+                  <View style={tw`items-center`}>
+                    <Image source={{ uri: uploadedPostImageUri }} style={tw`h-50 w-50`} />
+                  </View>
+                )
+            }
+            <View style={tw`h-100`} />
+          </ScrollView>
+          <Button
+            mode="contained"
+            onPress={() => {
+              let post: Post = {
+                id: postId,
+                userId: prToPost.userId,
+                username: prToPost.username,
+                workoutId: prToPost.id,
+                createdDate: new Date().toString(),
+                caption: postCaption,
+                commentIds: [],
+                likedByIds: [],
+                prId: prToPost.id,
+              };
 
-                  dispatch(upsertPost(post));
+              if (uploadedPostImageUri) {
+                post = { ...post, image: uploadedPostImageUri };
+              }
 
-                  setPostCaption('');
-                }}
-                disabled={
-                  postCaption.length < 1
+              dispatch(upsertPost(post));
+              dispatch(clearUploadedPostImageUri());
+
+              setPostCaption('');
+
+              postId = uuidv4();
+            }}
+            disabled={
+              postCaption.length < 1
                 || postCaption.length > POST_CHARACTER_LIMIT
                 || postsStatus === 'callingService'
-                }
-              >
-                {postsStatus === 'callingService' ? <ActivityIndicator /> : 'Post'}
-              </Button>
-            </ScrollView>
-          </View>
+                || postsStatus === 'uploadingImage'
+            }
+          >
+            {postsStatus === 'callingService' ? <ActivityIndicator /> : 'Post'}
+          </Button>
         </>
       );
     }

@@ -3,6 +3,7 @@
 import { initializeApp } from '@firebase/app';
 import { getAuth } from '@firebase/auth';
 import { getFirestore } from '@firebase/firestore';
+import { getStorage } from '@firebase/storage';
 import {
   FIREBASE_API_KEY,
   FIREBASE_AUTH_DOMAIN,
@@ -23,5 +24,7 @@ export const app = initializeApp({
   appId: FIREBASE_APP_ID,
   measurementId: FIREBASE_MEASUREMENT_ID,
 });
+
 export const db = getFirestore(app);
 export const auth = getAuth(app);
+export const storage = getStorage(app);

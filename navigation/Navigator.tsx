@@ -1,10 +1,15 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 import { Dimensions, View } from 'react-native';
-import { ActivityIndicator, Snackbar, Text } from 'react-native-paper';
+import {
+  ActivityIndicator, Snackbar, Text,
+} from 'react-native-paper';
 import tw from 'twrnc';
 import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
+import User from '../models/firestore/User';
+import { clearUploadImageResult } from '../state/imagesSlice';
+import { selectUploadImageResult } from '../state/imagesSlice/selectors';
 import { clearUpsertPostResult } from '../state/postsSlice';
 import { selectUpsertPostResult } from '../state/postsSlice/selectors';
 import { clearUpsertPRResult } from '../state/prsSlice';
@@ -16,7 +21,6 @@ import {
 } from '../state/userSlice/selectors';
 import { clearUpsertWorkoutResult } from '../state/workoutsSlice';
 import { selectUpsertWorkoutResult } from '../state/workoutsSlice/selectors';
-import User from '../models/firestore/User';
 import AuthStack from './stacks/auth';
 import MainStack from './stacks/main';
 
@@ -33,6 +37,7 @@ export default function Navigator() {
   const updateProfileResult = useAppSelector(selectUpdateProfileResult);
   const upsertPostResult = useAppSelector(selectUpsertPostResult);
   const upsertPRResult = useAppSelector(selectUpsertPRResult);
+  const uploadImageResult = useAppSelector(selectUploadImageResult);
 
   if (currentUserStatus === 'fetching') {
     return <ActivityIndicator />;
@@ -75,12 +80,18 @@ export default function Navigator() {
               && (
                 <>
                   <Snackbar
-                    visible={!!updateProfileResult}
+                    visible={!!updateProfileResult || !!uploadImageResult}
                     duration={3000}
-                    onDismiss={() => dispatch(clearUpdateProfileResult())}
+                    onDismiss={() => {
+                      dispatch(clearUpdateProfileResult());
+                      dispatch(clearUploadImageResult());
+                    }}
                     action={{
                       label: 'Dismiss',
-                      onPress: () => dispatch(clearUpdateProfileResult()),
+                      onPress: () => {
+                        dispatch(clearUpdateProfileResult());
+                        dispatch(clearUploadImageResult());
+                      },
                     }}
                     style={updateProfileResult && updateProfileResult.error ? tw`bg-red-500` : {}}
                   >

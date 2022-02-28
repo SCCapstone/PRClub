@@ -44,6 +44,15 @@ export default {
         },
       ),
     );
+
+    // remove all comments for post
+    await Promise.all(
+      post.commentIds.map(
+        async (commentId) => {
+          await deleteDoc(doc(db, COMMENTS_COLLECTION, commentId));
+        },
+      ),
+    );
   },
 
   async likePost(post: Post, userId: string): Promise<void> {
@@ -90,6 +99,10 @@ export default {
     await updateDoc(doc(db, POSTS_COLLECTION, post.id), {
       commentIds: arrayUnion(comment.id),
     });
+
+    await updateDoc(doc(db, USERS_COLLECTION, post.userId), {
+      commentIds: arrayUnion(comment.id),
+    });
   },
 
   async removeComment(post: Post, comment: Comment): Promise<void> {
@@ -97,6 +110,10 @@ export default {
     await deleteDoc(doc(db, COMMENTS_COLLECTION, comment.id));
     // remove comment id from commentIds
     await updateDoc(doc(db, POSTS_COLLECTION, post.id), {
+      commentIds: arrayRemove(comment.id),
+    });
+
+    await updateDoc(doc(db, USERS_COLLECTION, post.userId), {
       commentIds: arrayRemove(comment.id),
     });
   },

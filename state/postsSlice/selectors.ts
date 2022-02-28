@@ -1,3 +1,4 @@
+import Comment from '../../models/firestore/Comment';
 import Post from '../../models/firestore/Post';
 import { RootState } from '../store';
 import { postsAdapter } from './state';
@@ -38,4 +39,12 @@ export function selectUpsertPostResult(state: RootState) {
 
 export function selectRemovePostResult(state: RootState) {
   return state.posts.removePostResult;
+}
+
+export function selectUploadedPostImageUri(state: RootState) {
+  return state.posts.uploadedImageUri;
+}
+
+export function selectCommentsForPost(state: RootState, postId: string): Comment[] {
+  return state.posts.comments.filter((c) => c.postId === postId);
 }

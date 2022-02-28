@@ -1,6 +1,4 @@
 # PRClub
-*Project Structure Document: https://docs.google.com/document/d/1Q6jiE0bRHjM4UogHsJBCiUVq1bl6iZTmBYgcztHcrqo/edit?usp=sharing*
-
 We are creating a social networking application where users will be able to create and share workouts with other users. The goal of this project is to allow users to share their passion for fitness by exchanging workouts and meeting new people with the same interests. Some of the features of our applications include:
 - Creating a user profile
 - Following other users
@@ -37,7 +35,10 @@ of your local copy of this repository.
 2. Run `expo start` from the root directory of your local copy of this repository.
 
 ## Deployment
-TODO
+1. Create an [Expo Application Services (EAS)](https://expo.dev/eas) account.
+2. From the root directory, run `npx eas-cli build --platform android`.
+3. Sign in to your EAS account to view the status of your build (https://expo.dev/accounts/<your-account-username>).
+4. Monitor your build until it completes. Then, download its APK once it's complete.
 
 # Testing
 ## Testing Technology
