@@ -39,7 +39,8 @@ We are creating a social networking application where users will be able to crea
 3. Sign in to your EAS account to view the status of your build.
 4. Monitor your build until it completes. Then, download its APK once it's complete.
 
-### To Web
+### To web (as a backup solution)
+Thankfully, Expo lets us deploy apps as web apps in the event that an Android build doesn't succeed.
 1. Create an account on [Netlify](www.netlify.com). Wait until you get to the below screen
 with the following file upload box:
 <image src="./assets/netlify.png" class="center">
