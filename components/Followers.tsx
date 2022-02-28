@@ -1,5 +1,5 @@
 import React from 'react';
-import { View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { ActivityIndicator, Button, Text } from 'react-native-paper';
 import tw from 'twrnc';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -12,7 +12,10 @@ import { followUser, loadData, unfollowUser } from '../state/userSlice/thunks';
 import User from '../models/firestore/User';
 import CenteredView from './CenteredView';
 
-export default function Followers({ user }: { user: User }) {
+export default function Followers({
+  user,
+  onFollowerPress,
+}: { user: User, onFollowerPress: (follower: User) => void }) {
   const dispatch = useAppDispatch();
 
   const followers = useAppSelector((state) => selectUsersByIds(state, user.followerIds));
@@ -43,7 +46,12 @@ export default function Followers({ user }: { user: User }) {
               style={tw`p-2 border-b`}
             >
               <View style={tw`flex flex-row`}>
-                <View style={tw`flex flex-3`}>
+                <TouchableOpacity
+                  style={tw`flex flex-3`}
+                  onPress={() => {
+                    onFollowerPress(follower);
+                  }}
+                >
                   <Text style={tw`font-bold text-lg`}>
                     @
                     {follower.username}
@@ -51,7 +59,7 @@ export default function Followers({ user }: { user: User }) {
                   <Text>
                     {follower.name}
                   </Text>
-                </View>
+                </TouchableOpacity>
                 <View style={tw`flex flex-1 justify-center items-center`}>
                   {
                     follower.id === currentUser.id

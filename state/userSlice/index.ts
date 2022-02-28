@@ -27,6 +27,10 @@ const userSlice = createSlice({
     clearUserAuthError(state) {
       state.authError = null;
     },
+    // TODO: remove when profile picture setting gets moved to a thunk
+    setUpdateProfileResultSuccess(state) {
+      state.updateProfileResult = { success: true };
+    },
     clearUpdateProfileResult(state) {
       state.updateProfileResult = null;
     },
@@ -249,6 +253,7 @@ export const {
   registerAuthStateListener,
   unsubscribeAuthStateListener,
   clearUserAuthError,
+  setUpdateProfileResultSuccess,
   clearUpdateProfileResult,
   clearFollowResult,
   clearUnfollowResult,

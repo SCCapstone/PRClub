@@ -102,7 +102,7 @@ export default function Search() {
             setQueryString('');
           }}
         />
-        <Profile user={userBeingViewedInSearch} />
+        <Profile user={userBeingViewedInSearch} isProfileScreen={false} />
       </>
     );
   }

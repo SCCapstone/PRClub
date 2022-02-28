@@ -10,11 +10,7 @@ export default function ProfileScreen() {
     return <></>;
   }
 
-  if (!currentUser) {
-    throw new Error('Current user cannot be null!');
-  }
-
   return (
-    <Profile user={currentUser} />
+    <Profile user={currentUser} isProfileScreen />
   );
 }
