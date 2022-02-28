@@ -29,15 +29,12 @@ We are creating a social networking application where users will be able to crea
 2. Run `npm install`.
 
 ## Running
-1. Acquire a copy of this project's `.env` file from a maintainer of this repository. **This is
-important as it contains the credentials needed to connect to Firebase.** Place this at the root
-of your local copy of this repository.
-2. Run `expo start` from the root directory of your local copy of this repository.
+1. Run `expo start` from the root directory of your local copy of this repository.
 
 ## Deployment
 1. Create an [Expo Application Services (EAS)](https://expo.dev/eas) account.
 2. From the root directory, run `npx eas-cli build --platform android`.
-3. Sign in to your EAS account to view the status of your build (https://expo.dev/accounts/<your-account-username>).
+3. Sign in to your EAS account to view the status of your build.
 4. Monitor your build until it completes. Then, download its APK once it's complete.
 
 # Testing
