@@ -32,10 +32,21 @@ We are creating a social networking application where users will be able to crea
 1. Run `expo start` from the root directory of your local copy of this repository.
 
 ## Deployment
+
+### To Android
 1. Create an [Expo Application Services (EAS)](https://expo.dev/eas) account.
 2. From the root directory, run `npx eas-cli build --platform android`.
 3. Sign in to your EAS account to view the status of your build.
 4. Monitor your build until it completes. Then, download its APK once it's complete.
+
+### To Web
+1. Create an account on [Netlify](www.netlify.com). Wait until you get to the below screen
+with the following file upload box:
+<image src="./assets/netlify.png" class="center">
+2. From the root directory, run `expo build:web`. Confirm there are no issues by running
+`npx serve web-build` and accessing the port specified in its output.
+3. Drag-and-drop the `web-build/` folder created in the last step to the above file upload box.
+4. Access the URL provided by Netlify.
 
 # Testing
 ## Testing Technology
