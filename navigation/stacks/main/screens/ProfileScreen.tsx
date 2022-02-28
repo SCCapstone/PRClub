@@ -11,6 +11,6 @@ export default function ProfileScreen() {
   }
 
   return (
-    <Profile user={currentUser} />
+    <Profile user={currentUser} isProfileScreen />
   );
 }

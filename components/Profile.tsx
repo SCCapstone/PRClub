@@ -29,7 +29,10 @@ import Workouts from './Workouts';
 
 const Tab = createMaterialTopTabNavigator();
 
-export default function Profile({ user }: { user: User }) {
+export default function Profile({
+  user,
+  isProfileScreen,
+}: { user: User, isProfileScreen: boolean }) {
   const [profileBeingViewed, setProfileBeingViewed] = useState<User>(user);
 
   const dispatch = useAppDispatch();
@@ -162,7 +165,7 @@ export default function Profile({ user }: { user: User }) {
   return currentUser ? (
     <>
       {
-        profileBeingViewed.id !== currentUser.id
+        isProfileScreen && profileBeingViewed.id !== currentUser.id
           ? (
             <Button
               mode="contained"
