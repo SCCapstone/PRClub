@@ -200,6 +200,7 @@ export default function PRs({ prs, forCurrentUser }: {prs: PR[], forCurrentUser:
               postCaption.length < 1
                 || postCaption.length > POST_CHARACTER_LIMIT
                 || postsStatus === 'callingService'
+                || postsStatus === 'uploadingImage'
             }
           >
             {postsStatus === 'callingService' ? <ActivityIndicator /> : 'Post'}
