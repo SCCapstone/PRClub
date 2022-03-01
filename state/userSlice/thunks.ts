@@ -4,7 +4,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { CURRENT_USER_KEY } from '../../constants/async-storage';
 import { USERS_COLLECTION } from '../../constants/firestore';
 import { PROFILE_IMG_URI } from '../../constants/profile';
-import { db } from '../../firebase';
+import { firestore } from '../../firebase';
 import User from '../../models/firestore/User';
 import AuthService from '../../services/AuthService';
 import UsersService from '../../services/UsersService';
@@ -113,7 +113,7 @@ export const followUser = createAsyncThunk<User, string, {state: RootState}>(
 
     await UsersService.createFollowerRelationship(currentUser.id, userToFollowId);
 
-    const docSnap = await getDoc(doc(db, USERS_COLLECTION, userToFollowId));
+    const docSnap = await getDoc(doc(firestore, USERS_COLLECTION, userToFollowId));
     const userToFollow = docSnap.data() as User;
 
     return userToFollow;
@@ -130,7 +130,7 @@ export const unfollowUser = createAsyncThunk<User, string, {state: RootState}>(
 
     await UsersService.removeFollowerRelationship(currentUser.id, userToUnfollowId);
 
-    const docSnap = await getDoc(doc(db, USERS_COLLECTION, userToUnfollowId));
+    const docSnap = await getDoc(doc(firestore, USERS_COLLECTION, userToUnfollowId));
     const userToUnfollow = docSnap.data() as User;
 
     return userToUnfollow;

@@ -3,7 +3,7 @@ import {
 } from '@firebase/firestore';
 import _ from 'lodash';
 import * as FirestoreConstants from '../constants/firestore';
-import { db } from '../firebase';
+import { firestore } from '../firebase';
 
 type FirestoreCollectionName = typeof FirestoreConstants[keyof (typeof FirestoreConstants)];
 
@@ -17,7 +17,7 @@ export async function queryCollectionById<T>(
     await Promise.all(
       _.chunk(ids, 10).map( // firestore maximum "in" limit
         async (chunk) => {
-          const q = query(collection(db, collectionName), where('id', 'in', chunk));
+          const q = query(collection(firestore, collectionName), where('id', 'in', chunk));
           const querySnap = await getDocs(q);
           querySnap.forEach((d: QueryDocumentSnapshot<DocumentData>) => {
             const item = d.data() as T;
