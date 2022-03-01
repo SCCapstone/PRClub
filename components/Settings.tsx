@@ -9,7 +9,7 @@ import useAppSelector from '../hooks/useAppSelector';
 import { userLogOut } from '../state/userSlice/thunks';
 import { selectExerciseInfosAreSyncing } from '../state/exerciseInfosSlice/selectors';
 
-export function WgerLink() {
+function WgerLink() {
   return (
     <Text
       style={tw`underline text-blue-500`}

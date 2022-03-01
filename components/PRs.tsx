@@ -1,3 +1,4 @@
+import * as ImagePicker from 'expo-image-picker';
 import _ from 'lodash';
 import React, { useState } from 'react';
 import { Image, View } from 'react-native';
@@ -9,20 +10,18 @@ import {
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import tw from 'twrnc';
 import { v4 as uuidv4 } from 'uuid';
-import * as ImagePicker from 'expo-image-picker';
 import { POST_CHARACTER_LIMIT } from '../constants/posts';
 import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
+import Post from '../models/firestore/Post';
+import PR from '../models/firestore/PR';
+import { clearUploadedPostImageUri } from '../state/postsSlice';
 import { selectPostsStatus, selectUploadedPostImageUri } from '../state/postsSlice/selectors';
 import { addImageToPost, upsertPost } from '../state/postsSlice/thunks';
 import { clearUpsertPRResult } from '../state/prsSlice';
-import { selectPRsStatus } from '../state/prsSlice/selectors';
 import { removePR } from '../state/prsSlice/thunks';
-import Post from '../models/firestore/Post';
-import PR from '../models/firestore/PR';
 import BackButton from './BackButton';
 import CenteredView from './CenteredView';
-import { clearUploadedPostImageUri } from '../state/postsSlice';
 
 function PRsByExerciseListItem({
   pr, onDelete, onPost,
@@ -70,16 +69,20 @@ function PRsByExerciseListItem({
   );
 }
 
-export default function PRs({ prs, forCurrentUser }: {prs: PR[], forCurrentUser: boolean}) {
+export default function PRs({
+  prs,
+  prsStatus,
+  forCurrentUser,
+}: {prs: PR[], prsStatus: 'loading' | 'success' | 'error', forCurrentUser: boolean}) {
+  // Redux-level state
+  const dispatch = useAppDispatch();
+  const postsStatus = useAppSelector(selectPostsStatus);
+  const uploadedPostImageUri = useAppSelector(selectUploadedPostImageUri);
+
+  // component-level state
   const [postCaption, setPostCaption] = useState<string>('');
   const [prToPost, setPRToPost] = useState<PR | null>(null);
 
-  const prsStatus = useAppSelector(selectPRsStatus);
-  const postsStatus = useAppSelector(selectPostsStatus);
-
-  const dispatch = useAppDispatch();
-
-  const uploadedPostImageUri = useAppSelector(selectUploadedPostImageUri);
   const browseImages = async (userId: string, postId: string) => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -92,15 +95,7 @@ export default function PRs({ prs, forCurrentUser }: {prs: PR[], forCurrentUser:
     }
   };
 
-  if (prsStatus === 'idle') {
-    return (
-      <CenteredView>
-        <Text style={tw`text-center text-xl`}>PRs have not been loaded yet.</Text>
-      </CenteredView>
-    );
-  }
-
-  if (prsStatus === 'fetching') {
+  if (prsStatus === 'loading') {
     return (
       <CenteredView>
         <ActivityIndicator />
@@ -108,7 +103,7 @@ export default function PRs({ prs, forCurrentUser }: {prs: PR[], forCurrentUser:
     );
   }
 
-  if (prsStatus === 'loaded') {
+  if (prsStatus === 'success') {
     if (prs.length === 0) {
       return (
         <CenteredView>

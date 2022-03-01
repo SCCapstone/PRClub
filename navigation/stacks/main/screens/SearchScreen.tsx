@@ -7,7 +7,7 @@ export default function SearchScreen() {
   const currentUser = useAppSelector(selectCurrentUser);
 
   if (!currentUser) {
-    throw new Error('Current user cannot be null!');
+    return <></>;
   }
 
   return <Search />;

@@ -1,3 +1,4 @@
+import * as ImagePicker from 'expo-image-picker';
 import React, { useState } from 'react';
 import { Image, ScrollView, View } from 'react-native';
 import {
@@ -5,33 +6,35 @@ import {
 } from 'react-native-paper';
 import tw from 'twrnc';
 import { v4 as uuidv4 } from 'uuid';
-import * as ImagePicker from 'expo-image-picker';
 import { POST_CHARACTER_LIMIT } from '../constants/posts';
 import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
+import Post from '../models/firestore/Post';
+import Workout from '../models/firestore/Workout';
 import { clearUploadedPostImageUri, clearUpsertPostResult } from '../state/postsSlice';
 import { selectPostsStatus, selectUploadedPostImageUri } from '../state/postsSlice/selectors';
 import { addImageToPost, upsertPost } from '../state/postsSlice/thunks';
-import { selectWorkoutsStatus } from '../state/workoutsSlice/selectors';
 import { removeWorkout } from '../state/workoutsSlice/thunks';
-import Post from '../models/firestore/Post';
-import Workout from '../models/firestore/Workout';
 import BackButton from './BackButton';
 import WorkoutForm from './WorkoutForm';
 import WorkoutItem from './WorkoutItem';
 
-export default function Workouts(
-  { workouts, forCurrentUser }: {workouts: Workout[], forCurrentUser: boolean},
-) {
+export default function Workouts({
+  workouts,
+  workoutsStatus,
+  forCurrentUser,
+}: {
+  workouts: Workout[],
+  workoutsStatus: 'loading' | 'error' | 'success',
+  forCurrentUser: boolean
+}) {
+  // Redux-level state
   const dispatch = useAppDispatch();
-
-  const workoutsStatus = useAppSelector(selectWorkoutsStatus);
   const postsStatus = useAppSelector(selectPostsStatus);
 
+  // component-level state
   const [workoutsState, setWorkoutsState] = useState<'default' | 'editing' | 'sharing'>('default');
-
   const [workoutToEdit, setWorkoutToEdit] = useState<Workout | null>(null);
-
   const [workoutToPost, setWorkoutToPost] = useState<Workout | null>(null);
   const [postCaption, setPostCaption] = useState<string>('');
 
@@ -48,15 +51,7 @@ export default function Workouts(
     }
   };
 
-  if (workoutsStatus === 'idle') {
-    return (
-      <View style={tw`flex h-100 justify-center items-center`}>
-        <Text style={tw`text-center text-xl`}>Workouts have not been loaded yet.</Text>
-      </View>
-    );
-  }
-
-  if (workoutsStatus === 'fetching') {
+  if (workoutsStatus === 'loading') {
     return (
       <View style={tw`flex h-100 justify-center items-center`}>
         <ActivityIndicator />
@@ -65,7 +60,7 @@ export default function Workouts(
     );
   }
 
-  if (workoutsStatus === 'loaded') {
+  if (workoutsStatus === 'success') {
     if (workoutsState === 'editing' && workoutToEdit) {
       return (
         <ScrollView>

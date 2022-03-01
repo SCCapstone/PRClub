@@ -1,21 +1,20 @@
 import React from 'react';
+import { View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { ActivityIndicator, Text } from 'react-native-paper';
 import tw from 'twrnc';
-import { View } from 'react-native';
-import useAppSelector from '../hooks/useAppSelector';
-import { selectPostsStatus } from '../state/postsSlice/selectors';
 import Post from '../models/firestore/Post';
 import CenteredView from './CenteredView';
 import PRPost from './PRPost';
 import WorkoutPost from './WorkoutPost';
 
-export default function Posts(
-  { posts, forCurrentUser }: { posts: Post[], forCurrentUser: boolean },
-) {
-  const postsStatus = useAppSelector(selectPostsStatus);
-
-  if (postsStatus === 'fetching') {
+export default function Posts({
+  posts,
+  postsStatus,
+  forCurrentUser,
+}: {
+  posts: Post[], postsStatus: 'loading' | 'error' | 'success', forCurrentUser: boolean }) {
+  if (postsStatus === 'loading') {
     return (
       <CenteredView>
         <ActivityIndicator />

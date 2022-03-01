@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text, View, TouchableOpacity } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 import { Menu } from 'react-native-paper';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import tw from 'twrnc';
@@ -11,13 +11,15 @@ import { removeComment } from '../state/postsSlice/thunks';
 import { selectCurrentUser } from '../state/userSlice/selectors';
 
 export default function Comment({ post, thisComment }: {post: Post, thisComment: CommentType}) {
-  const [menuIsVisible, setMenuIsVisible] = useState<boolean>(false);
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(selectCurrentUser);
 
+  const [menuIsVisible, setMenuIsVisible] = useState<boolean>(false);
+
   if (!currentUser) {
-    throw new Error('Current user cannot be null!');
+    return <></>;
   }
+
   return (
     <>
       <Text style={tw`text-sm`}>

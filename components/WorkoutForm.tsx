@@ -30,12 +30,11 @@ export default function WorkoutForm({
   workoutToEdit?: Workout,
   onSave?: () => void
 }) {
+  // Redux-level state
+  const dispatch = useAppDispatch();
+  const currentUser: User | null = useAppSelector(selectCurrentUser);
   const exerciseInfos: WgerExerciseInfo[] = useAppSelector(selectExerciseInfos);
   const exerciseInfosStatus: SliceStatus = useAppSelector(selectExericseInfosStatus);
-
-  const currentUser: User | null = useAppSelector(selectCurrentUser);
-
-  const dispatch = useAppDispatch();
 
   const initialValues: WorkoutInput = {
     name: workoutToEdit?.name || '',
@@ -50,36 +49,35 @@ export default function WorkoutForm({
     })) || [],
   };
 
+  if (!currentUser) {
+    return <></>;
+  }
+
   return (
     <>
       <Formik
         initialValues={initialValues}
         validationSchema={WorkoutInputSchema}
         onSubmit={(values) => {
-          if (currentUser) {
-            const workout: Workout = {
-              id: workoutToEdit ? workoutToEdit.id : uuidv4(),
-              userId: currentUser.id,
-              username: currentUser.username,
-              createdDate: workoutToEdit?.createdDate || new Date().toString(),
-              modifiedDate: workoutToEdit ? new Date().toString() : null,
-              name: values.name,
-              exercises: values.exercises.map((e) => ({
-                id: e.id,
-                name: e.name,
-                exerciseSets: e.exerciseSets.map((s) => ({
-                  id: s.id,
-                  weight: Number(s.weight),
-                  reps: Number(s.reps),
-                })),
+          const workout: Workout = {
+            id: workoutToEdit ? workoutToEdit.id : uuidv4(),
+            userId: currentUser.id,
+            username: currentUser.username,
+            createdDate: workoutToEdit?.createdDate || new Date().toString(),
+            modifiedDate: workoutToEdit ? new Date().toString() : null,
+            name: values.name,
+            exercises: values.exercises.map((e) => ({
+              id: e.id,
+              name: e.name,
+              exerciseSets: e.exerciseSets.map((s) => ({
+                id: s.id,
+                weight: Number(s.weight),
+                reps: Number(s.reps),
               })),
-            };
+            })),
+          };
 
-            dispatch(upsertWorkout(workout));
-          } else {
-            throw new Error('Something went terribly wrong.'
-              + ' You are here without being authenticated!');
-          }
+          dispatch(upsertWorkout(workout));
         }}
       >
         {(formikProps) => (

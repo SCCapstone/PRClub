@@ -1,3 +1,4 @@
+import { collection, query, where } from '@firebase/firestore';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import * as ImagePicker from 'expo-image-picker';
 import React, { useEffect, useState } from 'react';
@@ -5,13 +6,16 @@ import { Image, View } from 'react-native';
 import {
   ActivityIndicator, Button, Text, TextInput,
 } from 'react-native-paper';
+import { useFirestore, useFirestoreCollectionData } from 'reactfire';
 import tw from 'twrnc';
+import { POSTS_COLLECTION, PRS_COLLECTION, WORKOUTS_COLLECTION } from '../constants/firestore';
 import useAppDispatch from '../hooks/useAppDispatch';
 import useAppSelector from '../hooks/useAppSelector';
+import Post from '../models/firestore/Post';
+import PR from '../models/firestore/PR';
 import User from '../models/firestore/User';
+import Workout from '../models/firestore/Workout';
 import { downloadImage, uploadImage } from '../state/imagesSlice/thunks';
-import { selectPostsSortedByMostRecentByUserId } from '../state/postsSlice/selectors';
-import { selectPRsSortedByMostRecentByUserId } from '../state/prsSlice/selectors';
 import { clearUpdateProfileResult, setUpdateProfileResultSuccess } from '../state/userSlice';
 import {
   selectCurrentUser, selectCurrentUserStatus,
@@ -19,7 +23,6 @@ import {
 import {
   followUser, unfollowUser, updateName, updateUsername,
 } from '../state/userSlice/thunks';
-import { selectWorkoutsSortedByMostRecentByUserId } from '../state/workoutsSlice/selectors';
 import BackButton from './BackButton';
 import EditButton from './EditButton';
 import Followers from './Followers';
@@ -33,27 +36,61 @@ export default function Profile({
   user,
   isProfileScreen,
 }: { user: User, isProfileScreen: boolean }) {
-  const [profileBeingViewed, setProfileBeingViewed] = useState<User>(user);
-
+  // Redux-level state
   const dispatch = useAppDispatch();
-
   const currentUser = useAppSelector(selectCurrentUser);
   const currentUserStatus = useAppSelector(selectCurrentUserStatus);
-  const workouts = useAppSelector(
-    (state) => selectWorkoutsSortedByMostRecentByUserId(state, profileBeingViewed.id),
-  );
-  const posts = useAppSelector(
-    (state) => selectPostsSortedByMostRecentByUserId(state, profileBeingViewed.id),
-  );
-  const prs = useAppSelector(
-    (state) => selectPRsSortedByMostRecentByUserId(state, profileBeingViewed.id),
-  );
+
+  // component-level state
+  const [profileBeingViewed, setProfileBeingViewed] = useState<User>(user);
 
   const [profilePictureUri, setProfilePictureUri] = useState<string | undefined>(undefined);
-  const [
-    newProfilePictureUri,
-    setNewProfilePictureUri,
-  ] = useState<string | undefined>(undefined);
+  const [newProfilePictureUri, setNewProfilePictureUri] = useState<string | undefined>(undefined);
+
+  const [newName, setNewName] = useState<string>(profileBeingViewed.name);
+  const [newUsername, setNewUsername] = useState<string>(profileBeingViewed.username);
+  const [editingProfile, setEditingProfile] = useState<boolean>(false);
+
+  const forCurrentUser = currentUser ? (profileBeingViewed.id === currentUser.id) : false;
+
+  // ReactFire queries
+  const firestore = useFirestore();
+
+  // workouts:
+  const workoutsCollection = collection(firestore, WORKOUTS_COLLECTION);
+  const workoutsQuery = query(
+    workoutsCollection,
+    where('userId', '==', profileBeingViewed.id),
+  );
+  const {
+    status: workoutsStatus,
+    data: workoutsData,
+  } = useFirestoreCollectionData(workoutsQuery);
+  const workouts = workoutsData as Workout[];
+
+  // posts:
+  const postsCollection = collection(firestore, POSTS_COLLECTION);
+  const postsQuery = query(
+    postsCollection,
+    where('userId', '==', profileBeingViewed.id),
+  );
+  const {
+    status: postsStatus,
+    data: postsData,
+  } = useFirestoreCollectionData(postsQuery);
+  const posts = postsData as Post[];
+
+  // prs:
+  const prsCollection = collection(firestore, PRS_COLLECTION);
+  const prsQuery = query(
+    prsCollection,
+    where('userId', '==', profileBeingViewed.id),
+  );
+  const {
+    status: prsStatus,
+    data: prsData,
+  } = useFirestoreCollectionData(prsQuery);
+  const prs = prsData as PR[];
 
   useEffect(() => {
     async function downloadProfileImage() {
@@ -67,12 +104,6 @@ export default function Profile({
 
     downloadProfileImage();
   }, [profileBeingViewed]);
-
-  const [newName, setNewName] = useState<string>(profileBeingViewed.name);
-  const [newUsername, setNewUsername] = useState<string>(profileBeingViewed.username);
-  const [editingProfile, setEditingProfile] = useState<boolean>(false);
-
-  const forCurrentUser = currentUser ? (profileBeingViewed.id === currentUser.id) : false;
 
   const browseImages = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -239,13 +270,31 @@ export default function Profile({
       }
       <Tab.Navigator>
         <Tab.Screen name="Workouts">
-          {() => <Workouts workouts={workouts} forCurrentUser={forCurrentUser} />}
+          {() => (
+            <Workouts
+              workouts={workouts}
+              workoutsStatus={workoutsStatus}
+              forCurrentUser={forCurrentUser}
+            />
+          )}
         </Tab.Screen>
         <Tab.Screen name="Posts">
-          {() => <Posts posts={posts} forCurrentUser={forCurrentUser} />}
+          {() => (
+            <Posts
+              posts={posts}
+              postsStatus={postsStatus}
+              forCurrentUser={forCurrentUser}
+            />
+          )}
         </Tab.Screen>
         <Tab.Screen name="PRs">
-          {() => <PRs prs={prs} forCurrentUser={forCurrentUser} />}
+          {() => (
+            <PRs
+              prs={prs}
+              prsStatus={prsStatus}
+              forCurrentUser={forCurrentUser}
+            />
+          )}
         </Tab.Screen>
         <Tab.Screen name="Followers">
           {() => (
