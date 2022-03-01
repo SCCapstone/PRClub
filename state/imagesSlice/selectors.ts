@@ -7,3 +7,7 @@ export function selectUploadingImage(state: RootState) {
 export function selectUploadImageResult(state: RootState) {
   return state.images.uploadImageResult;
 }
+
+export function selectUploadedImage(state: RootState) {
+  return state.images.uploadedImage;
+}

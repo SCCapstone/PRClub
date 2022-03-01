@@ -2,7 +2,7 @@ import { collection, query, where } from '@firebase/firestore';
 import { ref } from '@firebase/storage';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import React, { useState } from 'react';
-import { Image, View } from 'react-native';
+import { Image, TouchableHighlight, View } from 'react-native';
 import {
   ActivityIndicator, Button, Text, TextInput,
 } from 'react-native-paper';
@@ -16,6 +16,7 @@ import Post from '../models/firestore/Post';
 import PR from '../models/firestore/PR';
 import User from '../models/firestore/User';
 import Workout from '../models/firestore/Workout';
+import { selectUploadedImage, selectUploadingImage } from '../state/imagesSlice/selectors';
 import { uploadImage } from '../state/imagesSlice/thunks';
 import { clearUpdateProfileResult } from '../state/userSlice';
 import {
@@ -42,6 +43,8 @@ export default function Profile({
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(selectCurrentUser);
   const currentUserStatus = useAppSelector(selectCurrentUserStatus);
+  const uploadedImage = useAppSelector(selectUploadedImage);
+  const uploadingImage = useAppSelector(selectUploadingImage);
 
   // component-level state
   const [profileBeingViewed, setProfileBeingViewed] = useState<User>(user);
@@ -99,39 +102,22 @@ export default function Profile({
     data: profileImage,
   } = useStorageDownloadURL(profileImageRef);
 
+  if (!currentUser) {
+    return <></>;
+  }
+
   if (editingProfile) {
     return (
       <>
         <View style={tw`p-2`}>
           <BackButton
             onPress={() => {
-              dispatch(clearUpdateProfileResult());
               setEditingProfile(false);
-              setNewName(profileBeingViewed.name);
-              setNewUsername(profileBeingViewed.username);
+              setNewName(currentUser.name);
+              setNewUsername(currentUser.username);
+              dispatch(clearUpdateProfileResult());
             }}
           />
-          <View style={tw`items-center`}>
-            {
-              profileImageStatus === 'loading'
-                ? <ActivityIndicator size="large" color="white" />
-                : <Image source={{ uri: profileImage }} style={tw`w-25 h-25 rounded-full`} />
-            }
-            <Button
-              mode="contained"
-              onPress={() => {
-                launchImagePicker((selectionUri) => {
-                  dispatch(uploadImage({
-                    image: selectionUri,
-                    userId: profileBeingViewed.id,
-                    isProfile: true,
-                  }));
-                });
-              }}
-            >
-              Choose image
-            </Button>
-          </View>
           <Text style={tw`text-base`}>Name</Text>
           <TextInput
             style={tw`text-lg border-solid border-gray-500 border-b`}
@@ -147,10 +133,11 @@ export default function Profile({
           <Button
             mode="contained"
             onPress={() => {
-              if (newName !== profileBeingViewed.name) {
+              if (newName !== currentUser.name) {
                 dispatch(updateName(newName));
               }
-              if (newUsername !== profileBeingViewed.username) {
+
+              if (newUsername !== currentUser.username) {
                 dispatch(updateUsername(newUsername));
               }
             }}
@@ -159,23 +146,20 @@ export default function Profile({
               || newName.length === 0
               || newUsername.length === 0
               || (
-                newName === profileBeingViewed.name
-                && newUsername === profileBeingViewed.username
+                newName === currentUser.name
+                && newUsername === currentUser.username
               )
             }
+            loading={currentUserStatus === 'updatingProfile'}
           >
-            {
-              currentUserStatus === 'updatingProfile'
-                ? <ActivityIndicator />
-                : 'Save'
-            }
+            Save
           </Button>
         </View>
       </>
     );
   }
 
-  return currentUser ? (
+  return (
     <>
       {
         isProfileScreen && profileBeingViewed.id !== currentUser.id
@@ -191,21 +175,70 @@ export default function Profile({
           )
           : <></>
       }
-      <View style={tw`flex flex-row py-10 bg-gray-800 items-center justify-center`}>
-        <View style={tw`flex flex-1`} />
-        <View style={tw`flex flex-2`}>
-          {profileImageStatus === 'loading'
-            ? <ActivityIndicator size="large" color="white" />
-            : <Image source={{ uri: profileImage }} style={tw`w-25 h-25 rounded-full`} />}
-        </View>
-        <View style={tw`flex flex-2`}>
-          <Text style={tw`text-xl font-bold text-white text-left`}>{profileBeingViewed && profileBeingViewed.name}</Text>
-          <Text style={tw`text-lg text-white text-left`}>
-            @
-            {profileBeingViewed && profileBeingViewed.username}
-          </Text>
-        </View>
-        <View style={tw`flex flex-1`} />
+      <View style={tw`py-5 bg-gray-800 items-center justify-center`}>
+        {profileImageStatus === 'loading' || uploadingImage
+          ? <ActivityIndicator size="large" color="white" />
+          : (
+            <View style={tw`items-center p-3`}>
+              {profileBeingViewed.id === currentUser.id
+                ? (
+                  <TouchableHighlight
+                    onPress={() => {
+                      launchImagePicker((selectionUri) => {
+                        dispatch(uploadImage({
+                          image: selectionUri,
+                          userId: currentUser.id,
+                          isProfile: true,
+                        }));
+                      });
+                    }}
+                  >
+                    <>
+                      <Image
+                        source={{ uri: uploadedImage || profileImage }}
+                        style={tw`w-30 h-30`}
+                      />
+                      <View
+                        style={{
+                          position: 'absolute',
+                          top: '75%',
+                          left: 0,
+                          right: 0,
+                          bottom: 0,
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                        }}
+                      >
+                        <Text style={{
+                          color: 'white',
+                        }}
+                        >
+                          UPDATE
+                        </Text>
+                      </View>
+                    </>
+                  </TouchableHighlight>
+                )
+                : (
+                  <Image
+                    source={{ uri: profileImage }}
+                    style={tw`w-30 h-30`}
+                  />
+                )}
+            </View>
+          )}
+        <Text style={tw`text-xl font-bold text-white text-left`}>
+          {profileBeingViewed.id === currentUser.id
+            ? currentUser.name
+            : profileBeingViewed.name}
+        </Text>
+        <Text style={tw`text-lg text-white text-left`}>
+          @
+          {profileBeingViewed.id === currentUser.id
+            ? currentUser.username
+            : profileBeingViewed.username}
+        </Text>
       </View>
       {
         forCurrentUser
@@ -287,5 +320,5 @@ export default function Profile({
         </Tab.Screen>
       </Tab.Navigator>
     </>
-  ) : <></>;
+  );
 }

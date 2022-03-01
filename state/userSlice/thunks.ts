@@ -53,10 +53,7 @@ export const userSignUp = createAsyncThunk<
 
 export const userLogOut = createAsyncThunk<void, void>(
   'users/logOut',
-  async (): Promise<void> => {
-    await AsyncStorage.removeItem(CURRENT_USER_KEY);
-    await AuthService.logOut();
-  },
+  async (): Promise<void> => AuthService.logOut(),
 );
 
 export const updateName = createAsyncThunk<string, string, { state: RootState }>(
@@ -68,16 +65,6 @@ export const updateName = createAsyncThunk<string, string, { state: RootState }>
     }
 
     await AuthService.updateName(currentUser.id, newName);
-
-    const currentUserJson = await AsyncStorage.getItem(CURRENT_USER_KEY);
-    if (!currentUserJson) {
-      throw new Error('Could not cache profile update.');
-    } else {
-      const cachedCurrentUser = JSON.parse(currentUserJson) as User;
-      cachedCurrentUser.name = newName;
-      await AsyncStorage.setItem(CURRENT_USER_KEY, JSON.stringify(cachedCurrentUser));
-    }
-
     return newName;
   },
 );
@@ -91,14 +78,6 @@ export const updateUsername = createAsyncThunk<string, string, { state: RootStat
     }
 
     await AuthService.updateUsername(currentUser.id, newUsername);
-
-    const currentUserJson = await AsyncStorage.getItem(CURRENT_USER_KEY);
-    if (currentUserJson) {
-      const cachedCurrentUser = JSON.parse(currentUserJson) as User;
-      cachedCurrentUser.username = newUsername;
-      await AsyncStorage.setItem(CURRENT_USER_KEY, JSON.stringify(cachedCurrentUser));
-    }
-
     return newUsername;
   },
 );

@@ -1,5 +1,6 @@
 import {
-  ref, uploadBytesResumable, UploadTaskSnapshot,
+  getDownloadURL,
+  ref, uploadBytesResumable,
 } from '@firebase/storage';
 import path from 'path';
 import { storage } from '../firebase/index';
@@ -7,7 +8,7 @@ import { storage } from '../firebase/index';
 export default {
   async uploadImage(
     image: string, userId: string, isProfile: boolean, postId?: string,
-  ): Promise<UploadTaskSnapshot> {
+  ): Promise<string> {
     const response = await fetch(image);
     const blob = await response.blob();
 
@@ -21,6 +22,8 @@ export default {
     }
 
     const storageRef = ref(storage, path.join('images', imgPath));
-    return uploadBytesResumable(storageRef, blob);
+    const uploadTask = await uploadBytesResumable(storageRef, blob);
+
+    return getDownloadURL(uploadTask.ref);
   },
 };
