@@ -1,4 +1,3 @@
-import * as ImagePicker from 'expo-image-picker';
 import React, { useState } from 'react';
 import { Image, ScrollView, View } from 'react-native';
 import {
@@ -7,14 +6,14 @@ import {
 import tw from 'twrnc';
 import { v4 as uuidv4 } from 'uuid';
 import { POST_CHARACTER_LIMIT } from '../constants/posts';
-import useAppDispatch from '../hooks/useAppDispatch';
-import useAppSelector from '../hooks/useAppSelector';
+import { useAppDispatch, useAppSelector } from '../hooks/redux';
 import Post from '../models/firestore/Post';
 import Workout from '../models/firestore/Workout';
-import { clearUploadedPostImageUri, clearUpsertPostResult } from '../state/postsSlice';
-import { selectPostsStatus, selectUploadedPostImageUri } from '../state/postsSlice/selectors';
+import { clearUploadedImageToPost, clearUpsertPostResult } from '../state/postsSlice';
+import { selectCallingPostsService, selectUploadedImageToPost, selectUploadingImageToPost } from '../state/postsSlice/selectors';
 import { addImageToPost, upsertPost } from '../state/postsSlice/thunks';
 import { removeWorkout } from '../state/workoutsSlice/thunks';
+import { launchImagePicker } from '../utils/expo';
 import BackButton from './BackButton';
 import WorkoutForm from './WorkoutForm';
 import WorkoutItem from './WorkoutItem';
@@ -30,26 +29,15 @@ export default function Workouts({
 }) {
   // Redux-level state
   const dispatch = useAppDispatch();
-  const postsStatus = useAppSelector(selectPostsStatus);
+  const callingPostsService = useAppSelector(selectCallingPostsService);
+  const uploadingImageToPost = useAppSelector(selectUploadingImageToPost);
+  const uploadedImageToPost = useAppSelector(selectUploadedImageToPost);
 
   // component-level state
   const [workoutsState, setWorkoutsState] = useState<'default' | 'editing' | 'sharing'>('default');
   const [workoutToEdit, setWorkoutToEdit] = useState<Workout | null>(null);
   const [workoutToPost, setWorkoutToPost] = useState<Workout | null>(null);
   const [postCaption, setPostCaption] = useState<string>('');
-
-  const uploadedPostImageUri = useAppSelector(selectUploadedPostImageUri);
-  const browseImages = async (userId: string, postId: string) => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-    if (!result.cancelled) {
-      dispatch(addImageToPost({ image: result.uri, userId, postId }));
-    }
-  };
 
   if (workoutsStatus === 'loading') {
     return (
@@ -92,7 +80,7 @@ export default function Workouts({
                   <BackButton
                     onPress={() => {
                       dispatch(clearUpsertPostResult());
-                      dispatch(clearUploadedPostImageUri());
+                      dispatch(clearUploadedImageToPost());
                       setPostCaption('');
                       setWorkoutsState('default');
                     }}
@@ -118,18 +106,26 @@ export default function Workouts({
             </View>
             <Button
               mode="contained"
-              onPress={() => browseImages(workoutToPost.userId, postId)}
+              onPress={() => {
+                launchImagePicker((selectionUri) => {
+                  dispatch(addImageToPost({
+                    image: selectionUri,
+                    userId: workoutToPost.userId,
+                    postId,
+                  }));
+                });
+              }}
             >
               Choose image
             </Button>
             {
-              postsStatus === 'uploadingImage' && <ActivityIndicator size="large" />
+              callingPostsService && <ActivityIndicator size="large" />
             }
             {
-              uploadedPostImageUri && postsStatus !== 'uploadingImage'
+              uploadedImageToPost && !callingPostsService
                 && (
                   <View style={tw`items-center`}>
-                    <Image source={{ uri: uploadedPostImageUri || undefined }} style={tw`h-50 w-50`} />
+                    <Image source={{ uri: uploadedImageToPost || undefined }} style={tw`h-50 w-50`} />
                   </View>
                 )
             }
@@ -149,12 +145,12 @@ export default function Workouts({
                 likedByIds: [],
               };
 
-              if (uploadedPostImageUri) {
-                post = { ...post, image: uploadedPostImageUri };
+              if (uploadedImageToPost) {
+                post = { ...post, image: uploadedImageToPost };
               }
 
               dispatch(upsertPost(post));
-              dispatch(clearUploadedPostImageUri());
+              dispatch(clearUploadedImageToPost());
 
               setPostCaption('');
 
@@ -163,11 +159,12 @@ export default function Workouts({
             disabled={
               postCaption.length < 1
               || postCaption.length > POST_CHARACTER_LIMIT
-              || postsStatus === 'callingService'
-              || postsStatus === 'uploadingImage'
+              || callingPostsService
+              || uploadingImageToPost
             }
+            loading={callingPostsService}
           >
-            {postsStatus === 'callingService' ? <ActivityIndicator /> : 'Post'}
+            Post
           </Button>
         </>
       );

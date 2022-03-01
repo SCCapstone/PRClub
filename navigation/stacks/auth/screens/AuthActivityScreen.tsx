@@ -2,7 +2,7 @@ import React from 'react';
 import { View } from 'react-native';
 import { ActivityIndicator, Text } from 'react-native-paper';
 import tw from 'twrnc';
-import useAppSelector from '../../../../hooks/useAppSelector';
+import { useAppSelector } from '../../../../hooks/redux';
 import { selectCurrentUserStatus } from '../../../../state/userSlice/selectors';
 
 export default function AuthActivityScreen() {

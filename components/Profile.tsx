@@ -1,28 +1,30 @@
 import { collection, query, where } from '@firebase/firestore';
+import { ref } from '@firebase/storage';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import * as ImagePicker from 'expo-image-picker';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Image, View } from 'react-native';
 import {
   ActivityIndicator, Button, Text, TextInput,
 } from 'react-native-paper';
-import { useFirestore, useFirestoreCollectionData } from 'reactfire';
+import {
+  useFirestore, useFirestoreCollectionData, useStorage, useStorageDownloadURL,
+} from 'reactfire';
 import tw from 'twrnc';
 import { POSTS_COLLECTION, PRS_COLLECTION, WORKOUTS_COLLECTION } from '../constants/firestore';
-import useAppDispatch from '../hooks/useAppDispatch';
-import useAppSelector from '../hooks/useAppSelector';
+import { useAppDispatch, useAppSelector } from '../hooks/redux';
 import Post from '../models/firestore/Post';
 import PR from '../models/firestore/PR';
 import User from '../models/firestore/User';
 import Workout from '../models/firestore/Workout';
-import { downloadImage, uploadImage } from '../state/imagesSlice/thunks';
-import { clearUpdateProfileResult, setUpdateProfileResultSuccess } from '../state/userSlice';
+import { uploadImage } from '../state/imagesSlice/thunks';
+import { clearUpdateProfileResult } from '../state/userSlice';
 import {
   selectCurrentUser, selectCurrentUserStatus,
 } from '../state/userSlice/selectors';
 import {
   followUser, unfollowUser, updateName, updateUsername,
 } from '../state/userSlice/thunks';
+import { launchImagePicker } from '../utils/expo';
 import BackButton from './BackButton';
 import EditButton from './EditButton';
 import Followers from './Followers';
@@ -44,9 +46,6 @@ export default function Profile({
   // component-level state
   const [profileBeingViewed, setProfileBeingViewed] = useState<User>(user);
 
-  const [profilePictureUri, setProfilePictureUri] = useState<string | undefined>(undefined);
-  const [newProfilePictureUri, setNewProfilePictureUri] = useState<string | undefined>(undefined);
-
   const [newName, setNewName] = useState<string>(profileBeingViewed.name);
   const [newUsername, setNewUsername] = useState<string>(profileBeingViewed.username);
   const [editingProfile, setEditingProfile] = useState<boolean>(false);
@@ -55,6 +54,7 @@ export default function Profile({
 
   // ReactFire queries
   const firestore = useFirestore();
+  const storage = useStorage();
 
   // workouts:
   const workoutsCollection = collection(firestore, WORKOUTS_COLLECTION);
@@ -92,30 +92,12 @@ export default function Profile({
   } = useFirestoreCollectionData(prsQuery);
   const prs = prsData as PR[];
 
-  useEffect(() => {
-    async function downloadProfileImage() {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const result: any = await dispatch(downloadImage({
-        userId: profileBeingViewed.id, isProfile: true, postId: '',
-      }));
-
-      setProfilePictureUri(result.payload);
-    }
-
-    downloadProfileImage();
-  }, [profileBeingViewed]);
-
-  const browseImages = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-    if (!result.cancelled) {
-      setNewProfilePictureUri(result.uri);
-    }
-  };
+  // profile image:
+  const profileImageRef = ref(storage, `images/${profileBeingViewed.id}/profile`);
+  const {
+    status: profileImageStatus,
+    data: profileImage,
+  } = useStorageDownloadURL(profileImageRef);
 
   if (editingProfile) {
     return (
@@ -127,14 +109,25 @@ export default function Profile({
               setEditingProfile(false);
               setNewName(profileBeingViewed.name);
               setNewUsername(profileBeingViewed.username);
-              setNewProfilePictureUri(profilePictureUri);
             }}
           />
           <View style={tw`items-center`}>
-            <Image source={{ uri: newProfilePictureUri }} style={tw`w-25 h-25 rounded-full`} />
+            {
+              profileImageStatus === 'loading'
+                ? <ActivityIndicator size="large" color="white" />
+                : <Image source={{ uri: profileImage }} style={tw`w-25 h-25 rounded-full`} />
+            }
             <Button
               mode="contained"
-              onPress={browseImages}
+              onPress={() => {
+                launchImagePicker((selectionUri) => {
+                  dispatch(uploadImage({
+                    image: selectionUri,
+                    userId: profileBeingViewed.id,
+                    isProfile: true,
+                  }));
+                });
+              }}
             >
               Choose image
             </Button>
@@ -160,16 +153,6 @@ export default function Profile({
               if (newUsername !== profileBeingViewed.username) {
                 dispatch(updateUsername(newUsername));
               }
-              if (newProfilePictureUri) {
-                dispatch(uploadImage({
-                  image: newProfilePictureUri,
-                  userId: profileBeingViewed.id,
-                  isProfile: true,
-                  postId: '',
-                }));
-                setProfilePictureUri(newProfilePictureUri);
-                dispatch(setUpdateProfileResultSuccess());
-              }
             }}
             disabled={
               currentUserStatus === 'updatingProfile'
@@ -178,7 +161,6 @@ export default function Profile({
               || (
                 newName === profileBeingViewed.name
                 && newUsername === profileBeingViewed.username
-                && profilePictureUri === newProfilePictureUri
               )
             }
           >
@@ -212,9 +194,9 @@ export default function Profile({
       <View style={tw`flex flex-row py-10 bg-gray-800 items-center justify-center`}>
         <View style={tw`flex flex-1`} />
         <View style={tw`flex flex-2`}>
-          {!profilePictureUri
+          {profileImageStatus === 'loading'
             ? <ActivityIndicator size="large" color="white" />
-            : <Image source={{ uri: profilePictureUri }} style={tw`w-25 h-25 rounded-full`} />}
+            : <Image source={{ uri: profileImage }} style={tw`w-25 h-25 rounded-full`} />}
         </View>
         <View style={tw`flex flex-2`}>
           <Text style={tw`text-xl font-bold text-white text-left`}>{profileBeingViewed && profileBeingViewed.name}</Text>
@@ -230,9 +212,6 @@ export default function Profile({
           ? (
             <EditButton onPress={() => {
               setEditingProfile(true);
-              if (profilePictureUri !== newProfilePictureUri) {
-                setNewProfilePictureUri(profilePictureUri);
-              }
             }}
             />
           )

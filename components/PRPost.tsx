@@ -3,11 +3,10 @@ import React from 'react';
 import { Image, View } from 'react-native';
 import { ActivityIndicator, Button, Text } from 'react-native-paper';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { useFirestore, useFirestoreDocData } from 'reactfire';
+import { useFirestore, useFirestoreDocData, useStorage } from 'reactfire';
 import tw from 'twrnc';
 import { PRS_COLLECTION } from '../constants/firestore';
-import useAppDispatch from '../hooks/useAppDispatch';
-import useAppSelector from '../hooks/useAppSelector';
+import { useAppDispatch, useAppSelector } from '../hooks/redux';
 import Post from '../models/firestore/Post';
 import PR from '../models/firestore/PR';
 import Workout from '../models/firestore/Workout';
@@ -24,6 +23,7 @@ export default function PRPost({ post, forCurrentUser }: {post: Post, forCurrent
 
   // ReactFire queries
   const firestore = useFirestore();
+  const storage = useStorage();
 
   // pr:
   const prRef = doc(firestore, PRS_COLLECTION, post.prId!);

@@ -1,37 +1,4 @@
-import Comment from '../../models/firestore/Comment';
-import Post from '../../models/firestore/Post';
 import { RootState } from '../store';
-import { postsAdapter } from './state';
-
-export const {
-  selectIds: selectPostIds,
-  selectEntities: selectPostEntities,
-  selectAll: selectPosts,
-  selectTotal: selectTotalPosts,
-  selectById: selectPostById,
-} = postsAdapter.getSelectors((state: RootState) => state.posts);
-
-export function selectPostsSortedByMostRecentByUserId(state: RootState, userId: string): Post[] {
-  return selectPosts(state)
-    .filter((p) => p.userId === userId)
-    .sort((a, b) => (new Date(b.createdDate) > new Date(a.createdDate) ? 1 : -1));
-}
-
-export function selectHomeScreenPosts(state: RootState): Post[] {
-  const { currentUser } = state.users;
-
-  if (!currentUser) {
-    return [];
-  }
-
-  return selectPosts(state)
-    .filter((p) => p.userId === currentUser.id || currentUser.followingIds.includes(p.userId))
-    .sort((a, b) => (new Date(b.createdDate) > new Date(a.createdDate) ? 1 : -1));
-}
-
-export function selectPostsStatus(state: RootState) {
-  return state.posts.status;
-}
 
 export function selectUpsertPostResult(state: RootState) {
   return state.posts.upsertPostResult;
@@ -41,10 +8,18 @@ export function selectRemovePostResult(state: RootState) {
   return state.posts.removePostResult;
 }
 
-export function selectUploadedPostImageUri(state: RootState) {
-  return state.posts.uploadedImageUri;
+export function selectCallingPostsService(state: RootState) {
+  return state.posts.callingService;
 }
 
-export function selectCommentsForPost(state: RootState, postId: string): Comment[] {
-  return state.posts.comments.filter((c) => c.postId === postId);
+export function selectInteractingWithPost(state: RootState) {
+  return state.posts.interactingWithPost;
+}
+
+export function selectUploadingImageToPost(state: RootState) {
+  return state.posts.uploadingImage;
+}
+
+export function selectUploadedImageToPost(state: RootState) {
+  return state.posts.uploadedImage;
 }

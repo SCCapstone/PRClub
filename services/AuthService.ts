@@ -1,9 +1,6 @@
 import {
-  createUserWithEmailAndPassword,
-  NextOrObserver, signInWithEmailAndPassword,
+  createUserWithEmailAndPassword, signInWithEmailAndPassword,
   signOut,
-  Unsubscribe,
-  User as FirebaseUser,
 } from '@firebase/auth';
 import {
   collection, doc, getDoc, getDocs, query, setDoc, updateDoc, where,
@@ -26,10 +23,6 @@ async function checkUsernameIsAvailable(username: string): Promise<void> {
 
 // "public" functions
 export default {
-  registerAuthStateListener(l: NextOrObserver<FirebaseUser | null>): Unsubscribe {
-    return auth.onAuthStateChanged(l);
-  },
-
   async signUp(name: string, username: string, email: string, password: string): Promise<User> {
     await checkUsernameIsAvailable(username);
 

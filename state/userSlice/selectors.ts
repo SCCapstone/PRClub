@@ -4,38 +4,25 @@ import { RootState } from '../store';
 import { CurrentUserStatus } from './state';
 
 export function selectCurrentUser(state: RootState): User | null {
-  return state.users.currentUser;
+  return state.user.currentUser;
 }
 
 export function selectCurrentUserStatus(state: RootState): CurrentUserStatus {
-  return state.users.status;
+  return state.user.status;
 }
 
 export function selectUserAuthError(state: RootState): SerializedError | null {
-  return state.users.authError;
+  return state.user.authError;
 }
 
 export function selectUpdateProfileResult(state: RootState) {
-  return state.users.updateProfileResult;
+  return state.user.updateProfileResult;
 }
 
 export function selectFollowResult(state: RootState) {
-  return state.users.followResult;
+  return state.user.followResult;
 }
 
 export function selectUnfollowResult(state: RootState) {
-  return state.users.unfollowResult;
-}
-
-export function selectUsersByIds(state: RootState, userIds: string[]): User[] {
-  return (Object.values(state.users.entities) as User[])
-    .filter((u) => userIds.includes(u.id));
-}
-
-export function selectUsersStatus(state: RootState) {
-  return state.users.usersStatus;
-}
-
-export function selectUserBeingViewedInSearch(state: RootState) {
-  return state.users.userBeingViewedInSearch;
+  return state.user.unfollowResult;
 }

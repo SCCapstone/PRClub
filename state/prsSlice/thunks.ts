@@ -2,11 +2,6 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import PRsService from '../../services/PRsService';
 import PR from '../../models/firestore/PR';
 
-export const fetchPRsForUser = createAsyncThunk<PR[], string>(
-  'prs/fetchPRsForUser',
-  async (userId: string): Promise<PR[]> => PRsService.fetchPRsForUser(userId),
-);
-
 export const upsertPRs = createAsyncThunk<PR[], PR[]>(
   'prs/upsertPRs',
   async (prs: PR[]): Promise<PR[]> => {
@@ -15,18 +10,16 @@ export const upsertPRs = createAsyncThunk<PR[], PR[]>(
   },
 );
 
-export const removePR = createAsyncThunk<PR, PR>(
+export const removePR = createAsyncThunk<void, PR>(
   'prs/removePR',
-  async (pr: PR): Promise<PR> => {
+  async (pr: PR): Promise<void> => {
     await PRsService.removePR(pr);
-    return pr;
   },
 );
 
-export const removePRs = createAsyncThunk<PR[], PR[]>(
+export const removePRs = createAsyncThunk<void, PR[]>(
   'prs/removePRs',
-  async (prs: PR[]): Promise<PR[]> => {
+  async (prs: PR[]): Promise<void> => {
     await PRsService.removePRs(prs);
-    return prs;
   },
 );

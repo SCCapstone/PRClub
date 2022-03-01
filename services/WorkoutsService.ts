@@ -3,28 +3,33 @@ import {
 } from '@firebase/firestore';
 import _ from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
-import { USERS_COLLECTION, WORKOUTS_COLLECTION } from '../constants/firestore';
+import { PRS_COLLECTION, USERS_COLLECTION, WORKOUTS_COLLECTION } from '../constants/firestore';
 import { db } from '../firebase';
 import ExerciseSet from '../models/firestore/ExerciseSet';
 import PR from '../models/firestore/PR';
 import User from '../models/firestore/User';
 import Workout from '../models/firestore/Workout';
 import { queryCollectionById } from '../utils/firestore';
-import PRsService from './PRsService';
+
+async function fetchWorkoutsForUser(userId: string): Promise<Workout[]> {
+  const docSnap = await getDoc(doc(db, USERS_COLLECTION, userId));
+  const user = docSnap.data() as User;
+  return queryCollectionById(WORKOUTS_COLLECTION, user.workoutIds);
+}
+
+async function fetchPRsForUser(userId: string): Promise<PR[]> {
+  const docSnap = await getDoc(doc(db, USERS_COLLECTION, userId));
+  const user = docSnap.data() as User;
+  return queryCollectionById(PRS_COLLECTION, user.prIds);
+}
 
 function calculateTotalVolume(exerciseSets: ExerciseSet[]): number {
   return _.sumBy(exerciseSets, (set) => (set.weight * set.reps));
 }
 
 export default {
-  async fetchWorkoutsForUser(userId: string): Promise<Workout[]> {
-    const docSnap = await getDoc(doc(db, USERS_COLLECTION, userId));
-    const user = docSnap.data() as User;
-    return queryCollectionById(WORKOUTS_COLLECTION, user.workoutIds);
-  },
-
   async upsertWorkout(workout: Workout): Promise<PR[]> {
-    const userWorkouts = await this.fetchWorkoutsForUser(workout.userId);
+    const userWorkouts = await fetchWorkoutsForUser(workout.userId);
     const maxTotalVolumes = _.chain(userWorkouts)
       .flatMap((userWorkout) => userWorkout.exercises)
       .map((userExercise) => ({
@@ -41,7 +46,7 @@ export default {
       ): o is { exerciseName: string, maxTotalVolume: number } => !!o.maxTotalVolume)
       .value();
 
-    const userPRs = await PRsService.fetchPRsForUser(workout.userId);
+    const userPRs = await fetchPRsForUser(workout.userId);
     const prs: PR[] = [];
     workout.exercises.forEach((exercise) => {
       const thisExerciseTotalVolume = calculateTotalVolume(exercise.exerciseSets);
@@ -86,7 +91,7 @@ export default {
   },
 
   async removeWorkout(workout: Workout): Promise<PR[]> {
-    const userPRs = await PRsService.fetchPRsForUser(workout.userId);
+    const userPRs = await fetchPRsForUser(workout.userId);
     const prsToDelete = userPRs.filter((p) => p.workoutId === workout.id);
 
     // remove post

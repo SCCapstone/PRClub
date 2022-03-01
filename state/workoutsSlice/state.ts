@@ -1,22 +1,13 @@
-import { createEntityAdapter, SerializedError } from '@reduxjs/toolkit';
-import { SliceStatus } from '../../models/state/SliceStatus';
-import Workout from '../../models/firestore/Workout';
+import { ServiceCallResult } from '../../models/state/ServiceCallResult';
 
 interface WorkoutsInitialState {
-  status: SliceStatus | 'callingService'
-  upsertWorkoutResult: ServiceCallResult | null
-  removeWorkoutResult: ServiceCallResult | null
+  callingService: boolean;
+  upsertWorkoutResult: ServiceCallResult | null;
+  removeWorkoutResult: ServiceCallResult | null;
 }
 
-interface ServiceCallResult {
-  success: boolean
-  error?: SerializedError
-}
-
-export const workoutsAdapter = createEntityAdapter<Workout>();
-
-export const initialState = workoutsAdapter.getInitialState<WorkoutsInitialState>({
-  status: 'idle',
+export const initialState: WorkoutsInitialState = {
+  callingService: false,
   upsertWorkoutResult: null,
   removeWorkoutResult: null,
-});
+};

@@ -1,4 +1,3 @@
-import * as ImagePicker from 'expo-image-picker';
 import _ from 'lodash';
 import React, { useState } from 'react';
 import { Image, View } from 'react-native';
@@ -11,15 +10,15 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import tw from 'twrnc';
 import { v4 as uuidv4 } from 'uuid';
 import { POST_CHARACTER_LIMIT } from '../constants/posts';
-import useAppDispatch from '../hooks/useAppDispatch';
-import useAppSelector from '../hooks/useAppSelector';
+import { useAppDispatch, useAppSelector } from '../hooks/redux';
 import Post from '../models/firestore/Post';
 import PR from '../models/firestore/PR';
-import { clearUploadedPostImageUri } from '../state/postsSlice';
-import { selectPostsStatus, selectUploadedPostImageUri } from '../state/postsSlice/selectors';
+import { clearUploadedImageToPost } from '../state/postsSlice';
+import { selectCallingPostsService, selectUploadedImageToPost, selectUploadingImageToPost } from '../state/postsSlice/selectors';
 import { addImageToPost, upsertPost } from '../state/postsSlice/thunks';
 import { clearUpsertPRResult } from '../state/prsSlice';
 import { removePR } from '../state/prsSlice/thunks';
+import { launchImagePicker } from '../utils/expo';
 import BackButton from './BackButton';
 import CenteredView from './CenteredView';
 
@@ -76,24 +75,13 @@ export default function PRs({
 }: {prs: PR[], prsStatus: 'loading' | 'success' | 'error', forCurrentUser: boolean}) {
   // Redux-level state
   const dispatch = useAppDispatch();
-  const postsStatus = useAppSelector(selectPostsStatus);
-  const uploadedPostImageUri = useAppSelector(selectUploadedPostImageUri);
+  const callingPostsService = useAppSelector(selectCallingPostsService);
+  const uploadingImageToPost = useAppSelector(selectUploadingImageToPost);
+  const uploadedImage = useAppSelector(selectUploadedImageToPost);
 
   // component-level state
   const [postCaption, setPostCaption] = useState<string>('');
   const [prToPost, setPRToPost] = useState<PR | null>(null);
-
-  const browseImages = async (userId: string, postId: string) => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-    if (!result.cancelled) {
-      dispatch(addImageToPost({ image: result.uri, userId, postId }));
-    }
-  };
 
   if (prsStatus === 'loading') {
     return (
@@ -123,8 +111,9 @@ export default function PRs({
                 <View style={tw`flex flex-1`}>
                   <BackButton
                     onPress={() => {
-                      dispatch(clearUpsertPRResult());
                       setPRToPost(null);
+                      dispatch(clearUpsertPRResult());
+                      dispatch(clearUploadedImageToPost());
                     }}
                   />
                 </View>
@@ -148,18 +137,26 @@ export default function PRs({
             </View>
             <Button
               mode="contained"
-              onPress={() => browseImages(prToPost.userId, postId)}
+              onPress={() => {
+                launchImagePicker((selectionUri) => {
+                  dispatch(addImageToPost({
+                    image: selectionUri,
+                    userId: prToPost.userId,
+                    postId,
+                  }));
+                });
+              }}
             >
               Choose image
             </Button>
             {
-              postsStatus === 'uploadingImage' && <ActivityIndicator size="large" />
+              callingPostsService && <ActivityIndicator size="large" />
             }
             {
-              uploadedPostImageUri
+              !!uploadedImage
                 && (
                   <View style={tw`items-center`}>
-                    <Image source={{ uri: uploadedPostImageUri }} style={tw`h-50 w-50`} />
+                    <Image source={{ uri: uploadedImage }} style={tw`h-50 w-50`} />
                   </View>
                 )
             }
@@ -180,12 +177,12 @@ export default function PRs({
                 prId: prToPost.id,
               };
 
-              if (uploadedPostImageUri) {
-                post = { ...post, image: uploadedPostImageUri };
+              if (uploadedImage) {
+                post = { ...post, image: uploadedImage };
               }
 
               dispatch(upsertPost(post));
-              dispatch(clearUploadedPostImageUri());
+              dispatch(clearUploadedImageToPost());
 
               setPostCaption('');
 
@@ -194,11 +191,12 @@ export default function PRs({
             disabled={
               postCaption.length < 1
                 || postCaption.length > POST_CHARACTER_LIMIT
-                || postsStatus === 'callingService'
-                || postsStatus === 'uploadingImage'
+                || callingPostsService
+                || uploadingImageToPost
             }
+            loading={callingPostsService}
           >
-            {postsStatus === 'callingService' ? <ActivityIndicator /> : 'Post'}
+            Post
           </Button>
         </>
       );

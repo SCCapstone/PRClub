@@ -6,8 +6,7 @@ import { ActivityIndicator, Button, Text } from 'react-native-paper';
 import { useFirestore, useFirestoreCollectionData } from 'reactfire';
 import tw from 'twrnc';
 import { USERS_COLLECTION } from '../constants/firestore';
-import useAppDispatch from '../hooks/useAppDispatch';
-import useAppSelector from '../hooks/useAppSelector';
+import { useAppDispatch, useAppSelector } from '../hooks/redux';
 import User from '../models/firestore/User';
 import {
   selectCurrentUser,

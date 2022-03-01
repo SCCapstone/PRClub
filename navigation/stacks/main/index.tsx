@@ -1,11 +1,8 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React from 'react';
-import { Button } from 'react-native-paper';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import useAppDispatch from '../../../hooks/useAppDispatch';
-import useAppSelector from '../../../hooks/useAppSelector';
+import { useAppSelector } from '../../../hooks/redux';
 import { selectCurrentUser } from '../../../state/userSlice/selectors';
-import { loadData } from '../../../state/userSlice/thunks';
 import CreateWorkoutScreen from './screens/CreateWorkoutScreen';
 import HomeScreen from './screens/HomeScreen';
 import ProfileScreen from './screens/ProfileScreen';
@@ -16,7 +13,6 @@ const Tab = createBottomTabNavigator();
 
 export default function MainStack() {
   const currentUser = useAppSelector(selectCurrentUser);
-  const dispatch = useAppDispatch();
 
   if (!currentUser) {
     return <></>;
@@ -49,16 +45,7 @@ export default function MainStack() {
       <Tab.Screen
         name="Home"
         component={HomeScreen}
-        options={{
-          tabBarShowLabel: false,
-          headerRight: () => (
-            <Button
-              onPress={() => dispatch(loadData(currentUser.id))}
-            >
-              <Ionicons name="refresh" color="black" size={30} />
-            </Button>
-          ),
-        }}
+        options={{ tabBarShowLabel: false }}
       />
       <Tab.Screen
         name="Search"

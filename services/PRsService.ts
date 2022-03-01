@@ -1,20 +1,12 @@
 import {
-  arrayRemove, arrayUnion, deleteDoc, doc, getDoc, setDoc, updateDoc,
+  arrayRemove, arrayUnion, deleteDoc, doc, setDoc, updateDoc,
 } from '@firebase/firestore';
 import _ from 'lodash';
 import { PRS_COLLECTION, USERS_COLLECTION } from '../constants/firestore';
 import { db } from '../firebase';
 import PR from '../models/firestore/PR';
-import User from '../models/firestore/User';
-import { queryCollectionById } from '../utils/firestore';
 
 export default {
-  async fetchPRsForUser(userId: string): Promise<PR[]> {
-    const docSnap = await getDoc(doc(db, USERS_COLLECTION, userId));
-    const user = docSnap.data() as User;
-    return queryCollectionById(PRS_COLLECTION, user.prIds);
-  },
-
   async upsertPRs(prs: PR[]): Promise<void> {
     await Promise.all(
       prs.map(

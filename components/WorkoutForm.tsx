@@ -9,18 +9,17 @@ import {
 } from 'react-native-paper';
 import tw from 'twrnc';
 import { v4 as uuidv4 } from 'uuid';
-import useAppDispatch from '../hooks/useAppDispatch';
-import useAppSelector from '../hooks/useAppSelector';
-import { selectExerciseInfos, selectExericseInfosStatus } from '../state/exerciseInfosSlice/selectors';
-import { selectCurrentUser } from '../state/userSlice/selectors';
-import { upsertWorkout } from '../state/workoutsSlice/thunks';
-import WgerExerciseInfo from '../models/services/WgerExerciseInfo';
+import { useAppDispatch, useAppSelector } from '../hooks/redux';
 import User from '../models/firestore/User';
 import Workout from '../models/firestore/Workout';
+import WgerExerciseInfo from '../models/services/WgerExerciseInfo';
 import { SliceStatus } from '../models/state/SliceStatus';
 import { ExerciseInput } from '../models/validation/ExerciseInput';
 import { ExerciseSetInput } from '../models/validation/ExerciseSetInput';
 import { WorkoutInput, WorkoutInputSchema } from '../models/validation/WorkoutInput';
+import { selectExerciseInfos, selectExericseInfosStatus } from '../state/exerciseInfosSlice/selectors';
+import { selectCurrentUser } from '../state/userSlice/selectors';
+import { upsertWorkout } from '../state/workoutsSlice/thunks';
 import DeleteButton from './DeleteButton';
 
 export default function WorkoutForm({

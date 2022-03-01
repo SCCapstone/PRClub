@@ -3,7 +3,7 @@ import React from 'react';
 import { useFirestore, useFirestoreCollectionData } from 'reactfire';
 import Posts from '../../../../components/Posts';
 import { POSTS_COLLECTION } from '../../../../constants/firestore';
-import useAppSelector from '../../../../hooks/useAppSelector';
+import { useAppSelector } from '../../../../hooks/redux';
 import Post from '../../../../models/firestore/Post';
 import { selectCurrentUser } from '../../../../state/userSlice/selectors';
 

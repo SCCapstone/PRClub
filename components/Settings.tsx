@@ -1,13 +1,12 @@
+import { openURL } from 'expo-linking';
 import React from 'react';
 import { ScrollView } from 'react-native-gesture-handler';
 import { ActivityIndicator, List, Text } from 'react-native-paper';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import tw from 'twrnc';
-import { openURL } from 'expo-linking';
-import useAppDispatch from '../hooks/useAppDispatch';
-import useAppSelector from '../hooks/useAppSelector';
-import { userLogOut } from '../state/userSlice/thunks';
+import { useAppDispatch, useAppSelector } from '../hooks/redux';
 import { selectExerciseInfosAreSyncing } from '../state/exerciseInfosSlice/selectors';
+import { userLogOut } from '../state/userSlice/thunks';
 
 function WgerLink() {
   return (

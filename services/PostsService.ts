@@ -3,18 +3,11 @@ import {
 } from '@firebase/firestore';
 import { COMMENTS_COLLECTION, POSTS_COLLECTION, USERS_COLLECTION } from '../constants/firestore';
 import { db } from '../firebase';
-import Post from '../models/firestore/Post';
-import User from '../models/firestore/User';
 import Comment from '../models/firestore/Comment';
+import Post from '../models/firestore/Post';
 import { queryCollectionById } from '../utils/firestore';
 
 export default {
-  async fetchPostsForUser(userId: string): Promise<Post[]> {
-    const docSnap = await getDoc(doc(db, USERS_COLLECTION, userId));
-    const user = docSnap.data() as User;
-    return queryCollectionById(POSTS_COLLECTION, user.postIds);
-  },
-
   async upsertPost(post: Post): Promise<void> {
     // add or update post
     await setDoc(doc(db, POSTS_COLLECTION, post.id), post);

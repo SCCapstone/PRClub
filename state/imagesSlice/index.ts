@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { imageAdapter, initialState } from './state';
-import { downloadImage, uploadImage } from './thunks';
+import { initialState } from './state';
+import { uploadImage } from './thunks';
 
 const imagesSlice = createSlice({
   name: 'images',
@@ -9,36 +9,25 @@ const imagesSlice = createSlice({
     clearUploadImageResult(state) {
       state.uploadImageResult = null;
     },
-    flushImagesFromStore: imageAdapter.removeAll,
   },
   extraReducers(builder) {
     builder
+      .addCase(uploadImage.pending, (state) => {
+        state.uploadingImage = true;
+      })
       .addCase(uploadImage.fulfilled, (state) => {
         state.uploadImageResult = { success: true };
-        state.status = 'loaded';
+        state.uploadingImage = false;
       })
-      .addCase(uploadImage.pending, (state) => {
-        state.status = 'uploadingImage';
-      })
-      .addCase(uploadImage.rejected, (state) => {
-        state.status = 'fetching';
-      })
-      .addCase(downloadImage.fulfilled, (state) => {
-        state.status = 'loaded';
-      })
-      .addCase(downloadImage.rejected, (state, action) => {
-        state.storageError = action.error;
-        state.status = 'idle';
-      })
-      .addCase(downloadImage.pending, (state) => {
-        state.status = 'downloadingImage';
+      .addCase(uploadImage.rejected, (state, action) => {
+        state.uploadImageResult = { success: false, error: action.error };
+        state.uploadingImage = false;
       });
   },
 });
 
 export const {
   clearUploadImageResult,
-  flushImagesFromStore,
 } = imagesSlice.actions;
 
 export default imagesSlice.reducer;

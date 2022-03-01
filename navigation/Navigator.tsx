@@ -5,8 +5,7 @@ import {
   ActivityIndicator, Snackbar, Text,
 } from 'react-native-paper';
 import tw from 'twrnc';
-import useAppDispatch from '../hooks/useAppDispatch';
-import useAppSelector from '../hooks/useAppSelector';
+import { useAppDispatch, useAppSelector } from '../hooks/redux';
 import User from '../models/firestore/User';
 import { clearUploadImageResult } from '../state/imagesSlice';
 import { selectUploadImageResult } from '../state/imagesSlice/selectors';
