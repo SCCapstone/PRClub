@@ -38,7 +38,7 @@ export const addImageToPost = createAsyncThunk<
 >(
   'posts/addImageToPost',
   async ({ image, userId, postId }): Promise<string> => {
-    const uploadedImageUrl = await ImagesService.uploadImage(image, userId, false, postId);
+    const uploadedImageUrl = await ImagesService.uploadImage(image, userId, postId);
     return uploadedImageUrl;
   },
 );

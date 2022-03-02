@@ -15,6 +15,18 @@ export function selectUserAuthError(state: RootState): SerializedError | null {
   return state.user.authError;
 }
 
+export function selectUploadingProfileImage(state: RootState) {
+  return state.user.uploadingProfileImage;
+}
+
+export function selectUploadProfileImageResult(state: RootState) {
+  return state.user.uploadProfileImageResult;
+}
+
+export function selectUploadedProfileImage(state: RootState) {
+  return state.user.uploadedProfileImage;
+}
+
 export function selectUpdateProfileResult(state: RootState) {
   return state.user.updateProfileResult;
 }

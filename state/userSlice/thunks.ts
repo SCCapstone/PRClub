@@ -7,8 +7,8 @@ import { PROFILE_IMG_URI } from '../../constants/profile';
 import { firestore } from '../../firebase';
 import User from '../../models/firestore/User';
 import AuthService from '../../services/AuthService';
+import ImagesService from '../../services/ImagesService';
 import UsersService from '../../services/UsersService';
-import { uploadImage } from '../imagesSlice/thunks';
 import type { AppDispatch, RootState } from '../store';
 
 export const userSignIn = createAsyncThunk<
@@ -36,11 +36,9 @@ export const userSignUp = createAsyncThunk<
   }, { dispatch }): Promise<User> => {
     const user = await AuthService.signUp(name, username, email, password);
 
-    dispatch(uploadImage({
+    dispatch(uploadProfileImage({
       image: PROFILE_IMG_URI,
       userId: user.id,
-      isProfile: true,
-      postId: '',
     }));
 
     if (remember) {
@@ -54,6 +52,14 @@ export const userSignUp = createAsyncThunk<
 export const userLogOut = createAsyncThunk<void, void>(
   'users/logOut',
   async (): Promise<void> => AuthService.logOut(),
+);
+
+export const uploadProfileImage = createAsyncThunk<
+  string,
+  { image: string, userId: string }
+>(
+  'image/uploadProfileImage',
+  async ({ image, userId }): Promise<string> => ImagesService.uploadImage(image, userId),
 );
 
 export const updateName = createAsyncThunk<string, string, { state: RootState }>(

@@ -8,6 +8,7 @@ import { useFirestore, useFirestoreCollectionData } from 'reactfire';
 import { COMMENTS_COLLECTION } from '../constants/firestore';
 import CommentType from '../models/firestore/Comment';
 import Post from '../models/firestore/Post';
+import { sortByDate } from '../utils/arrays';
 import Comment from './Comment';
 
 export default function Comments({ post } : { post: Post }) {
@@ -27,7 +28,11 @@ export default function Comments({ post } : { post: Post }) {
   if (comments.length > 0) {
     return (
       <View>
-        {comments.map((c) => (
+        {sortByDate(
+          comments,
+          (c) => c.date,
+          true,
+        ).map((c) => (
           <Comment
             post={post}
             thisComment={c}

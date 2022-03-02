@@ -77,7 +77,7 @@ export default function PRs({
   const dispatch = useAppDispatch();
   const callingPostsService = useAppSelector(selectCallingPostsService);
   const uploadingImageToPost = useAppSelector(selectUploadingImageToPost);
-  const uploadedImage = useAppSelector(selectUploadedImageToPost);
+  const uploadedImageToPost = useAppSelector(selectUploadedImageToPost);
 
   // component-level state
   const [postCaption, setPostCaption] = useState<string>('');
@@ -111,9 +111,9 @@ export default function PRs({
                 <View style={tw`flex flex-1`}>
                   <BackButton
                     onPress={() => {
-                      setPRToPost(null);
-                      dispatch(clearUpsertPRResult());
                       dispatch(clearUploadedImageToPost());
+                      setPRToPost(null);
+                      setPostCaption('');
                     }}
                   />
                 </View>
@@ -146,17 +146,16 @@ export default function PRs({
                   }));
                 });
               }}
+              loading={uploadingImageToPost}
+              disabled={uploadingImageToPost}
             >
-              Choose image
+              {uploadingImageToPost ? 'Uploading image' : 'Choose image'}
             </Button>
             {
-              callingPostsService && <ActivityIndicator size="large" />
-            }
-            {
-              !!uploadedImage
+              uploadedImageToPost && !callingPostsService
                 && (
                   <View style={tw`items-center`}>
-                    <Image source={{ uri: uploadedImage }} style={tw`h-50 w-50`} />
+                    <Image source={{ uri: uploadedImageToPost }} style={tw`h-50 w-50`} />
                   </View>
                 )
             }
@@ -177,8 +176,8 @@ export default function PRs({
                 prId: prToPost.id,
               };
 
-              if (uploadedImage) {
-                post = { ...post, image: uploadedImage };
+              if (uploadedImageToPost) {
+                post = { ...post, image: uploadedImageToPost };
               }
 
               dispatch(upsertPost(post));

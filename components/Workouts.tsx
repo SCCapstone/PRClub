@@ -9,10 +9,11 @@ import { POST_CHARACTER_LIMIT } from '../constants/posts';
 import { useAppDispatch, useAppSelector } from '../hooks/redux';
 import Post from '../models/firestore/Post';
 import Workout from '../models/firestore/Workout';
-import { clearUploadedImageToPost, clearUpsertPostResult } from '../state/postsSlice';
+import { clearUploadedImageToPost } from '../state/postsSlice';
 import { selectCallingPostsService, selectUploadedImageToPost, selectUploadingImageToPost } from '../state/postsSlice/selectors';
 import { addImageToPost, upsertPost } from '../state/postsSlice/thunks';
 import { removeWorkout } from '../state/workoutsSlice/thunks';
+import { sortByDate } from '../utils/arrays';
 import { launchImagePicker } from '../utils/expo';
 import BackButton from './BackButton';
 import WorkoutForm from './WorkoutForm';
@@ -79,8 +80,8 @@ export default function Workouts({
                 <View style={tw`flex flex-1`}>
                   <BackButton
                     onPress={() => {
-                      dispatch(clearUpsertPostResult());
                       dispatch(clearUploadedImageToPost());
+                      setWorkoutToPost(null);
                       setPostCaption('');
                       setWorkoutsState('default');
                     }}
@@ -115,17 +116,16 @@ export default function Workouts({
                   }));
                 });
               }}
+              loading={uploadingImageToPost}
+              disabled={uploadingImageToPost}
             >
-              Choose image
+              {uploadingImageToPost ? 'Uploading image' : 'Choose image'}
             </Button>
-            {
-              callingPostsService && <ActivityIndicator size="large" />
-            }
             {
               uploadedImageToPost && !callingPostsService
                 && (
                   <View style={tw`items-center`}>
-                    <Image source={{ uri: uploadedImageToPost || undefined }} style={tw`h-50 w-50`} />
+                    <Image source={{ uri: uploadedImageToPost }} style={tw`h-50 w-50`} />
                   </View>
                 )
             }
@@ -179,7 +179,10 @@ export default function Workouts({
                 <Text style={tw`text-center text-xl`}>No workouts!</Text>
               </View>
             )
-            : workouts.map((workout) => (
+            : sortByDate(
+              workouts,
+              (w) => w.createdDate,
+            ).map((workout) => (
               forCurrentUser ? (
                 <WorkoutItem
                   key={workout.id}

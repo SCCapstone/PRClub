@@ -10,21 +10,22 @@ import {
   useFirestore, useFirestoreCollectionData, useStorage, useStorageDownloadURL,
 } from 'reactfire';
 import tw from 'twrnc';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import { POSTS_COLLECTION, PRS_COLLECTION, WORKOUTS_COLLECTION } from '../constants/firestore';
 import { useAppDispatch, useAppSelector } from '../hooks/redux';
 import Post from '../models/firestore/Post';
 import PR from '../models/firestore/PR';
 import User from '../models/firestore/User';
 import Workout from '../models/firestore/Workout';
-import { selectUploadedImage, selectUploadingImage } from '../state/imagesSlice/selectors';
-import { uploadImage } from '../state/imagesSlice/thunks';
-import { clearUpdateProfileResult } from '../state/userSlice';
 import {
+  selectUploadedProfileImage, selectUploadingProfileImage,
   selectCurrentUser, selectCurrentUserStatus,
 } from '../state/userSlice/selectors';
 import {
+  uploadProfileImage,
   followUser, unfollowUser, updateName, updateUsername,
 } from '../state/userSlice/thunks';
+import { clearUpdateProfileResult } from '../state/userSlice';
 import { launchImagePicker } from '../utils/expo';
 import BackButton from './BackButton';
 import EditButton from './EditButton';
@@ -43,8 +44,8 @@ export default function Profile({
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(selectCurrentUser);
   const currentUserStatus = useAppSelector(selectCurrentUserStatus);
-  const uploadedImage = useAppSelector(selectUploadedImage);
-  const uploadingImage = useAppSelector(selectUploadingImage);
+  const uploadedProfileImage = useAppSelector(selectUploadedProfileImage);
+  const uploadingProfileImage = useAppSelector(selectUploadingProfileImage);
 
   // component-level state
   const [profileBeingViewed, setProfileBeingViewed] = useState<User>(user);
@@ -175,27 +176,26 @@ export default function Profile({
           )
           : <></>
       }
-      <View style={tw`py-5 bg-gray-800 items-center justify-center`}>
-        {profileImageStatus === 'loading' || uploadingImage
-          ? <ActivityIndicator size="large" color="white" />
-          : (
-            <View style={tw`items-center p-3`}>
-              {profileBeingViewed.id === currentUser.id
+      <View style={tw`py-5 bg-gray-800`}>
+        <View style={tw`flex flex-row`}>
+          <View style={tw`flex flex-1 justify-center items-center`}>
+            {profileImageStatus === 'loading' || uploadingProfileImage
+              ? <ActivityIndicator size="large" color="white" />
+              : (profileBeingViewed.id === currentUser.id
                 ? (
                   <TouchableHighlight
                     onPress={() => {
                       launchImagePicker((selectionUri) => {
-                        dispatch(uploadImage({
+                        dispatch(uploadProfileImage({
                           image: selectionUri,
                           userId: currentUser.id,
-                          isProfile: true,
                         }));
                       });
                     }}
                   >
                     <>
                       <Image
-                        source={{ uri: uploadedImage || profileImage }}
+                        source={{ uri: uploadedProfileImage || profileImage }}
                         style={tw`w-30 h-30`}
                       />
                       <View
@@ -214,7 +214,7 @@ export default function Profile({
                           color: 'white',
                         }}
                         >
-                          UPDATE
+                          TAP TO UPDATE
                         </Text>
                       </View>
                     </>
@@ -225,20 +225,70 @@ export default function Profile({
                     source={{ uri: profileImage }}
                     style={tw`w-30 h-30`}
                   />
-                )}
-            </View>
-          )}
-        <Text style={tw`text-xl font-bold text-white text-left`}>
-          {profileBeingViewed.id === currentUser.id
-            ? currentUser.name
-            : profileBeingViewed.name}
-        </Text>
-        <Text style={tw`text-lg text-white text-left`}>
-          @
-          {profileBeingViewed.id === currentUser.id
-            ? currentUser.username
-            : profileBeingViewed.username}
-        </Text>
+                )
+              )}
+          </View>
+          <View style={tw`flex flex-1 justify-center`}>
+            <Text style={tw`text-xl font-bold text-white`}>
+              {profileBeingViewed.id === currentUser.id
+                ? currentUser.name
+                : profileBeingViewed.name}
+            </Text>
+            <Text style={tw`text-lg text-white pb-2`}>
+              @
+              {profileBeingViewed.id === currentUser.id
+                ? currentUser.username
+                : profileBeingViewed.username}
+            </Text>
+            <Text style={tw`text-sm text-white`}>
+              <Ionicons name="barbell" />
+              {' '}
+              {profileBeingViewed.id === currentUser.id
+                ? currentUser.workoutIds.length
+                : profileBeingViewed.workoutIds.length}
+              {' '}
+              workout
+              {profileBeingViewed.id === currentUser.id
+                ? (currentUser.workoutIds.length === 1 ? '' : 's')
+                : (profileBeingViewed.workoutIds.length === 1 ? '' : 's')}
+              {' '}
+              |
+              {' '}
+              {profileBeingViewed.id === currentUser.id
+                ? currentUser.prIds.length
+                : profileBeingViewed.prIds.length}
+              {' '}
+              PR
+              {profileBeingViewed.id === currentUser.id
+                ? (currentUser.prIds.length === 1 ? '' : 's')
+                : (profileBeingViewed.prIds.length === 1 ? '' : 's')}
+            </Text>
+            <Text style={tw`text-sm text-white`}>
+              <Ionicons name="image" />
+              {' '}
+              {profileBeingViewed.id === currentUser.id
+                ? currentUser.postIds.length
+                : profileBeingViewed.postIds.length}
+              {' '}
+              post
+              {profileBeingViewed.id === currentUser.id
+                ? (currentUser.postIds.length === 1 ? '' : 's')
+                : (profileBeingViewed.postIds.length === 1 ? '' : 's')}
+            </Text>
+            <Text style={tw`text-sm text-white`}>
+              <Ionicons name="person" />
+              {' '}
+              {profileBeingViewed.id === currentUser.id
+                ? currentUser.followerIds.length
+                : profileBeingViewed.followerIds.length}
+              {' '}
+              follower
+              {profileBeingViewed.id === currentUser.id
+                ? (currentUser.followerIds.length === 1 ? '' : 's')
+                : (profileBeingViewed.followerIds.length === 1 ? '' : 's')}
+            </Text>
+          </View>
+        </View>
       </View>
       {
         forCurrentUser
@@ -246,7 +296,9 @@ export default function Profile({
             <EditButton onPress={() => {
               setEditingProfile(true);
             }}
-            />
+            >
+              Edit Profile
+            </EditButton>
           )
           : (
             currentUser.followingIds.includes(profileBeingViewed.id)
@@ -280,7 +332,11 @@ export default function Profile({
               )
           )
       }
-      <Tab.Navigator>
+      <Tab.Navigator
+        screenOptions={{
+          tabBarLabelStyle: tw`text-xs`,
+        }}
+      >
         <Tab.Screen name="Workouts">
           {() => (
             <Workouts
@@ -290,20 +346,20 @@ export default function Profile({
             />
           )}
         </Tab.Screen>
-        <Tab.Screen name="Posts">
-          {() => (
-            <Posts
-              posts={posts}
-              postsStatus={postsStatus}
-              forCurrentUser={forCurrentUser}
-            />
-          )}
-        </Tab.Screen>
         <Tab.Screen name="PRs">
           {() => (
             <PRs
               prs={prs}
               prsStatus={prsStatus}
+              forCurrentUser={forCurrentUser}
+            />
+          )}
+        </Tab.Screen>
+        <Tab.Screen name="Posts">
+          {() => (
+            <Posts
+              posts={posts}
+              postsStatus={postsStatus}
               forCurrentUser={forCurrentUser}
             />
           )}

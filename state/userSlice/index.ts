@@ -4,7 +4,7 @@ import _ from 'lodash';
 import User from '../../models/firestore/User';
 import { initialState } from './state';
 import {
-  followUser, unfollowUser, updateName, updateUsername, userLogOut, userSignIn,
+  followUser, unfollowUser, updateName, updateUsername, uploadProfileImage, userLogOut, userSignIn,
   userSignUp,
 } from './thunks';
 
@@ -14,6 +14,12 @@ const userSlice = createSlice({
   reducers: {
     clearUserAuthError(state) {
       state.authError = null;
+    },
+    clearUploadedProfileImage(state) {
+      state.uploadedProfileImage = null;
+    },
+    clearUploadProfileImageResult(state) {
+      state.uploadProfileImageResult = null;
     },
     setUpdateProfileResultSuccess(state) {
       state.updateProfileResult = { success: true };
@@ -64,6 +70,16 @@ const userSlice = createSlice({
       .addCase(userLogOut.fulfilled, (state) => {
         state.currentUser = null;
         state.status = 'idle';
+      });
+
+    builder
+      .addCase(uploadProfileImage.pending, (state) => {
+        state.uploadingProfileImage = true;
+      })
+      .addCase(uploadProfileImage.fulfilled, (state, action: PayloadAction<string>) => {
+        state.uploadedProfileImage = action.payload;
+        state.updateProfileResult = { success: true };
+        state.uploadingProfileImage = false;
       });
 
     builder
@@ -119,10 +135,12 @@ const userSlice = createSlice({
           throw new Error('Current user cannot be null!');
         }
 
-        state.currentUser.followingIds = _.union(
-          state.currentUser.followingIds,
-          action.payload.id,
-        );
+        if (!state.currentUser.followingIds.includes(action.payload.id)) {
+          state.currentUser.followingIds = [
+            ...state.currentUser.followingIds,
+            action.payload.id,
+          ];
+        }
 
         state.followResult = { success: true, user: action.payload };
 
@@ -158,6 +176,8 @@ const userSlice = createSlice({
 
 export const {
   clearUserAuthError,
+  clearUploadedProfileImage,
+  clearUploadProfileImageResult,
   setUpdateProfileResultSuccess,
   clearUpdateProfileResult,
   clearFollowResult,

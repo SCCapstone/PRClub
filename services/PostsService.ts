@@ -5,7 +5,6 @@ import { COMMENTS_COLLECTION, POSTS_COLLECTION, USERS_COLLECTION } from '../cons
 import { firestore } from '../firebase';
 import Comment from '../models/firestore/Comment';
 import Post from '../models/firestore/Post';
-import { queryCollectionById } from '../utils/firestore';
 
 export default {
   async upsertPost(post: Post): Promise<void> {
@@ -77,12 +76,6 @@ export default {
         likedPostIds: arrayRemove(post.id),
       });
     }
-  },
-
-  async fetchCommentsForPost(postId: string): Promise<Comment[]> {
-    const docSnap = await getDoc(doc(firestore, POSTS_COLLECTION, postId));
-    const post = docSnap.data() as Post;
-    return queryCollectionById(COMMENTS_COLLECTION, post.commentIds);
   },
 
   async addComment(post: Post, comment: Comment): Promise<void> {

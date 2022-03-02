@@ -1,7 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import exerciseInfosReducer from './exerciseInfosSlice';
 import { fetchExerciseInfos, syncExerciseInfos } from './exerciseInfosSlice/thunks';
-import imagesReducer from './imagesSlice';
 import postsReducer from './postsSlice';
 import prsReducer from './prsSlice';
 import userReducer from './userSlice';
@@ -13,7 +12,6 @@ export const store = configureStore({
     exerciseInfos: exerciseInfosReducer,
     user: userReducer,
     posts: postsReducer,
-    images: imagesReducer,
     prs: prsReducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware({
