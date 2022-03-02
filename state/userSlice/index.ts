@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import User from '../../models/firestore/User';
 import { initialState } from './state';
