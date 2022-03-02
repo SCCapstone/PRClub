@@ -23,7 +23,6 @@ export default function PRPost({ post, forCurrentUser }: {post: Post, forCurrent
 
   // ReactFire queries
   const firestore = useFirestore();
-  const storage = useStorage();
 
   // pr:
   const prRef = doc(firestore, PRS_COLLECTION, post.prId!);
