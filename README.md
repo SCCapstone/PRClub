@@ -44,9 +44,12 @@ Thankfully, Expo lets us deploy apps as web apps in the event that an Android bu
 1. Create an account on [Netlify](www.netlify.com). Wait until you get to the below screen
 with the following file upload box:
 <image src="./assets/netlify.png" class="center">
+
 2. From the root directory, run `expo build:web`. Confirm there are no issues by running
 `npx serve web-build` and accessing the port specified in its output.
+
 3. Drag-and-drop the `web-build/` folder created in the last step to the above file upload box.
+
 4. Access the URL provided by Netlify.
 
 # Testing
