@@ -3,7 +3,7 @@ import React from 'react';
 import { Image, View } from 'react-native';
 import { ActivityIndicator, Button, Text } from 'react-native-paper';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { useFirestore, useFirestoreDocData, useStorage } from 'reactfire';
+import { useFirestore, useFirestoreDocData } from 'reactfire';
 import tw from 'twrnc';
 import { PRS_COLLECTION } from '../constants/firestore';
 import { useAppDispatch, useAppSelector } from '../hooks/redux';
