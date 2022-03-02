@@ -16,7 +16,6 @@ import PR from '../models/firestore/PR';
 import { clearUploadedImageToPost } from '../state/postsSlice';
 import { selectCallingPostsService, selectUploadedImageToPost, selectUploadingImageToPost } from '../state/postsSlice/selectors';
 import { addImageToPost, upsertPost } from '../state/postsSlice/thunks';
-import { clearUpsertPRResult } from '../state/prsSlice';
 import { removePR } from '../state/prsSlice/thunks';
 import { launchImagePicker } from '../utils/expo';
 import BackButton from './BackButton';

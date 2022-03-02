@@ -4,7 +4,7 @@ import { useAppSelector } from '../../../hooks/redux';
 import { selectCurrentUserStatus } from '../../../state/userSlice/selectors';
 import AuthActivityScreen from './screens/AuthActivityScreen';
 import LoginScreen from './screens/AuthScreen';
- 
+
 export default function LoginStack() {
   const userStatus = useAppSelector(selectCurrentUserStatus);
 
