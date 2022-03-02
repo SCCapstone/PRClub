@@ -8,7 +8,9 @@ import {
 import { useFirestore, useFirestoreCollectionData } from 'reactfire';
 import tw from 'twrnc';
 import { USERS_COLLECTION } from '../constants/firestore';
+import { useAppSelector } from '../hooks/redux';
 import User from '../models/firestore/User';
+import { selectCurrentUser } from '../state/userSlice/selectors';
 import BackButton from './BackButton';
 import CenteredView from './CenteredView';
 import Profile from './Profile';
@@ -16,6 +18,9 @@ import Profile from './Profile';
 function SearchResults(
   { queryString, onUserPress }: {queryString: string, onUserPress: (user: User) => void},
 ) {
+  // Redux-based state
+  const currentUser = useAppSelector(selectCurrentUser);
+
   // ReactFire query
   const firestore = useFirestore();
   const usersCollection = collection(firestore, USERS_COLLECTION);
@@ -44,14 +49,12 @@ function SearchResults(
     usernameQueryData as User[],
     nameQueryData as User[],
     (u) => u.id,
+  ).filter(
+    (u) => u.id !== currentUser?.id,
   );
 
-  if (queryString === '') {
-    return (
-      <CenteredView>
-        <Text style={tw`text-lg text-center`}>Start searching for users by typing in the search bar above!</Text>
-      </CenteredView>
-    );
+  if (!currentUser) {
+    return <></>;
   }
 
   if (nameQueryStatus === 'loading' || usernameQueryStatus === 'loading') {
@@ -127,10 +130,20 @@ export default function Search() {
         onChangeText={setQueryString}
         value={queryString}
       />
-      <SearchResults
-        queryString={queryString}
-        onUserPress={setUserBeingViewedInSearch}
-      />
+      {
+        queryString.length > 0
+          ? (
+            <SearchResults
+              queryString={queryString}
+              onUserPress={setUserBeingViewedInSearch}
+            />
+          )
+          : (
+            <CenteredView>
+              <Text style={tw`text-lg text-center`}>Start searching for users by typing in the search bar above!</Text>
+            </CenteredView>
+          )
+      }
     </>
   );
 }
