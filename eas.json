@@ -7,19 +7,18 @@
       "developmentClient": true,
       "distribution": "internal",
       "android": {
-        "buildType": "apk"
-      }
+        "gradleCommand": ":app:assembleDebug"
+      },
+      "releaseChannel": "development"
     },
     "preview": {
-      "distribution": "internal",
       "android": {
         "buildType": "apk"
-      }
+      },
+      "releaseChannel": "preview"
     },
     "production": {
-      "android": {
-        "buildType": "apk"
-      }
+      "releaseChannel": "production"
     }
   },
   "submit": {

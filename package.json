@@ -7,8 +7,7 @@
     "web": "expo start --web",
     "eject": "expo eject",
     "test": "jest --runInBand --detectOpenHandles --forceExit",
-    "cypress": "concurrently -k -s first \"npm run web\" \"npx cypress run --headless\"",
-    "cypress:gui": "concurrently -k -s first \"npm run web\" \"npx cypress open\""
+    "cicd": "act -W ./.github/workflows/cicd.yml --secret-file act.secrets pull_request"
   },
   "dependencies": {
     "@firebase/app": "^0.7.9",
