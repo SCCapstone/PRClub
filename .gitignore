@@ -26,5 +26,8 @@ cypress/videos/
 # Local Netlify folder
 .netlify
 
+# Firebase Emulator logs
+*-debug.log
+
 # Other local files
 bugs.txt
