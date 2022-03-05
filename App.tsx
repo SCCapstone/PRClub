@@ -10,7 +10,7 @@ import Navigator from './navigation/Navigator';
 import { store } from './state/store';
 import {
   auth, firestore, firebaseConfig, storage,
-} from './firebase';
+} from './firebase-lib';
 
 export default function App() {
   return (

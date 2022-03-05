@@ -6,7 +6,7 @@ import type { AppDispatch } from '../store';
 
 export const upsertWorkout = createAsyncThunk<void, Workout, {dispatch: AppDispatch}>(
   'workouts/upsertWorkout',
-  async (workout: Workout, { dispatch }): Promise<void> => {
+  async (workout: Workout, { dispatch }: {dispatch: AppDispatch}): Promise<void> => {
     const prs = await WorkoutsService.upsertWorkout(workout);
     dispatch(upsertPRs(prs));
   },
@@ -14,7 +14,7 @@ export const upsertWorkout = createAsyncThunk<void, Workout, {dispatch: AppDispa
 
 export const removeWorkout = createAsyncThunk<void, Workout, {dispatch: AppDispatch}>(
   'workouts/removeWorkout',
-  async (workout: Workout, { dispatch }): Promise<void> => {
+  async (workout: Workout, { dispatch }: {dispatch: AppDispatch}): Promise<void> => {
     const prsToDelete = await WorkoutsService.removeWorkout(workout);
     dispatch(removePRs(prsToDelete));
   },

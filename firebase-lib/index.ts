@@ -2,18 +2,20 @@ import { initializeApp } from '@firebase/app';
 import { getAuth } from '@firebase/auth';
 import { getFirestore } from '@firebase/firestore';
 import { getStorage } from '@firebase/storage';
+import Constants from 'expo-constants';
 
-export const firebaseConfig = {
-  apiKey: 'AIzaSyAAVQd1H3QrQbrSXioon-Rr9OTR1_opb8Y',
-  authDomain: 'prclub-f4e2e.firebaseapp.com',
-  projectId: 'prclub-f4e2e',
-  storageBucket: 'prclub-f4e2e.appspot.com',
-  messagingSenderId: '387696645596',
-  appId: '1:387696645596:web:ec8e38df26a0ed1a45eb19',
-  measurementId: 'G-TEQ56GBJEG',
-};
+if (!Constants.manifest) {
+  throw new Error('Constants.manifest must be defined!');
+}
+
+if (!Constants.manifest.extra) {
+  throw new Error('Constants.manifest.extra must be defined!');
+}
+
+export const { firebaseConfig } = Constants.manifest.extra;
 
 export const app = initializeApp(firebaseConfig);
+
 export const firestore = getFirestore(app);
 export const auth = getAuth(app);
 export const storage = getStorage(app);

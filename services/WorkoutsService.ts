@@ -4,7 +4,7 @@ import {
 import _ from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 import { PRS_COLLECTION, USERS_COLLECTION, WORKOUTS_COLLECTION } from '../constants/firestore';
-import { firestore } from '../firebase';
+import { firestore } from '../firebase-lib';
 import ExerciseSet from '../models/firestore/ExerciseSet';
 import PR from '../models/firestore/PR';
 import User from '../models/firestore/User';

@@ -69,6 +69,8 @@ export default function SignUp({ remember }: {remember: boolean}) {
           color="green"
           onPress={() => {
             if (!submitIsDisabled) {
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore
               dispatch(userSignUp({
                 name, username, email, password, remember,
               }));
