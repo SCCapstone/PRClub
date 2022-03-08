@@ -29,7 +29,6 @@
     "@types/react-redux": "^7.1.22",
     "@types/yup": "^0.29.13",
     "axios": "^0.24.0",
-    "babel-plugin-transform-inline-environment-variables": "^0.4.3",
     "dotenv": "^16.0.0",
     "expo": "~42.0.1",
     "expo-constants": "~11.0.1",
