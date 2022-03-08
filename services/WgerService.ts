@@ -28,6 +28,7 @@ const baseQueryParams = {
 };
 
 async function getExerciseInfosCount() {
+  await process.nextTick(_.noop);
   const response = await client.get<WgerExerciseInfoResponse>(exerciseInfosEndpoint, {
     params: {
       ...baseQueryParams,

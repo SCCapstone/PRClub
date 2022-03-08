@@ -1,32 +1,13 @@
-name: CICD
+name: Deploy
 
 on:
-  pull_request:
+  push:
     branches: [ main ]
 
 jobs:
-  lint:
-    name: Run ESLint
-    runs-on: ubuntu-latest
-    steps:
-      - name: 🗃  Checkout repo
-        uses: actions/checkout@v2
-
-      - name: ⚙️  Configure Node
-        uses: actions/setup-node@v2
-        with:
-          node-version: 16.x
-
-      - name: 📦 Install dependencies
-        run: npm ci
-
-      - name: ✏️  Run ESLint
-        run: npx eslint . --ext .js,.jsx,.ts,.tsx
-
   netlify:
     name: Deploy to Netlify
     runs-on: ubuntu-latest
-    needs: lint
     steps:
       - name: 🗃  Checkout repo
         uses: actions/checkout@v2
@@ -39,7 +20,7 @@ jobs:
       - name: 📦 Install sharp-cli, expo-cli
         run: npm i -g sharp-cli expo-cli
 
-      - name: 📦 Install dependencies
+      - name: 📦 Install node_modules
         run: npm ci
 
       - name: 🏗  Build web
@@ -56,7 +37,6 @@ jobs:
   eas:
     name: Build Android apk on EAS
     runs-on: ubuntu-latest
-    needs: lint
     steps:
       - name: 🗃  Checkout repo
         uses: actions/checkout@v2
@@ -69,7 +49,7 @@ jobs:
       - name: 📦 Install eas-cli
         run: npm i -g eas-cli
 
-      - name: 📦 Install dependencies
+      - name: 📦 Install node_modules
         run: npm ci
 
       - name: 🚀 Build Android apk on EAS

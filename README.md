@@ -22,6 +22,7 @@ and meet others with the same interests.
   - [`firebase`](https://github.com/firebase/firebase-js-sdk) - Firebase Javascript SDK
   - [`reactfire`](https://github.com/FirebaseExtended/reactfire) - Firebase hooks for React
 - Data sources: 
+  - [wger.de REST API](https://wger.de/en/software/api) - primary exercise databank
 
 ## External Dependencies
 ### Required
@@ -51,7 +52,7 @@ We are using `jest` for unit tests and `cypress` for behavioral tests.
 #### Behavioral Tests
 * Located in `cypress/integration/`.
 * To run:
-  1. Launch the expo web server, and wait for it to fully load: `npm run web`.
+  1. Build the web version of the app, run it, and wait for it to fully load: `npm run web:build`.
   2. In a parallel command prompt, run `npx cypress run --headless` to run tests in headless mode,
   or `npx cypress open` to run tests interactively in the browser. *This must be done from the
   root of this repository.*
@@ -69,7 +70,7 @@ must pass through unit and UI testing **[/TODO]**. Once these steps are successf
 is then deployed as a [Netlify static site](https://prclub-preview.netlify.app/) and built as an
 Android apk on [EAS](https://expo.dev/accounts/prclub22/projects/PRClub/builds).
 
-Our entire CICD pipeline can be run locally using a nifty tool called
+Our entire deployment pipeline can be run locally using a nifty tool called
 [`act`](https://github.com/nektos/act)! To do so, follow the below steps:
 
 1. Install [Docker](https://www.docker.com/), if you don't already have it. This is required for
@@ -78,11 +79,11 @@ Our entire CICD pipeline can be run locally using a nifty tool called
 2. Install `act` using the instructions
 [here](https://github.com/nektos/act/blob/master/README.md#installation).
 
-3. Obtain a copy of the `act.secrets` file from a maintainer of this repository.
+3. Obtain a copy of the `cicd.env` file from a maintainer of this repository.
 
 4. Start a Docker instance on your development environment.
 
-5. Run `npm run cicd`. Monitor changes to the
+5. Run `npm run deploy`. Monitor changes to the
 [Netlify static site](https://prclub-preview.netlify.app/) and updates on the
 [EAS dashboard](https://expo.dev/accounts/prclub22/projects/PRClub/builds).
 
