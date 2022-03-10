@@ -5,10 +5,11 @@ on:
     branches: [ main ]
 
 jobs:
+  # TODO: figure out way to automate UI tests here first
+
   eslint:
     name: Run ESLint
     runs-on: ubuntu-latest
-    needs: cypress
     steps:
       - name: 🗃  Checkout repo
         uses: actions/checkout@v2
