@@ -65,13 +65,9 @@ unit test React components.
 
 ## Deployment
 All deployments are done automatically on each merge into `main` using our
-[`cicd` GitHub Action](.github/workflows/cicd.yml). First, a commit is linted and then **[TODO]**
-must pass through unit and UI testing **[/TODO]**. Once these steps are successfully completed, it
-is then deployed as a [Netlify static site](https://prclub-preview.netlify.app/) and built as an
-Android apk on [EAS](https://expo.dev/accounts/prclub22/projects/PRClub/builds).
-
-Our entire deployment pipeline can be run locally using a nifty tool called
-[`act`](https://github.com/nektos/act)! To do so, follow the below steps:
+[`deploy` GitHub Action](.github/workflows/deploy.yml). Our entire deployment pipeline can be run
+locally using a nifty tool called [`act`](https://github.com/nektos/act)! To do so, follow the
+below steps:
 
 1. Install [Docker](https://www.docker.com/), if you don't already have it. This is required for
 `act` to be able to run workflows locally.
