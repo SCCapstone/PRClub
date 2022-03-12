@@ -9,18 +9,17 @@ import {
 } from 'react-native-paper';
 import tw from 'twrnc';
 import { v4 as uuidv4 } from 'uuid';
-import useAppDispatch from '../hooks/useAppDispatch';
-import useAppSelector from '../hooks/useAppSelector';
-import { selectExerciseInfos, selectExericseInfosStatus } from '../state/exerciseInfosSlice/selectors';
-import { selectCurrentUser } from '../state/userSlice/selectors';
-import { upsertWorkout } from '../state/workoutsSlice/thunks';
-import WgerExerciseInfo from '../models/services/WgerExerciseInfo';
+import { useAppDispatch, useAppSelector } from '../hooks/redux';
 import User from '../models/firestore/User';
 import Workout from '../models/firestore/Workout';
+import WgerExerciseInfo from '../models/services/WgerExerciseInfo';
 import { SliceStatus } from '../models/state/SliceStatus';
 import { ExerciseInput } from '../models/validation/ExerciseInput';
 import { ExerciseSetInput } from '../models/validation/ExerciseSetInput';
 import { WorkoutInput, WorkoutInputSchema } from '../models/validation/WorkoutInput';
+import { selectExerciseInfos, selectExericseInfosStatus } from '../state/exerciseInfosSlice/selectors';
+import { selectCurrentUser } from '../state/userSlice/selectors';
+import { upsertWorkout } from '../state/workoutsSlice/thunks';
 import DeleteButton from './DeleteButton';
 
 export default function WorkoutForm({
@@ -30,12 +29,11 @@ export default function WorkoutForm({
   workoutToEdit?: Workout,
   onSave?: () => void
 }) {
+  // Redux-level state
+  const dispatch = useAppDispatch();
+  const currentUser: User | null = useAppSelector(selectCurrentUser);
   const exerciseInfos: WgerExerciseInfo[] = useAppSelector(selectExerciseInfos);
   const exerciseInfosStatus: SliceStatus = useAppSelector(selectExericseInfosStatus);
-
-  const currentUser: User | null = useAppSelector(selectCurrentUser);
-
-  const dispatch = useAppDispatch();
 
   const initialValues: WorkoutInput = {
     name: workoutToEdit?.name || '',
@@ -50,36 +48,35 @@ export default function WorkoutForm({
     })) || [],
   };
 
+  if (!currentUser) {
+    return <></>;
+  }
+
   return (
     <>
       <Formik
         initialValues={initialValues}
         validationSchema={WorkoutInputSchema}
         onSubmit={(values) => {
-          if (currentUser) {
-            const workout: Workout = {
-              id: workoutToEdit ? workoutToEdit.id : uuidv4(),
-              userId: currentUser.id,
-              username: currentUser.username,
-              createdDate: workoutToEdit?.createdDate || new Date().toString(),
-              modifiedDate: workoutToEdit ? new Date().toString() : null,
-              name: values.name,
-              exercises: values.exercises.map((e) => ({
-                id: e.id,
-                name: e.name,
-                exerciseSets: e.exerciseSets.map((s) => ({
-                  id: s.id,
-                  weight: Number(s.weight),
-                  reps: Number(s.reps),
-                })),
+          const workout: Workout = {
+            id: workoutToEdit ? workoutToEdit.id : uuidv4(),
+            userId: currentUser.id,
+            username: currentUser.username,
+            createdDate: workoutToEdit?.createdDate || new Date().toString(),
+            modifiedDate: workoutToEdit ? new Date().toString() : null,
+            name: values.name,
+            exercises: values.exercises.map((e) => ({
+              id: e.id,
+              name: e.name,
+              exerciseSets: e.exerciseSets.map((s) => ({
+                id: s.id,
+                weight: Number(s.weight),
+                reps: Number(s.reps),
               })),
-            };
+            })),
+          };
 
-            dispatch(upsertWorkout(workout));
-          } else {
-            throw new Error('Something went terribly wrong.'
-              + ' You are here without being authenticated!');
-          }
+          dispatch(upsertWorkout(workout));
         }}
       >
         {(formikProps) => (

@@ -1,21 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import { collection, query, where } from '@firebase/firestore';
+import _ from 'lodash';
+import React, { useState } from 'react';
 import { TouchableOpacity } from 'react-native';
 import {
   ActivityIndicator, Searchbar, Text,
 } from 'react-native-paper';
+import { useFirestore, useFirestoreCollectionData } from 'reactfire';
 import tw from 'twrnc';
-import useAppDispatch from '../hooks/useAppDispatch';
-import useAppSelector from '../hooks/useAppSelector';
-import { fetchPostsForUser } from '../state/postsSlice/thunks';
-import { fetchPRsForUser } from '../state/prsSlice/thunks';
-import { flushSearch } from '../state/searchSlice';
-import { selectSearchResults, selectSearchStatus } from '../state/searchSlice/selectors';
-import { queryUsers } from '../state/searchSlice/thunks';
-import { clearUserBeingViewedInSearch, setUserBeingViewedInSearch } from '../state/userSlice';
-import { selectUserBeingViewedInSearch } from '../state/userSlice/selectors';
-import { fetchFollowersForUser } from '../state/userSlice/thunks';
-import { fetchWorkoutsForUser } from '../state/workoutsSlice/thunks';
+import { USERS_COLLECTION } from '../constants/firestore';
+import { useAppSelector } from '../hooks/redux';
 import User from '../models/firestore/User';
+import { selectCurrentUser } from '../state/userSlice/selectors';
 import BackButton from './BackButton';
 import CenteredView from './CenteredView';
 import Profile from './Profile';
@@ -23,18 +18,46 @@ import Profile from './Profile';
 function SearchResults(
   { queryString, onUserPress }: {queryString: string, onUserPress: (user: User) => void},
 ) {
-  const queriedUsers: User[] = useAppSelector((state) => selectSearchResults(state));
-  const searchStatus = useAppSelector(selectSearchStatus);
+  // Redux-based state
+  const currentUser = useAppSelector(selectCurrentUser);
 
-  if (!queryString || queryString === '' || searchStatus === 'idle') {
-    return (
-      <CenteredView>
-        <Text style={tw`text-lg text-center`}>Start searching for users by typing in the search bar above!</Text>
-      </CenteredView>
-    );
+  // ReactFire query
+  const firestore = useFirestore();
+  const usersCollection = collection(firestore, USERS_COLLECTION);
+
+  const nameQuery = query(
+    usersCollection,
+    where('name', '>=', queryString),
+    where('name', '<=', `${queryString}\uf8ff`),
+  );
+  const {
+    status: nameQueryStatus,
+    data: nameQueryData,
+  } = useFirestoreCollectionData(nameQuery);
+
+  const usernameQuery = query(
+    usersCollection,
+    where('username', '>=', queryString),
+    where('username', '<=', `${queryString}\uf8ff`),
+  );
+  const {
+    status: usernameQueryStatus,
+    data: usernameQueryData,
+  } = useFirestoreCollectionData(usernameQuery);
+
+  const queriedUsers = _.unionBy(
+    usernameQueryData as User[],
+    nameQueryData as User[],
+    (u) => u.id,
+  ).filter(
+    (u) => u.id !== currentUser?.id,
+  );
+
+  if (!currentUser) {
+    return <></>;
   }
 
-  if (searchStatus === 'fetching') {
+  if (nameQueryStatus === 'loading' || usernameQueryStatus === 'loading') {
     return (
       <CenteredView>
         <ActivityIndicator />
@@ -42,7 +65,7 @@ function SearchResults(
     );
   }
 
-  if (searchStatus === 'loaded') {
+  if (nameQueryStatus === 'success' && usernameQueryStatus === 'success') {
     if (queriedUsers.length > 0) {
       return (
         <>
@@ -82,23 +105,16 @@ function SearchResults(
 }
 
 export default function Search() {
+  // component-level state
+  const [userBeingViewedInSearch, setUserBeingViewedInSearch] = useState<User | null>(null);
   const [queryString, setQueryString] = useState<string>('');
-  const userBeingViewedInSearch = useAppSelector(selectUserBeingViewedInSearch);
-
-  useEffect(() => {
-    if (userBeingViewedInSearch) {
-      dispatch(clearUserBeingViewedInSearch());
-    }
-  }, []);
-
-  const dispatch = useAppDispatch();
 
   if (userBeingViewedInSearch) {
     return (
       <>
         <BackButton
           onPress={() => {
-            dispatch(clearUserBeingViewedInSearch());
+            setUserBeingViewedInSearch(null);
             setQueryString('');
           }}
         />
@@ -111,23 +127,23 @@ export default function Search() {
     <>
       <Searchbar
         placeholder="search for users..."
-        onChangeText={(query: string) => {
-          setQueryString(query);
-          dispatch(flushSearch());
-          dispatch(queryUsers(query));
-        }}
+        onChangeText={setQueryString}
         value={queryString}
       />
-      <SearchResults
-        queryString={queryString}
-        onUserPress={(user) => {
-          dispatch(setUserBeingViewedInSearch(user));
-          dispatch(fetchWorkoutsForUser(user.id));
-          dispatch(fetchPostsForUser(user.id));
-          dispatch(fetchPRsForUser(user.id));
-          dispatch(fetchFollowersForUser(user.id));
-        }}
-      />
+      {
+        queryString.length > 0
+          ? (
+            <SearchResults
+              queryString={queryString}
+              onUserPress={setUserBeingViewedInSearch}
+            />
+          )
+          : (
+            <CenteredView>
+              <Text style={tw`text-lg text-center`}>Start searching for users by typing in the search bar above!</Text>
+            </CenteredView>
+          )
+      }
     </>
   );
 }

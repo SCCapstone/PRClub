@@ -5,20 +5,20 @@ import {
   ActivityIndicator, Snackbar, Text,
 } from 'react-native-paper';
 import tw from 'twrnc';
-import useAppDispatch from '../hooks/useAppDispatch';
-import useAppSelector from '../hooks/useAppSelector';
+import { useAppDispatch, useAppSelector } from '../hooks/redux';
 import User from '../models/firestore/User';
-import { clearUploadImageResult } from '../state/imagesSlice';
-import { selectUploadImageResult } from '../state/imagesSlice/selectors';
+import {
+  clearUploadProfileImageResult, clearFollowResult, clearUnfollowResult, clearUpdateProfileResult,
+} from '../state/userSlice';
+import {
+  selectUploadProfileImageResult,
+  selectCurrentUser, selectCurrentUserStatus, selectFollowResult,
+  selectUnfollowResult, selectUpdateProfileResult,
+} from '../state/userSlice/selectors';
 import { clearUpsertPostResult } from '../state/postsSlice';
 import { selectUpsertPostResult } from '../state/postsSlice/selectors';
 import { clearUpsertPRResult } from '../state/prsSlice';
 import { selectUpsertPRResult } from '../state/prsSlice/selectors';
-import { clearFollowResult, clearUnfollowResult, clearUpdateProfileResult } from '../state/userSlice';
-import {
-  selectCurrentUser, selectCurrentUserStatus, selectFollowResult,
-  selectUnfollowResult, selectUpdateProfileResult,
-} from '../state/userSlice/selectors';
 import { clearUpsertWorkoutResult } from '../state/workoutsSlice';
 import { selectUpsertWorkoutResult } from '../state/workoutsSlice/selectors';
 import AuthStack from './stacks/auth';
@@ -37,7 +37,7 @@ export default function Navigator() {
   const updateProfileResult = useAppSelector(selectUpdateProfileResult);
   const upsertPostResult = useAppSelector(selectUpsertPostResult);
   const upsertPRResult = useAppSelector(selectUpsertPRResult);
-  const uploadImageResult = useAppSelector(selectUploadImageResult);
+  const uploadProfileImageResult = useAppSelector(selectUploadProfileImageResult);
 
   if (currentUserStatus === 'fetching') {
     return <ActivityIndicator />;
@@ -80,17 +80,17 @@ export default function Navigator() {
               && (
                 <>
                   <Snackbar
-                    visible={!!updateProfileResult || !!uploadImageResult}
+                    visible={!!updateProfileResult || !!uploadProfileImageResult}
                     duration={3000}
                     onDismiss={() => {
                       dispatch(clearUpdateProfileResult());
-                      dispatch(clearUploadImageResult());
+                      dispatch(clearUploadProfileImageResult());
                     }}
                     action={{
                       label: 'Dismiss',
                       onPress: () => {
                         dispatch(clearUpdateProfileResult());
-                        dispatch(clearUploadImageResult());
+                        dispatch(clearUploadProfileImageResult());
                       },
                     }}
                     style={updateProfileResult && updateProfileResult.error ? tw`bg-red-500` : {}}

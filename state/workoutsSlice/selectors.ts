@@ -1,25 +1,7 @@
-import Workout from '../../models/firestore/Workout';
 import { RootState } from '../store';
-import { workoutsAdapter } from './state';
 
-export const {
-  selectIds: selectWorkoutIds,
-  selectEntities: selectWorkoutEntities,
-  selectAll: selectWorkouts,
-  selectTotal: selectTotalWorkouts,
-  selectById: selectWorkoutById,
-} = workoutsAdapter.getSelectors((state: RootState) => state.workouts);
-
-export function selectWorkoutsSortedByMostRecentByUserId(
-  state: RootState, userId: string,
-): Workout[] {
-  return selectWorkouts(state)
-    .filter((w) => w.userId === userId)
-    .sort((a, b) => (new Date(b.createdDate) > new Date(a.createdDate) ? 1 : -1));
-}
-
-export function selectWorkoutsStatus(state: RootState) {
-  return state.workouts.status;
+export function selectWorkoutsCallingService(state: RootState) {
+  return state.workouts.callingService;
 }
 
 export function selectRemoveWorkoutResult(state: RootState) {

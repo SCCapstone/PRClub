@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
 import tw from 'twrnc';
-import useAppDispatch from '../hooks/useAppDispatch';
+import { useAppDispatch } from '../hooks/redux';
 import { userSignUp } from '../state/userSlice/thunks';
 
 export default function SignUp({ remember }: {remember: boolean}) {

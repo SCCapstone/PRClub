@@ -1,11 +1,10 @@
-/* eslint-disable no-alert */
 import React, { useState } from 'react';
 import { View } from 'react-native';
 import {
   Button, TextInput,
 } from 'react-native-paper';
 import tw from 'twrnc';
-import useAppDispatch from '../hooks/useAppDispatch';
+import { useAppDispatch } from '../hooks/redux';
 import { userSignIn } from '../state/userSlice/thunks';
 
 export default function SignIn({ remember }: {remember: boolean}) {

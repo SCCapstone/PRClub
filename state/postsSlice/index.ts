@@ -1,11 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import Post from '../../models/firestore/Post';
-import Comment from '../../models/firestore/Comment';
-import { initialState, postsAdapter } from './state';
+import { initialState } from './state';
 import {
-  addImageToPost,
-  addComment, removeComment,
-  fetchPostsForUser, likePost, removePost, unlikePost, upsertPost, fetchCommentsForPost,
+  addComment, addImageToPost, likePost, removeComment, removePost, unlikePost, upsertPost,
 } from './thunks';
 
 const postsSlice = createSlice({
@@ -18,176 +14,90 @@ const postsSlice = createSlice({
     clearRemovePostResult(state) {
       state.removePostResult = null;
     },
-    clearUploadedPostImageUri(state) {
-      state.uploadedImageUri = null;
-    },
-    flushPostsFromStore: postsAdapter.removeAll,
-    flushCommentsFromStore(state) {
-      state.comments = [];
+    clearUploadedImageToPost(state) {
+      state.uploadedImage = null;
     },
   },
   extraReducers(builder) {
     builder
-      .addCase(fetchPostsForUser.pending, (state) => {
-        state.status = 'fetching';
-      })
-      .addCase(fetchPostsForUser.fulfilled, (state, action: PayloadAction<Post[]>) => {
-        postsAdapter.upsertMany(state, action.payload);
-        state.status = 'loaded';
-      })
       .addCase(upsertPost.pending, (state) => {
-        state.status = 'callingService';
+        state.callingService = true;
       })
-      .addCase(upsertPost.fulfilled, (state, action: PayloadAction<Post>) => {
-        postsAdapter.upsertOne(state, action.payload);
+      .addCase(upsertPost.fulfilled, (state) => {
         state.upsertPostResult = { success: true };
-        state.status = 'loaded';
+        state.callingService = false;
       })
       .addCase(upsertPost.rejected, (state, action) => {
         state.upsertPostResult = { success: false, error: action.error };
-        state.status = 'loaded';
-      })
+        state.callingService = false;
+      });
+
+    builder
       .addCase(removePost.pending, (state) => {
-        state.status = 'callingService';
+        state.callingService = true;
       })
-      .addCase(removePost.fulfilled, (state, action: PayloadAction<Post>) => {
-        postsAdapter.removeOne(state, action.payload.id);
+      .addCase(removePost.fulfilled, (state) => {
         state.removePostResult = { success: true };
-        state.status = 'loaded';
+        state.callingService = false;
       })
       .addCase(removePost.rejected, (state, action) => {
         state.removePostResult = { success: false, error: action.error };
-        state.status = 'loaded';
+        state.callingService = false;
+      });
+
+    builder
+      .addCase(likePost.pending, (state) => {
+        state.interactingWithPost = true;
       })
-      .addCase(likePost.pending, (state, action) => {
-        const { post, userId } = action.meta.arg;
-        if (!post.likedByIds.includes(userId)) {
-          postsAdapter.upsertOne(state, {
-            ...post,
-            likedByIds: [...post.likedByIds, userId],
-          });
-        }
-
-        state.status = 'interactingWithPost';
+      .addCase(likePost.rejected, (state) => {
+        state.interactingWithPost = false;
       })
-      .addCase(likePost.rejected, (state, action) => {
-        const { post, userId } = action.meta.arg;
-        postsAdapter.upsertOne(state, {
-          ...post,
-          likedByIds: post.likedByIds.filter((i) => i !== userId),
-        });
+      .addCase(likePost.fulfilled, (state) => {
+        state.interactingWithPost = true;
+      });
 
-        state.status = 'loaded';
+    builder
+      .addCase(unlikePost.pending, (state) => {
+        state.interactingWithPost = true;
       })
-      .addCase(
-        likePost.fulfilled,
-        (state, action: PayloadAction<{post: Post, userId: string}>) => {
-          const { post, userId } = action.payload;
-          if (!post.likedByIds.includes(userId)) {
-            postsAdapter.upsertOne(state, {
-              ...post,
-              likedByIds: [...post.likedByIds, userId],
-            });
-          }
-
-          state.status = 'loaded';
-        },
-      )
-      .addCase(unlikePost.pending, (state, action) => {
-        const { post, userId } = action.meta.arg;
-        postsAdapter.upsertOne(state, {
-          ...post,
-          likedByIds: post.likedByIds.filter((i) => i !== userId),
-        });
-
-        state.status = 'interactingWithPost';
+      .addCase(unlikePost.rejected, (state) => {
+        state.interactingWithPost = false;
       })
-      .addCase(unlikePost.rejected, (state, action) => {
-        const { post, userId } = action.meta.arg;
-        if (!post.likedByIds.includes(userId)) {
-          postsAdapter.upsertOne(state, {
-            ...post,
-            likedByIds: [...post.likedByIds, userId],
-          });
-        }
+      .addCase(unlikePost.fulfilled, (state) => {
+        state.interactingWithPost = true;
+      });
 
-        state.status = 'loaded';
-      })
-      .addCase(
-        unlikePost.fulfilled,
-        (state, action: PayloadAction<{post: Post, userId: string}>) => {
-          const { post, userId } = action.payload;
-          postsAdapter.upsertOne(state, {
-            ...post,
-            likedByIds: post.likedByIds.filter((i) => i !== userId),
-          });
-
-          state.status = 'loaded';
-        },
-      )
+    builder
       .addCase(addImageToPost.pending, (state) => {
-        state.status = 'uploadingImage';
+        state.uploadingImage = true;
       })
       .addCase(addImageToPost.fulfilled, (state, action: PayloadAction<string>) => {
-        state.uploadedImageUri = action.payload;
-        state.status = 'loaded';
+        state.uploadedImage = action.payload;
+        state.uploadingImage = false;
+      });
+
+    builder
+      .addCase(addComment.pending, (state) => {
+        state.interactingWithPost = true;
       })
-      .addCase(fetchCommentsForPost.pending, (state) => {
-        state.status = 'fetching';
+      .addCase(addComment.fulfilled, (state) => {
+        state.interactingWithPost = false;
+      });
+
+    builder
+      .addCase(removeComment.pending, (state) => {
+        state.interactingWithPost = true;
       })
-      .addCase(fetchCommentsForPost.fulfilled, (state, action: PayloadAction<Comment[]>) => {
-        state.comments = action.payload;
-        state.status = 'loaded';
-      })
-      .addCase(
-        addComment.fulfilled,
-        (state, action: PayloadAction<{post: Post, comment: Comment}>) => {
-          const { post, comment } = action.payload;
-          if (!post.commentIds.includes(comment.id)) {
-            postsAdapter.upsertOne(state, {
-              ...post,
-              commentIds: [...post.commentIds, comment.id],
-            });
-          }
-
-          if (!state.comments.map((c) => c.id).includes(comment.id)) {
-            state.comments = [...state.comments, comment];
-          }
-
-          state.status = 'loaded';
-        },
-      )
-      .addCase(addComment.pending,
-        (state) => {
-          state.status = 'interactingWithPost';
-        })
-      .addCase(
-        removeComment.fulfilled,
-        (state, action: PayloadAction<{post: Post, comment: Comment}>) => {
-          const { post, comment } = action.payload;
-          postsAdapter.upsertOne(state, {
-            ...post,
-            commentIds: post.commentIds.filter((i) => i !== comment.id),
-          });
-
-          state.comments = state.comments.filter((c) => c.id !== comment.id);
-
-          state.status = 'loaded';
-        },
-      )
-      .addCase(removeComment.pending,
-        (state) => {
-          state.status = 'interactingWithPost';
-        });
+      .addCase(removeComment.fulfilled, (state) => {
+        state.interactingWithPost = false;
+      });
   },
 });
 
 export const {
   clearUpsertPostResult,
   clearRemovePostResult,
-  clearUploadedPostImageUri,
-  flushPostsFromStore,
-  flushCommentsFromStore,
+  clearUploadedImageToPost,
 } = postsSlice.actions;
 
 export default postsSlice.reducer;

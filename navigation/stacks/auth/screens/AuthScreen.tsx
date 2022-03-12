@@ -7,8 +7,7 @@ import {
 import tw from 'twrnc';
 import SignIn from '../../../../components/SignIn';
 import SignUp from '../../../../components/SignUp';
-import useAppDispatch from '../../../../hooks/useAppDispatch';
-import useAppSelector from '../../../../hooks/useAppSelector';
+import { useAppDispatch, useAppSelector } from '../../../../hooks/redux';
 import { clearUserAuthError } from '../../../../state/userSlice';
 import { selectUserAuthError } from '../../../../state/userSlice/selectors';
 

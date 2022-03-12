@@ -1,20 +1,38 @@
+import {
+  collection, query, where,
+} from '@firebase/firestore';
 import React from 'react';
 import { Text, View } from 'react-native';
-import useAppSelector from '../hooks/useAppSelector';
+import { ActivityIndicator } from 'react-native-paper';
+import { useFirestore, useFirestoreCollectionData } from 'reactfire';
+import { COMMENTS_COLLECTION } from '../constants/firestore';
+import CommentType from '../models/firestore/Comment';
 import Post from '../models/firestore/Post';
-import { selectCommentsForPost } from '../state/postsSlice/selectors';
+import { sortByDate } from '../utils/arrays';
 import Comment from './Comment';
 
 export default function Comments({ post } : { post: Post }) {
-  const comments = useAppSelector((state) => (
-    selectCommentsForPost(state, post.id)
-      .sort((a, b) => (new Date(b.date) > new Date(a.date) ? 1 : -1))
-  ));
+  const firestore = useFirestore();
+  const commentsCollection = collection(firestore, COMMENTS_COLLECTION);
+  const commentsQuery = query(
+    commentsCollection,
+    where('id', 'in', !post.commentIds.length ? [''] : post.commentIds),
+  );
+  const { status, data } = useFirestoreCollectionData(commentsQuery);
+  const comments = data as CommentType[];
 
-  if (comments && comments.length > 0) {
+  if (status === 'loading') {
+    return <ActivityIndicator />;
+  }
+
+  if (comments.length > 0) {
     return (
       <View>
-        {comments.map((c) => (
+        {sortByDate(
+          comments,
+          (c) => c.date,
+          true,
+        ).map((c) => (
           <Comment
             post={post}
             thisComment={c}
@@ -22,9 +40,9 @@ export default function Comments({ post } : { post: Post }) {
           />
         ))}
       </View>
-
     );
   }
+
   return (
     <View>
       <Text style={{ color: 'grey' }}>no comments</Text>

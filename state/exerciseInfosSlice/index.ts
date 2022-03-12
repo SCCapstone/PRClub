@@ -16,14 +16,17 @@ const exerciseInfosSlice = createSlice({
         (state, action: PayloadAction<WgerExerciseInfo[]>) => {
           exerciseInfosAdapter.upsertMany(state, action.payload);
           state.status = 'loaded';
-        })
+        });
+
+    builder
       .addCase(syncExerciseInfos.pending, (state) => {
         state.isSyncing = true;
       })
-      .addCase(syncExerciseInfos.fulfilled, (state, action: PayloadAction<WgerExerciseInfo[]>) => {
-        exerciseInfosAdapter.upsertMany(state, action.payload);
-        state.isSyncing = false;
-      });
+      .addCase(syncExerciseInfos.fulfilled,
+        (state, action: PayloadAction<WgerExerciseInfo[]>) => {
+          exerciseInfosAdapter.upsertMany(state, action.payload);
+          state.isSyncing = false;
+        });
   },
 });
 

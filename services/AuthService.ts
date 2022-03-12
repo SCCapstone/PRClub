@@ -1,21 +1,18 @@
 import {
-  createUserWithEmailAndPassword,
-  NextOrObserver, signInWithEmailAndPassword,
+  createUserWithEmailAndPassword, signInWithEmailAndPassword,
   signOut,
-  Unsubscribe,
-  User as FirebaseUser,
 } from '@firebase/auth';
 import {
   collection, doc, getDoc, getDocs, query, setDoc, updateDoc, where,
 } from '@firebase/firestore';
 import { USERS_COLLECTION } from '../constants/firestore';
-import { auth, db } from '../firebase';
+import { auth, firestore } from '../firebase';
 import User from '../models/firestore/User';
 
 // "private" functions
 async function checkUsernameIsAvailable(username: string): Promise<void> {
   const q = query(
-    collection(db, USERS_COLLECTION),
+    collection(firestore, USERS_COLLECTION),
     where('username', '==', username),
   );
   const querySnap = await getDocs(q);
@@ -26,10 +23,6 @@ async function checkUsernameIsAvailable(username: string): Promise<void> {
 
 // "public" functions
 export default {
-  registerAuthStateListener(l: NextOrObserver<FirebaseUser | null>): Unsubscribe {
-    return auth.onAuthStateChanged(l);
-  },
-
   async signUp(name: string, username: string, email: string, password: string): Promise<User> {
     await checkUsernameIsAvailable(username);
 
@@ -54,14 +47,14 @@ export default {
       likedPostIds: [],
       commentIds: [],
     };
-    await setDoc(doc(db, USERS_COLLECTION, user.id), user);
+    await setDoc(doc(firestore, USERS_COLLECTION, user.id), user);
 
     return user;
   },
 
   async signIn(email: string, password: string): Promise<User> {
     const userCred = await signInWithEmailAndPassword(auth, email, password);
-    const documentSnapshot = await getDoc(doc(db, USERS_COLLECTION, userCred.user.uid));
+    const documentSnapshot = await getDoc(doc(firestore, USERS_COLLECTION, userCred.user.uid));
     return documentSnapshot.data() as User;
   },
 
@@ -70,7 +63,7 @@ export default {
   },
 
   async updateName(userId: string, newName: string): Promise<void> {
-    const docRef = doc(db, USERS_COLLECTION, userId);
+    const docRef = doc(firestore, USERS_COLLECTION, userId);
 
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
@@ -83,7 +76,7 @@ export default {
   },
 
   async updateUsername(userId: string, newUsername: string): Promise<void> {
-    const docRef = doc(db, USERS_COLLECTION, userId);
+    const docRef = doc(firestore, USERS_COLLECTION, userId);
 
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
