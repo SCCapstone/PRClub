@@ -51,11 +51,7 @@ We are using `jest` for unit tests and `cypress` for behavioral tests.
 ### Running Tests
 #### Behavioral Tests
 * Located in `cypress/integration/`.
-* To run:
-  1. Build the web version of the app, run it, and wait for it to fully load: `npm run web:build`.
-  2. In a parallel command prompt, run `npx cypress run --headless` to run tests in headless mode,
-  or `npx cypress open` to run tests interactively in the browser. *This must be done from the
-  root of this repository.*
+* To run locally, run `npm run cy` from the root of this repository.
 
 #### Unit Tests
 * Located in all `**/__tests__/` subfolders as appropriate.
