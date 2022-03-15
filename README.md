@@ -51,7 +51,8 @@ We are using `jest` for unit tests and `cypress` for behavioral tests.
 ### Running Tests
 #### Behavioral Tests
 * Located in `cypress/integration/`.
-* To run locally, run `npm run cy` from the root of this repository.
+* To run locally, run `npm run cy` from the root of this repository to launch the graphical
+  Cypress test runner and select the test suites you would like to run as necessary.
 
 #### Unit Tests
 * Located in all `**/__tests__/` subfolders as appropriate.
@@ -75,7 +76,7 @@ below steps:
 
 4. Start a Docker instance on your development environment.
 
-5. Run `npm run workflows:deploy`. Monitor changes to the
+5. Run `npm run deploy`. Monitor changes to the
 [Netlify static site](https://prclub-preview.netlify.app/) and updates on the
 [EAS dashboard](https://expo.dev/accounts/prclub22/projects/PRClub/builds).
 
