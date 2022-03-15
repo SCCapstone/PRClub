@@ -9,21 +9,21 @@ jobs:
     name: Deploy to Netlify
     runs-on: ubuntu-latest
     steps:
-      - name: 🗃  Checkout repo
+      - name: 🗃 Checkout repo
         uses: actions/checkout@v2
 
-      - name: ⚙️  Configure Node
+      - name: ⚙️ Configure Node
         uses: actions/setup-node@v2
         with:
           node-version: 16.x
 
-      - name: 📦 Install sharp-cli, expo-cli
-        run: npm i -g sharp-cli expo-cli
+      - name: 🛠 Install expo-cli, sharp-cli
+        run: npm i -g expo-cli sharp-cli
 
       - name: 📦 Install node_modules
         run: npm ci
 
-      - name: 🏗  Build web
+      - name: 🏗 Build web
         run: expo build:web
 
       - name: 🚀 Deploy to Netlify
@@ -38,15 +38,15 @@ jobs:
     name: Build Android apk on EAS
     runs-on: ubuntu-latest
     steps:
-      - name: 🗃  Checkout repo
+      - name: 🗃 Checkout repo
         uses: actions/checkout@v2
 
-      - name: ⚙️  Configure Node
+      - name: ⚙️ Configure Node
         uses: actions/setup-node@v2
         with:
           node-version: 16.x
 
-      - name: 📦 Install eas-cli
+      - name: 🛠 Install eas-cli
         run: npm i -g eas-cli
 
       - name: 📦 Install node_modules

@@ -79,7 +79,7 @@ below steps:
 
 4. Start a Docker instance on your development environment.
 
-5. Run `npm run deploy`. Monitor changes to the
+5. Run `npm run workflows:deploy`. Monitor changes to the
 [Netlify static site](https://prclub-preview.netlify.app/) and updates on the
 [EAS dashboard](https://expo.dev/accounts/prclub22/projects/PRClub/builds).
 

@@ -7,10 +7,12 @@
     "web": "expo start --web",
     "eject": "expo eject",
     "test": "jest --runInBand --detectOpenHandles --forceExit",
-    "web:build": "expo build:web -d; npx serve web-build",
-    "cypress": "firebase emulators:exec 'npx cypress open'",
-    "ci": "act -W ./.github/workflows/ci.yml --secret-file cicd.env pull_request",
-    "deploy": "act -W ./.github/workflows/deploy.yml --secret-file cicd.env push"
+    "cy:open": "firebase emulators:exec 'npx cypress open'",
+    "cy:run": "firebase emulators:exec 'npx cypress run --headless'",
+    "cy": "start-server-and-test web http://localhost:19006 cy:open",
+    "cy:ci": "start-server-and-test web http://localhost:19006 cy:run",
+    "workflows:ci": "act --container-architecture linux/amd64 -W ./.github/workflows/ci.yml --secret-file cicd.env pull_request",
+    "workflows:deploy": "act --container-architecture linux/amd64 -W ./.github/workflows/deploy.yml --secret-file cicd.env push"
   },
   "dependencies": {
     "@firebase/app": "^0.7.9",
@@ -29,6 +31,7 @@
     "@types/react-redux": "^7.1.22",
     "@types/yup": "^0.29.13",
     "axios": "^0.24.0",
+    "babel-plugin-transform-inline-environment-variables": "^0.4.3",
     "dotenv": "^16.0.0",
     "expo": "~42.0.1",
     "expo-constants": "~11.0.1",
@@ -57,6 +60,7 @@
     "react-native-web": "~0.13.12",
     "react-redux": "^7.2.6",
     "reactfire": "^4.2.1",
+    "start-server-and-test": "^1.14.0",
     "tailwindcss": "^3.0.23",
     "twrnc": "^2.0.3",
     "uuid": "^8.3.2",
