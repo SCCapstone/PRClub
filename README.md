@@ -42,8 +42,8 @@ Deployment:
 2. Run `npm install`.
 
 ## Running
-Run `expo start` from the root directory of your local copy of this repository, and follow the
-instructions returned by the command.
+Run `expo start --no-dev` from the root directory of your local copy of this repository, and
+follow the instructions within the webapp that is opened by the command.
 
 ## Testing
 ### Testing Infrastructure
