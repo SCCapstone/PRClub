@@ -193,10 +193,10 @@ export default function Profile({
                       });
                     }}
                   >
-                    <>
+                    <View style={tw`overflow-hidden rounded-full`}>
                       <Image
                         source={{ uri: uploadedProfileImage || profileImage }}
-                        style={tw`w-30 h-30`}
+                        style={tw`w-40 h-40 rounded-full`}
                       />
                       <View
                         style={{
@@ -210,14 +210,11 @@ export default function Profile({
                           backgroundColor: 'rgba(0, 0, 0, 0.7)',
                         }}
                       >
-                        <Text style={{
-                          color: 'white',
-                        }}
-                        >
+                        <Text style={tw`text-xs text-white`}>
                           TAP TO UPDATE
                         </Text>
                       </View>
-                    </>
+                    </View>
                   </TouchableHighlight>
                 )
                 : (
@@ -333,11 +330,27 @@ export default function Profile({
           )
       }
       <Tab.Navigator
-        screenOptions={{
-          tabBarLabelStyle: tw`text-xs`,
-        }}
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({ focused, color }) => {
+            let iconName = '';
+
+            if (route.name === 'Workouts') {
+              iconName = focused ? 'barbell' : 'barbell-outline';
+            } else if (route.name === 'PRs') {
+              iconName = focused ? 'trophy' : 'trophy-outline';
+            } else if (route.name === 'Posts') {
+              iconName = focused ? 'images' : 'images-outline';
+            } else if (route.name === 'Followers') {
+              iconName = focused ? 'people' : 'people-outline';
+            }
+
+            return <Ionicons name={iconName} size={20} color={color} />;
+          },
+          tabBarActiveTintColor: 'black',
+          tabBarInactiveTintColor: 'gray',
+        })}
       >
-        <Tab.Screen name="Workouts">
+        <Tab.Screen name="Workouts" options={{ tabBarShowLabel: false }}>
           {() => (
             <Workouts
               workouts={workouts}
@@ -346,7 +359,7 @@ export default function Profile({
             />
           )}
         </Tab.Screen>
-        <Tab.Screen name="PRs">
+        <Tab.Screen name="PRs" options={{ tabBarShowLabel: false }}>
           {() => (
             <PRs
               prs={prs}
@@ -355,16 +368,17 @@ export default function Profile({
             />
           )}
         </Tab.Screen>
-        <Tab.Screen name="Posts">
+        <Tab.Screen name="Posts" options={{ tabBarShowLabel: false }}>
           {() => (
             <Posts
               posts={posts}
               postsStatus={postsStatus}
               forCurrentUser={forCurrentUser}
+
             />
           )}
         </Tab.Screen>
-        <Tab.Screen name="Followers">
+        <Tab.Screen name="Followers" options={{ tabBarShowLabel: false }}>
           {() => (
             <Followers
               user={profileBeingViewed}
