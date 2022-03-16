@@ -7,7 +7,7 @@
     "web": "firebase emulators:exec 'expo start --web'",
     "web:no-dev": "expo start --web --no-dev",
     "eject": "expo eject",
-    "test": "jest --runInBand --detectOpenHandles --forceExit",
+    "test": "firebase emulators:exec 'jest --runInBand --detectOpenHandles --forceExit'",
     "cy:open": "npx cypress open",
     "cy:run": "npx cypress run --headless",
     "cy": "start-server-and-test web http://localhost:19006 cy:open",
