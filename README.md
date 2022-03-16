@@ -63,8 +63,7 @@ unit test React components.
 ## Deployment
 All deployments are done automatically on each merge into `main` using our
 [`deploy` GitHub Action](.github/workflows/deploy.yml). Our entire deployment pipeline can be run
-locally using a nifty tool called [`act`](https://github.com/nektos/act)! To do so, follow the
-below steps:
+locally using [`act`](https://github.com/nektos/act). To do so, follow the below steps:
 
 1. Install [Docker](https://www.docker.com/), if you don't already have it. This is required for
 `act` to be able to run workflows locally.
