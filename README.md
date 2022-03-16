@@ -1,5 +1,6 @@
 # PRClub
-[![CICD](https://github.com/SCCapstone/PRClub/actions/workflows/cicd.yml/badge.svg)](https://github.com/SCCapstone/PRClub/actions/workflows/cicd.yml)
+[![CI](https://github.com/SCCapstone/PRClub/actions/workflows/ci.yml/badge.svg)](https://github.com/SCCapstone/PRClub/actions/workflows/ci.yml)
+[![Deploy](https://github.com/SCCapstone/PRClub/actions/workflows/deploy.yml/badge.svg)](https://github.com/SCCapstone/PRClub/actions/workflows/deploy.yml)
 [![Netlify Status](https://api.netlify.com/api/v1/badges/e177e10b-1448-43b1-b6fe-d879220c11c5/deploy-status)](https://app.netlify.com/sites/prclub/deploys)
 
 **PR Club** is a fitness-oriented social networking app centered around users being able to share
