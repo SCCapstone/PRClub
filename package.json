@@ -8,8 +8,8 @@
     "web:no-dev": "expo start --web --no-dev",
     "eject": "expo eject",
     "test": "jest --runInBand --detectOpenHandles --forceExit",
-    "cy:open": "firebase emulators:exec 'npx cypress open'",
-    "cy:run": "firebase emulators:exec 'npx cypress run --headless'",
+    "cy:open": "npx cypress open",
+    "cy:run": "npx cypress run --headless",
     "cy": "start-server-and-test web http://localhost:19006 cy:open",
     "cy:ci": "start-server-and-test web http://localhost:19006 cy:run",
     "deploy": "act --container-architecture linux/amd64 -W ./.github/workflows/deploy.yml --secret-file cicd.env push"
