@@ -3,7 +3,7 @@ import {
 } from '@firebase/firestore';
 import _ from 'lodash';
 import { PRS_COLLECTION, USERS_COLLECTION } from '../constants/firestore';
-import { firestore } from '../firebase';
+import { firestore } from '../firebase-lib';
 import PR from '../models/firestore/PR';
 
 export default {

@@ -6,7 +6,7 @@ import {
   collection, doc, getDoc, getDocs, query, setDoc, updateDoc, where,
 } from '@firebase/firestore';
 import { USERS_COLLECTION } from '../constants/firestore';
-import { auth, firestore } from '../firebase';
+import { auth, firestore } from '../firebase-lib';
 import User from '../models/firestore/User';
 
 // "private" functions

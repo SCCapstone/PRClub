@@ -2,7 +2,7 @@ import {
   getDownloadURL,
   ref, uploadBytesResumable,
 } from '@firebase/storage';
-import { storage } from '../firebase/index';
+import { storage } from '../firebase-lib/index';
 
 export default {
   async uploadImage(

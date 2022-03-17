@@ -15,9 +15,19 @@ web-build/
 # Visual Studio Code
 .vscode/
 
-.env
+# Environment variables and secrets
+*.env
+*.secrets
 
+# Cypress
 cypress/screenshots/
 cypress/videos/
 
+# Local Netlify folder
+.netlify
+
+# Firebase Emulator logs
+*-debug.log
+
+# Other local files
 bugs.txt

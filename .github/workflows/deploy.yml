@@ -1,0 +1,58 @@
+name: Deploy
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  netlify:
+    name: Deploy to Netlify
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🗃 Checkout repo
+        uses: actions/checkout@v2
+
+      - name: ⚙️ Configure Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
+
+      - name: 🛠 Install expo-cli, sharp-cli
+        run: npm i -g expo-cli sharp-cli
+
+      - name: 📦 Install node_modules
+        run: npm ci
+
+      - name: 🏗 Build web
+        run: expo build:web
+
+      - name: 🚀 Deploy to Netlify
+        uses: netlify/actions/cli@master
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        with:
+          args: deploy --dir=web-build --prod
+
+  eas:
+    name: Build Android apk on EAS
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🗃 Checkout repo
+        uses: actions/checkout@v2
+
+      - name: ⚙️ Configure Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
+
+      - name: 🛠 Install eas-cli
+        run: npm i -g eas-cli
+
+      - name: 📦 Install node_modules
+        run: npm ci
+
+      - name: 🚀 Build Android apk on EAS
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: eas build --profile=preview --platform=android --clear-cache --non-interactive

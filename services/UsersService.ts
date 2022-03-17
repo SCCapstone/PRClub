@@ -3,7 +3,7 @@ import {
   arrayUnion, doc, DocumentData, DocumentReference, getDoc, updateDoc,
 } from '@firebase/firestore';
 import { USERS_COLLECTION } from '../constants/firestore';
-import { firestore } from '../firebase';
+import { firestore } from '../firebase-lib';
 
 async function checkUserExists(userDocRef: DocumentReference<DocumentData>): Promise<void> {
   if (!(await getDoc(userDocRef)).exists()) {
