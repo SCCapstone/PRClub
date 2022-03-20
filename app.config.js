@@ -21,7 +21,7 @@ export default {
   android: {
     adaptiveIcon: {
       foregroundImage: './assets/adaptive-icon.png',
-      backgroundColor: '#FFFFFF',
+      backgroundColor: '#0d0908',
     },
     package: 'com.prclub',
   },
