@@ -24,7 +24,7 @@ const exerciseInfosEndpoint = '/exerciseinfo/?';
 const baseQueryParams = {
   format: 'json',
   offset: 0,
-  language: 2, // wger.de's language code for English
+  license_author: 'wger.de',
 };
 
 async function getExerciseInfosCount() {
@@ -53,6 +53,8 @@ export default {
     });
 
     const exerciseInfos = response.data.results
+      // need to filter language on client side
+      .filter((e) => e.language.id === 2)
       .sort((a, b) => a.category.name.localeCompare(b.category.name));
 
     return _.uniqBy(_.uniqBy(exerciseInfos, (i) => i.id), (i) => i.name);
@@ -78,6 +80,8 @@ export default {
     });
 
     const exerciseInfos = response.data.results
+    // need to filter language on client side
+      .filter((e) => e.language.id === 2)
       .sort((a, b) => a.category.name.localeCompare(b.category.name));
 
     return _.uniqBy(_.uniqBy(exerciseInfos, (i) => i.id), (i) => i.name);
