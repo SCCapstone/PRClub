@@ -169,17 +169,19 @@ export default function WorkoutForm({
                                                     mode="outlined"
                                                     placeholder="weight (lbs)"
                                                     onChangeText={(input) => {
-                                                      formikProps.setFieldValue(
-                                                        `exercises.${i}.exerciseSets.${j}.weight`,
-                                                        Number(input),
-                                                      );
+                                                      if (input.match(/(^$)|([1-9][0-9]*)/g)) {
+                                                        formikProps.setFieldValue(
+                                                          `exercises.${i}.exerciseSets.${j}.weight`,
+                                                          input === '' ? input : Number(input),
+                                                        );
+                                                      }
                                                     }}
                                                     value={String(formikProps
                                                       .values
                                                       .exercises[i]
                                                       .exerciseSets[j]
                                                       .weight)}
-                                                    keyboardType="decimal-pad"
+                                                    keyboardType="numeric"
                                                   />
                                                 )}
                                               </Field>
@@ -191,10 +193,12 @@ export default function WorkoutForm({
                                                     mode="outlined"
                                                     placeholder="reps"
                                                     onChangeText={(input) => {
-                                                      formikProps.setFieldValue(
-                                                        `exercises.${i}.exerciseSets.${j}.reps`,
-                                                        Number(input),
-                                                      );
+                                                      if (input.match(/(^$)|([1-9][0-9]*)/g)) {
+                                                        formikProps.setFieldValue(
+                                                          `exercises.${i}.exerciseSets.${j}.reps`,
+                                                          input === '' ? input : Number(input),
+                                                        );
+                                                      }
                                                     }}
                                                     value={String(formikProps
                                                       .values
