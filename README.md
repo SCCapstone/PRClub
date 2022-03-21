@@ -1,3 +1,7 @@
+<center>
+  <image src="./assets/brand.png" style="max-width:60%;" />
+</center>
+
 # PRClub
 [![CI](https://github.com/SCCapstone/PRClub/actions/workflows/ci.yml/badge.svg)](https://github.com/SCCapstone/PRClub/actions/workflows/ci.yml)
 [![Deploy](https://github.com/SCCapstone/PRClub/actions/workflows/deploy.yml/badge.svg)](https://github.com/SCCapstone/PRClub/actions/workflows/deploy.yml)
