@@ -1,0 +1,13 @@
+diff --git a/node_modules/react-native/Libraries/Core/Timers/JSTimers.js b/node_modules/react-native/Libraries/Core/Timers/JSTimers.js
+index 4c154db..a5c2941 100644
+--- a/node_modules/react-native/Libraries/Core/Timers/JSTimers.js
++++ b/node_modules/react-native/Libraries/Core/Timers/JSTimers.js
+@@ -44,7 +44,7 @@ export type JSTimerType =
+ const FRAME_DURATION = 1000 / 60;
+ const IDLE_CALLBACK_FRAME_DEADLINE = 1;
+ 
+-const MAX_TIMER_DURATION_MS = 60 * 1000;
++const MAX_TIMER_DURATION_MS = 10000 * 1000;
+ const IS_ANDROID = Platform.OS === 'android';
+ const ANDROID_LONG_TIMER_MESSAGE =
+   'Setting a timer for a long period of time, i.e. multiple minutes, is a ' +

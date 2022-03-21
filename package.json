@@ -12,6 +12,7 @@
     "cy:run": "npx cypress run --headless",
     "cy": "start-server-and-test web http://localhost:19006 cy:open",
     "cy:ci": "start-server-and-test web http://localhost:19006 cy:run",
+    "postinstall": "patch-package",
     "deploy": "act --container-architecture linux/amd64 -W ./.github/workflows/deploy.yml --secret-file cicd.env push"
   },
   "dependencies": {
@@ -38,11 +39,13 @@
     "expo-image-picker": "~10.2.2",
     "expo-linking": "~2.3.1",
     "expo-status-bar": "~1.0.4",
-    "firebase": "^9.5.0",
+    "firebase": "^9.6.9",
     "formik": "^2.2.9",
     "humps": "^2.0.1",
     "lodash": "^4.17.21",
+    "patch-package": "^6.4.7",
     "path": "^0.12.7",
+    "postinstall-postinstall": "^2.1.0",
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-error-boundary": "^3.1.4",
