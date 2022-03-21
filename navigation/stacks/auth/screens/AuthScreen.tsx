@@ -1,8 +1,9 @@
+/* eslint-disable global-require */
 import { SerializedError } from '@reduxjs/toolkit';
 import React, { useState } from 'react';
-import { ScrollView, View } from 'react-native';
+import { ScrollView, View, Image } from 'react-native';
 import {
-  Button, Snackbar, Text,
+  Button, Snackbar,
 } from 'react-native-paper';
 import tw from 'twrnc';
 import SignIn from '../../../../components/SignIn';
@@ -20,8 +21,11 @@ export default function LoginScreen() {
   return (
     <>
       <ScrollView style={tw`pt-20`}>
-        <View style={tw`items-center`}>
-          <Text style={tw`text-xl`}>Welcome to PR Club!</Text>
+        <View style={tw`items-center p-5`}>
+          <Image
+            source={require('../../../../assets/banner.png')}
+            style={{ width: '100%', height: 75 }}
+          />
         </View>
         {
           showSignIn
