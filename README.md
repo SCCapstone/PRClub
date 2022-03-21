@@ -37,6 +37,7 @@ and meet others with the same interests.
 ### Optional
 Testing:
 - [`jest`](https://jestjs.io/)
+- [`firebase-tools`](https://www.npmjs.com/package/firebase-tools)
 
 Deployment:
 - [`act`](https://github.com/nektos/act)
@@ -46,12 +47,20 @@ Deployment:
 2. Run `npm install`.
 
 ## Running
-Run `expo start --no-dev` from the root directory of your local copy of this repository, and
-follow the instructions within the webapp that is opened by the command.
+Run `expo start` from the root directory of your local copy of this repository, and follow the
+instructions within the command line output that is opened by the command.
 
 ## Testing
 ### Testing Infrastructure
 We are using `jest` for unit tests and `cypress` for behavioral tests.
+
+### Prerequisites
+1. Install the [Firebase CLI (`firebase-tools`)](https://www.npmjs.com/package/firebase-tools).
+   This is needed in order to run an instance of the
+   [Firebase Local Emulator Suite](https://firebase.google.com/docs/emulator-suite), which is used as
+   our primary means of mocking backend data for tests.
+2. `cd` to the root of this repo (the Firebase CLI must be run from a directory containing a valid
+   `firebase.json` file at its root).
 
 ### Running Tests
 #### Behavioral Tests
