@@ -33,7 +33,7 @@ interface MuscleSecondary {
   id: number;
   name: string;
   isFront: boolean;
-  iamgeUrlMain: string;
+  imageUrlMain: string;
   imageUrlSecondary: string;
 }
 
