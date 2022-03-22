@@ -4,6 +4,7 @@ import _ from 'lodash';
 import { EXERCISE_INFOS_KEY } from '../../constants/async-storage';
 import WgerService from '../../services/WgerService';
 import WgerExerciseInfo from '../../models/services/WgerExerciseInfo';
+import FallbackExerciseInfos from '../../assets/exerciseInfos.json';
 
 export const fetchExerciseInfos = createAsyncThunk<WgerExerciseInfo[], void>(
   'exerciseInfos/fetchExerciseInfos',
@@ -11,9 +12,9 @@ export const fetchExerciseInfos = createAsyncThunk<WgerExerciseInfo[], void>(
     // try to retrieve cached exercise infos
     const exerciseInfosJson = await AsyncStorage.getItem(EXERCISE_INFOS_KEY);
 
-    // if they are uncatched, fetch from wger api
+    // if they are uncached, fetch from fallback cache in /assets/exerciseInfos
     if (!exerciseInfosJson) {
-      const exerciseInfos = await WgerService.getAllExerciseInfos();
+      const exerciseInfos = FallbackExerciseInfos as WgerExerciseInfo[];
       await AsyncStorage.setItem(EXERCISE_INFOS_KEY, JSON.stringify(exerciseInfos));
       return exerciseInfos;
     }

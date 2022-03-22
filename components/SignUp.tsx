@@ -5,7 +5,7 @@ import tw from 'twrnc';
 import { useAppDispatch } from '../hooks/redux';
 import { userSignUp } from '../state/userSlice/thunks';
 
-export default function SignUp({ remember }: {remember: boolean}) {
+export default function SignUp() {
   const [name, setName] = useState<string | null>(null);
   const [username, setUsername] = useState<string | null>(null);
   const [email, setEmail] = useState<string | null>(null);
@@ -72,7 +72,7 @@ export default function SignUp({ remember }: {remember: boolean}) {
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-ignore
               dispatch(userSignUp({
-                name, username, email, password, remember,
+                name, username, email, password,
               }));
             }
           }}

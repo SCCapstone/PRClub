@@ -7,7 +7,7 @@ import tw from 'twrnc';
 import { useAppDispatch } from '../hooks/redux';
 import { userSignIn } from '../state/userSlice/thunks';
 
-export default function SignIn({ remember }: {remember: boolean}) {
+export default function SignIn() {
   const [email, setEmail] = useState<string | null>(null);
   const [password, setPassword] = useState<string | null>(null);
 
@@ -32,7 +32,7 @@ export default function SignIn({ remember }: {remember: boolean}) {
           color="green"
           onPress={() => {
             if (email && password) {
-              dispatch(userSignIn({ email, password, remember }));
+              dispatch(userSignIn({ email, password }));
             }
           }}
           disabled={!email || !password}

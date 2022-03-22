@@ -7,6 +7,6 @@ describe('first-time startup', () => {
   });
 
   it('should show login screen', () => {
-    cy.contains('Welcome to PR Club!');
+    cy.contains('Sign In');
   });
 });

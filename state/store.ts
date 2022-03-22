@@ -4,6 +4,7 @@ import { fetchExerciseInfos, syncExerciseInfos } from './exerciseInfosSlice/thun
 import postsReducer from './postsSlice';
 import prsReducer from './prsSlice';
 import userReducer from './userSlice';
+import { tryFetchCurrentUser } from './userSlice/thunks';
 import workoutsReducer from './workoutsSlice';
 
 export const store = configureStore({
@@ -21,6 +22,7 @@ export const store = configureStore({
 
 store.dispatch(fetchExerciseInfos());
 store.dispatch(syncExerciseInfos());
+store.dispatch(tryFetchCurrentUser());
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

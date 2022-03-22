@@ -11,28 +11,40 @@ import ImagesService from '../../services/ImagesService';
 import UsersService from '../../services/UsersService';
 import type { AppDispatch, RootState } from '../store';
 
+export const tryFetchCurrentUser = createAsyncThunk<User | null, void>(
+  'users/tryFetchCurrentUser',
+  async (): Promise<User | null> => {
+    const currentUserIdJson = await AsyncStorage.getItem(CURRENT_USER_KEY);
+
+    if (currentUserIdJson) {
+      const currentUserId = JSON.parse(currentUserIdJson) as string;
+      return UsersService.fetchUser(currentUserId);
+    }
+
+    return null;
+  },
+);
+
 export const userSignIn = createAsyncThunk<
   User,
-  { email: string, password: string, remember: boolean }
+  { email: string, password: string }
 >(
   'users/signIn',
-  async ({ email, password, remember }): Promise<User> => {
+  async ({ email, password }): Promise<User> => {
     const user = await AuthService.signIn(email, password);
-    if (remember) {
-      await AsyncStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
-    }
+    await AsyncStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user.id));
     return user;
   },
 );
 
 export const userSignUp = createAsyncThunk<
   User,
-  { name: string, username: string, email: string, password: string, remember: boolean },
+  { name: string, username: string, email: string, password: string },
   { dispatch: AppDispatch }
 >(
   'users/signUp',
   async ({
-    name, username, email, password, remember,
+    name, username, email, password,
   }, { dispatch }): Promise<User> => {
     const user = await AuthService.signUp(name, username, email, password);
 
@@ -41,9 +53,7 @@ export const userSignUp = createAsyncThunk<
       userId: user.id,
     }));
 
-    if (remember) {
-      await AsyncStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
-    }
+    await AsyncStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user.id));
 
     return user;
   },
@@ -51,7 +61,10 @@ export const userSignUp = createAsyncThunk<
 
 export const userLogOut = createAsyncThunk<void, void>(
   'users/logOut',
-  async (): Promise<void> => AuthService.logOut(),
+  async (): Promise<void> => {
+    await AuthService.logOut();
+    await AsyncStorage.removeItem(CURRENT_USER_KEY);
+  },
 );
 
 export const uploadProfileImage = createAsyncThunk<

@@ -1,8 +1,9 @@
+/* eslint-disable global-require */
 import { SerializedError } from '@reduxjs/toolkit';
 import React, { useState } from 'react';
-import { ScrollView, View } from 'react-native';
+import { ScrollView, View, Image } from 'react-native';
 import {
-  Button, Checkbox, Snackbar, Text,
+  Button, Snackbar,
 } from 'react-native-paper';
 import tw from 'twrnc';
 import SignIn from '../../../../components/SignIn';
@@ -11,30 +12,8 @@ import { useAppDispatch, useAppSelector } from '../../../../hooks/redux';
 import { clearUserAuthError } from '../../../../state/userSlice';
 import { selectUserAuthError } from '../../../../state/userSlice/selectors';
 
-export function Remember({ value, onCheck }: {value: boolean, onCheck: () => void}) {
-  return (
-    <View style={tw`flex flex-row p-5`}>
-      <View style={tw`flex flex-3`} />
-      <View style={tw`flex flex-3 items-center justify-center`}>
-        <Text style={tw`text-base text-center`}>Remember?</Text>
-      </View>
-      <View style={tw`flex flex-1`}>
-        <Checkbox
-          status={value ? 'checked' : 'unchecked'}
-          onPress={onCheck}
-        />
-      </View>
-      <View style={tw`flex flex-2`} />
-    </View>
-  );
-}
-
 export default function LoginScreen() {
   const [showSignIn, setShowSignIn] = useState<boolean>(true);
-
-  // caching current user is currently broken, remove when fixed
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [remember, setRemember] = useState<boolean>(false);
 
   const dispatch = useAppDispatch();
   const userAuthError: SerializedError | null = useAppSelector(selectUserAuthError);
@@ -42,15 +21,17 @@ export default function LoginScreen() {
   return (
     <>
       <ScrollView style={tw`pt-20`}>
-        <View style={tw`items-center`}>
-          <Text style={tw`text-xl`}>Welcome to PR Club!</Text>
+        <View style={tw`items-center p-5`}>
+          <Image
+            source={require('../../../../assets/banner.png')}
+            style={{ width: '100%', height: 75 }}
+          />
         </View>
         {
           showSignIn
             ? (
               <>
-                <SignIn remember={remember} />
-                {/* <Remember value={remember} onCheck={() => setRemember(!remember)} /> */}
+                <SignIn />
                 <Button
                   color="purple"
                   onPress={() => setShowSignIn(false)}
@@ -62,8 +43,7 @@ export default function LoginScreen() {
             )
             : (
               <>
-                <SignUp remember={remember} />
-                {/* <Remember value={remember} onCheck={() => setRemember(!remember)} /> */}
+                <SignUp />
                 <Button
                   color="purple"
                   onPress={() => setShowSignIn(true)}

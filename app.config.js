@@ -28,4 +28,7 @@ export default {
   web: {
     favicon: './assets/favicon.png',
   },
+  extra: {
+    useEmulators: process.env.USE_EMULATORS === 'true',
+  },
 };
