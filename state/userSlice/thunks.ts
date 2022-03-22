@@ -4,7 +4,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { CURRENT_USER_KEY } from '../../constants/async-storage';
 import { USERS_COLLECTION } from '../../constants/firestore';
 import { PROFILE_IMG_URI } from '../../constants/profile';
-import { firestore } from '../../firebase';
+import { firestore } from '../../firebase-lib';
 import User from '../../models/firestore/User';
 import AuthService from '../../services/AuthService';
 import ImagesService from '../../services/ImagesService';

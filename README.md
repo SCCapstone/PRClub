@@ -1,79 +1,92 @@
+<center>
+  <image src="./assets/brand.png" style="max-width:60%;" />
+</center>
+
 # PRClub
-We are creating a social networking application where users will be able to create and share workouts with other users. The goal of this project is to allow users to share their passion for fitness by exchanging workouts and meeting new people with the same interests. Some of the features of our applications include:
-- Creating a user profile
-- Following other users
-- Keeping track of your workout routines and progress
-- Publicly posting workout routines
-- Comment and like other users' workouts
-- Instant messaging
+[![CI](https://github.com/SCCapstone/PRClub/actions/workflows/ci.yml/badge.svg)](https://github.com/SCCapstone/PRClub/actions/workflows/ci.yml)
+[![Deploy](https://github.com/SCCapstone/PRClub/actions/workflows/deploy.yml/badge.svg)](https://github.com/SCCapstone/PRClub/actions/workflows/deploy.yml)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/e177e10b-1448-43b1-b6fe-d879220c11c5/deploy-status)](https://app.netlify.com/sites/prclub/deploys)
+
+**PR Club** is a fitness-oriented social networking app centered around users being able to share
+their personal records (PRs) with each other. The goal of this project is to allow users to support
+each other as they meet their fitness goals, all while being able to exchange each other's workouts
+and meet others with the same interests.
 
 ## Technology
-- Framework: React Native, Expo
-- Languages: Typescript/Javascript
-- IDE: Visual Studio Code
-- Backend Server: Firebase
-- Third Party Libraries: React Native Elements, ReduxJS Toolkit, Firebase Javascript SDK, ~~React Native Health~~\*
-  - \* omitted -- only compatible with iOS, making it unusable on Android targets (build target for course)
-- Third Party APIs: [wger Workout Manager REST API](https://wger.de/en/software/api) as our primary exercise databank, ~~MyFitnessPal API~~\*\*, ~~Fitbit API~~\*\*\*
-  - \*\* currently unable to gain access as a public project landing page is required and OAuth/Activity Callback URLs are required (see their [form](https://docs.google.com/forms/d/e/1FAIpQLScRgAz4W_1QQ2He5QvUXsSfJxJ4xJZTbPUnzxo-uQahT3SESQ/viewform)).
-  - \*\*\* blocked on this as none of our group members own a Fitbit; API also primarily focuses on biometric information rather than workout log data which is currently out of the scope of our PoC
+- Framework: [React Native](https://reactnative.dev/) (via [Expo](https://expo.dev/))
+- Language: primarily [TypeScript](https://www.typescriptlang.org/)
+- IDE: [Visual Studio Code](https://code.visualstudio.com/)
+- Backend: [Firebase](https://firebase.google.com/)
+- Hosting: [Netlify](https://www.netlify.com/)
+- Artifact registry: [Expo Application Services (EAS)](https://expo.dev/eas)
+- Key 3rd-party libraries:
+  - [`react-native-paper`](https://github.com/callstack/react-native-paper) - component library
+  - [`react-navigation`](https://github.com/react-navigation/react-navigation) - navigation/routing
+  - [`redux-toolkit`](https://github.com/reduxjs/redux-toolkit) - state management
+  - [`formik`](https://github.com/jaredpalmer/formik) - form building
+  - [`firebase`](https://github.com/firebase/firebase-js-sdk) - Firebase Javascript SDK
+  - [`reactfire`](https://github.com/FirebaseExtended/reactfire) - Firebase hooks for React
+- Data sources: 
+  - [wger.de REST API](https://wger.de/en/software/api) - primary exercise databank
 
-## External Requirements
-- Javascript
-- Expo
-- React Native
-- npm
+## External Dependencies
+### Required
+- [`npm`](https://github.com/npm/cli)
+- [`expo-cli`](https://github.com/expo/expo-cli)
+
+### Optional
+Testing:
+- [`jest`](https://jestjs.io/)
+
+Deployment:
+- [`act`](https://github.com/nektos/act)
 
 ## Setup
 1. Clone this repository. `cd` into its repo.
 2. Run `npm install`.
 
 ## Running
-1. Run `expo start` from the root directory of your local copy of this repository.
+Run `expo start --no-dev` from the root directory of your local copy of this repository, and
+follow the instructions within the webapp that is opened by the command.
 
-## Deployment
-
-### To Android
-1. Create an [Expo Application Services (EAS)](https://expo.dev/eas) account.
-2. From the root directory, run `npx eas-cli build --platform android`.
-3. Sign in to your EAS account to view the status of your build.
-4. Monitor your build until it completes. Then, download its APK once it's complete.
-
-### To web (as a backup solution)
-Thankfully, Expo lets us deploy apps as web apps in the event that an Android build doesn't succeed.
-1. Create an account on [Netlify](www.netlify.com). Pause when you get to the below screen
-with the following file upload box:
-
-<image src="./assets/netlify.png" class="center">
-
-2. From the root directory, run `expo build:web`. Confirm there are no issues by running
-`npx serve web-build` and accessing the port specified in its output.
-
-3. Drag-and-drop the `web-build/` folder created in the last step to the above file upload box.
-
-4. Access the URL provided by Netlify.
-
-# Testing
-## Testing Technology
+## Testing
+### Testing Infrastructure
 We are using `jest` for unit tests and `cypress` for behavioral tests.
 
-## Running Tests
-### Behavioral Tests
+### Running Tests
+#### Behavioral Tests
 * Located in `cypress/integration/`.
-* To run:
-  1. Launch the expo web server, and wait for it to fully load: `npm run web`.
-  2. In a parallel command prompt, run `npx cypress run --headless` to run tests in headless mode,
-  or `npx cypress open` to run tests interactively in the browser. *This must be done from the
-  root of this repository.*
+* To run locally, run `npm run cy` from the root of this repository to launch the graphical
+  Cypress test runner and select the test suites you would like to run as necessary.
 
-### Unit Tests
+#### Unit Tests
 * Located in all `**/__tests__/` subfolders as appropriate.
-  * e.g. in `services/__tests__/` for now but could also be added to `components/__tests__/` to unit test React components.
+  * e.g. in `services/__tests__/` for now but could also be added to `components/__tests__/` to
+unit test React components.
 * To run, simply run `npm test` from the root of this repository.
 
-# Authors
-- Dhruv Pai (dhruv.k.pai@gmail.com)
-- John Angelidis (johnangelidis12@gmail.com)
-- Ishrat Singh (ishrat512@icloud.com)
-- Nick Yglesias  (nyglesias64@outlook.com)
-- Ethan Schimelman (eschimelman@gmail.com)
+## Deployment
+All deployments are done automatically on each merge into `main` using our
+[`deploy` GitHub Action](.github/workflows/deploy.yml). Our entire deployment pipeline can be run
+locally using [`act`](https://github.com/nektos/act). To do so, follow the below steps:
+
+1. Install [Docker](https://www.docker.com/), if you don't already have it. This is required for
+`act` to be able to run workflows locally.
+
+2. Install `act` using the instructions
+[here](https://github.com/nektos/act/blob/master/README.md#installation).
+
+3. Obtain a copy of the `cicd.env` file from a maintainer of this repository.
+
+4. Start a Docker instance on your development environment.
+
+5. Run `npm run deploy`. Monitor changes to the
+[Netlify static site](https://prclub-preview.netlify.app/) and updates on the
+[EAS dashboard](https://expo.dev/accounts/prclub22/projects/PRClub/builds).
+
+## Maintainers
+- Dhruv Pai ([GitHub](https://github.com/thatpaiguy) | [email](mailto:dhruv.k.pai@gmail.com))
+- Ethan Schimelman ([GitHub](https://github.com/eschim) | [email](mailto:eschimelman@gmail.com))
+- Ish Singh ([GitHub](https://github.com/singhish) | [email](mailto:ishratsingh00@gmail.com))
+- John Angelidis ([GitHub](https://github.com/johnangelidis) | [email](mailto:johnangelidis12@gmail.com))
+- Nick Yglesias ([GitHub](https://github.com/NickYglesias64) | [email](mailto:nyglesias64@outlook.com))

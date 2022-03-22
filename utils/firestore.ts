@@ -3,7 +3,7 @@ import {
 } from '@firebase/firestore';
 import _ from 'lodash';
 import * as FirestoreConstants from '../constants/firestore';
-import { firestore } from '../firebase';
+import { firestore } from '../firebase-lib';
 
 type FirestoreCollectionName = typeof FirestoreConstants[keyof (typeof FirestoreConstants)];
 

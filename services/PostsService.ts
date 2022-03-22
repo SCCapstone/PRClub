@@ -2,7 +2,7 @@ import {
   arrayRemove, arrayUnion, deleteDoc, doc, getDoc, setDoc, updateDoc,
 } from '@firebase/firestore';
 import { COMMENTS_COLLECTION, POSTS_COLLECTION, USERS_COLLECTION } from '../constants/firestore';
-import { firestore } from '../firebase';
+import { firestore } from '../firebase-lib';
 import Comment from '../models/firestore/Comment';
 import Post from '../models/firestore/Post';
 

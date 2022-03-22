@@ -191,6 +191,8 @@ export default function Workouts({
                     setWorkoutToEdit(workout);
                     setWorkoutsState('editing');
                   }}
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore
                   onDelete={() => dispatch(removeWorkout(workout))}
                   onPost={() => {
                     setWorkoutToPost(workout);
