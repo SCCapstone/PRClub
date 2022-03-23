@@ -21,11 +21,14 @@ export default {
   android: {
     adaptiveIcon: {
       foregroundImage: './assets/adaptive-icon.png',
-      backgroundColor: '#FFFFFF',
+      backgroundColor: '#0d0908',
     },
     package: 'com.prclub',
   },
   web: {
     favicon: './assets/favicon.png',
+  },
+  extra: {
+    useEmulators: process.env.USE_EMULATORS === 'true',
   },
 };

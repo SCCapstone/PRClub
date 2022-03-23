@@ -6,11 +6,11 @@ import { Provider as ReduxProvider } from 'react-redux';
 import {
   AuthProvider, FirebaseAppProvider, FirestoreProvider, StorageProvider, DatabaseProvider,
 } from 'reactfire';
-import Navigator from './navigation/Navigator';
-import { store } from './state/store';
 import {
   auth, firestore, firebaseConfig, storage, database,
 } from './firebase-lib';
+import Navigator from './navigation/Navigator';
+import { store } from './state/store';
 
 export default function App() {
   return (

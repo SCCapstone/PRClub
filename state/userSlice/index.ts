@@ -2,7 +2,9 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import User from '../../models/firestore/User';
 import { initialState } from './state';
 import {
-  followUser, unfollowUser, updateName, updateUsername, uploadProfileImage, userLogOut, userSignIn,
+  followUser,
+  tryFetchCurrentUser,
+  unfollowUser, updateName, updateUsername, uploadProfileImage, userLogOut, userSignIn,
   userSignUp,
 } from './thunks';
 
@@ -33,6 +35,15 @@ const userSlice = createSlice({
     },
   },
   extraReducers(builder) {
+    builder
+      .addCase(tryFetchCurrentUser.pending, (state) => {
+        state.status = 'fetching';
+      })
+      .addCase(tryFetchCurrentUser.fulfilled, (state, action: PayloadAction<User | null>) => {
+        state.currentUser = action.payload;
+        state.status = 'loaded';
+      });
+
     builder
       .addCase(userSignIn.pending, (state) => {
         state.status = 'signingIn';
