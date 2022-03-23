@@ -110,52 +110,64 @@ export default function Profile({
   if (editingProfile) {
     return (
       <>
-        <View style={tw`p-2`}>
-          <BackButton
-            onPress={() => {
-              setEditingProfile(false);
-              setNewName(currentUser.name);
-              setNewUsername(currentUser.username);
-              dispatch(clearUpdateProfileResult());
-            }}
-          />
-          <Text style={tw`text-base`}>Name</Text>
-          <TextInput
-            style={tw`text-lg border-solid border-gray-500 border-b`}
-            value={newName}
-            onChangeText={(name) => setNewName(name)}
-          />
-          <Text style={tw`text-base`}>Handle</Text>
-          <TextInput
-            style={tw`mb-2 text-lg border-solid border-gray-500 border-b`}
-            value={newUsername}
-            onChangeText={(username) => setNewUsername(username)}
-          />
-          <Button
-            mode="contained"
-            onPress={() => {
-              if (newName !== currentUser.name) {
-                dispatch(updateName(newName));
-              }
+        <View style={tw`p-2 flex flex-row`}>
+          <View style={tw`m-2`}>
+            <TouchableHighlight
+              style={tw`w-12 h-12 bg-gray-500 rounded-full justify-center items-center`}
+              onPress={() => {
+                setEditingProfile(false);
+                setNewName(currentUser.name);
+                setNewUsername(currentUser.username);
+                dispatch(clearUpdateProfileResult());
+              }}
+            >
+              <Ionicons name="arrow-back" size={16} color="white" />
+            </TouchableHighlight>
+          </View>
 
-              if (newUsername !== currentUser.username) {
-                dispatch(updateUsername(newUsername));
-              }
-            }}
-            disabled={
-              currentUserStatus === 'updatingProfile'
+          <View style={tw`flex flex-1 justify-center items-center`}>
+            <Text style={tw`text-base`}>Name</Text>
+            <TextInput
+              style={tw`text-lg border-solid border-gray-500 border-b w-full`}
+              value={newName}
+              onChangeText={(name) => setNewName(name)}
+              theme={{ colors: { primary: '#22252a' } }}
+            />
+            <Text style={tw`text-base`}>Handle</Text>
+            <TextInput
+              style={tw`mb-2 text-lg border-solid border-gray-500 border-b w-full`}
+              value={newUsername}
+              onChangeText={(username) => setNewUsername(username)}
+              theme={{ colors: { primary: '#22252a' } }}
+            />
+
+          </View>
+        </View>
+        <Button
+          mode="contained"
+          onPress={() => {
+            if (newName !== currentUser.name) {
+              dispatch(updateName(newName));
+            }
+
+            if (newUsername !== currentUser.username) {
+              dispatch(updateUsername(newUsername));
+            }
+          }}
+          disabled={
+            currentUserStatus === 'updatingProfile'
               || newName.length === 0
               || newUsername.length === 0
               || (
                 newName === currentUser.name
                 && newUsername === currentUser.username
               )
-            }
-            loading={currentUserStatus === 'updatingProfile'}
-          >
-            Save
-          </Button>
-        </View>
+          }
+          loading={currentUserStatus === 'updatingProfile'}
+          color="#22252a"
+        >
+          Save
+        </Button>
       </>
     );
   }
@@ -177,8 +189,8 @@ export default function Profile({
           : <></>
       }
       <View style={tw`py-5 bg-gray-900`}>
-        <View style={tw`flex flex-row`}>
-          <View style={tw`flex flex-1 justify-center items-center`}>
+        <View style={tw`flex flex-row justify-between`}>
+          <View style={tw`m-1`}>
             {profileImageStatus === 'loading' || uploadingProfileImage
               ? <ActivityIndicator size="large" color="white" />
               : (profileBeingViewed.id === currentUser.id
@@ -225,7 +237,7 @@ export default function Profile({
                 )
               )}
           </View>
-          <View style={tw`flex flex-1 justify-center`}>
+          <View style={tw`m-1`}>
             <Text style={tw`text-xl font-bold text-white`}>
               {profileBeingViewed.id === currentUser.id
                 ? currentUser.name
@@ -237,59 +249,70 @@ export default function Profile({
                 ? currentUser.username
                 : profileBeingViewed.username}
             </Text>
-            <Text style={tw`text-sm text-white`}>
-              <Ionicons name="barbell" />
-              {' '}
-              {profileBeingViewed.id === currentUser.id
-                ? currentUser.workoutIds.length
-                : profileBeingViewed.workoutIds.length}
-              {' '}
-              workout
-              {profileBeingViewed.id === currentUser.id
-                ? (currentUser.workoutIds.length === 1 ? '' : 's')
-                : (profileBeingViewed.workoutIds.length === 1 ? '' : 's')}
-              {' '}
-              |
-              {' '}
-              {profileBeingViewed.id === currentUser.id
-                ? currentUser.prIds.length
-                : profileBeingViewed.prIds.length}
-              {' '}
-              PR
-              {profileBeingViewed.id === currentUser.id
-                ? (currentUser.prIds.length === 1 ? '' : 's')
-                : (profileBeingViewed.prIds.length === 1 ? '' : 's')}
-            </Text>
-            <Text style={tw`text-sm text-white`}>
-              <Ionicons name="image" />
-              {' '}
-              {profileBeingViewed.id === currentUser.id
-                ? currentUser.postIds.length
-                : profileBeingViewed.postIds.length}
-              {' '}
-              post
-              {profileBeingViewed.id === currentUser.id
-                ? (currentUser.postIds.length === 1 ? '' : 's')
-                : (profileBeingViewed.postIds.length === 1 ? '' : 's')}
-            </Text>
-            <Text style={tw`text-sm text-white`}>
-              <Ionicons name="person" />
-              {' '}
-              {profileBeingViewed.id === currentUser.id
-                ? currentUser.followerIds.length
-                : profileBeingViewed.followerIds.length}
-              {' '}
-              follower
-              {profileBeingViewed.id === currentUser.id
-                ? (currentUser.followerIds.length === 1 ? '' : 's')
-                : (profileBeingViewed.followerIds.length === 1 ? '' : 's')}
-            </Text>
+            <View style={tw``}>
+              <Text style={tw`text-sm text-white`}>
+                <Ionicons name="barbell" />
+                {' '}
+                {profileBeingViewed.id === currentUser.id
+                  ? currentUser.workoutIds.length
+                  : profileBeingViewed.workoutIds.length}
+                {' '}
+                workout
+                {profileBeingViewed.id === currentUser.id
+                  ? (currentUser.workoutIds.length === 1 ? '' : 's')
+                  : (profileBeingViewed.workoutIds.length === 1 ? '' : 's')}
+                {' '}
+                |
+                {' '}
+                {profileBeingViewed.id === currentUser.id
+                  ? currentUser.prIds.length
+                  : profileBeingViewed.prIds.length}
+                {' '}
+                PR
+                {profileBeingViewed.id === currentUser.id
+                  ? (currentUser.prIds.length === 1 ? '' : 's')
+                  : (profileBeingViewed.prIds.length === 1 ? '' : 's')}
+              </Text>
+              <Text style={tw`text-sm text-white`}>
+                <Ionicons name="image" />
+                {' '}
+                {profileBeingViewed.id === currentUser.id
+                  ? currentUser.postIds.length
+                  : profileBeingViewed.postIds.length}
+                {' '}
+                post
+                {profileBeingViewed.id === currentUser.id
+                  ? (currentUser.postIds.length === 1 ? '' : 's')
+                  : (profileBeingViewed.postIds.length === 1 ? '' : 's')}
+              </Text>
+              <Text style={tw`text-sm text-white`}>
+                <Ionicons name="person" />
+                {' '}
+                {profileBeingViewed.id === currentUser.id
+                  ? currentUser.followerIds.length
+                  : profileBeingViewed.followerIds.length}
+                {' '}
+                follower
+                {profileBeingViewed.id === currentUser.id
+                  ? (currentUser.followerIds.length === 1 ? '' : 's')
+                  : (profileBeingViewed.followerIds.length === 1 ? '' : 's')}
+              </Text>
+            </View>
           </View>
-          <View style={tw`m-5`}>
-            <TouchableHighlight style={tw`w-12 h-12 bg-gray-500 rounded-full justify-center items-center`} onPress={() => setEditingProfile(true)}>
-              <Ionicons name="create-outline" size={16} color="white" />
-            </TouchableHighlight>
-          </View>
+          {
+            forCurrentUser
+              ? (
+                <View style={tw`m-1`}>
+                  <TouchableHighlight style={tw`w-12 h-12 bg-gray-500 rounded-full justify-center items-center`} onPress={() => setEditingProfile(true)}>
+                    <Ionicons name="create-outline" size={16} color="white" />
+                  </TouchableHighlight>
+                </View>
+              )
+              : (
+                <></>
+              )
+          }
+
         </View>
       </View>
       {
