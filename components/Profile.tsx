@@ -176,7 +176,7 @@ export default function Profile({
           )
           : <></>
       }
-      <View style={tw`py-5 bg-gray-800`}>
+      <View style={tw`py-5 bg-gray-900`}>
         <View style={tw`flex flex-row`}>
           <View style={tw`flex flex-1 justify-center items-center`}>
             {profileImageStatus === 'loading' || uploadingProfileImage
@@ -196,7 +196,7 @@ export default function Profile({
                     <View style={tw`overflow-hidden rounded-full`}>
                       <Image
                         source={{ uri: uploadedProfileImage || profileImage }}
-                        style={tw`w-40 h-40 rounded-full`}
+                        style={tw`w-32 h-32 rounded-full`}
                       />
                       <View
                         style={{
@@ -211,7 +211,7 @@ export default function Profile({
                         }}
                       >
                         <Text style={tw`text-xs text-white`}>
-                          TAP TO UPDATE
+                          UPDATE
                         </Text>
                       </View>
                     </View>
@@ -220,7 +220,7 @@ export default function Profile({
                 : (
                   <Image
                     source={{ uri: profileImage }}
-                    style={tw`w-30 h-30`}
+                    style={tw`w-32 h-32 rounded-full`}
                   />
                 )
               )}
@@ -285,17 +285,17 @@ export default function Profile({
                 : (profileBeingViewed.followerIds.length === 1 ? '' : 's')}
             </Text>
           </View>
+          <View style={tw`m-5`}>
+            <TouchableHighlight style={tw`w-12 h-12 bg-gray-500 rounded-full justify-center items-center`} onPress={() => setEditingProfile(true)}>
+              <Ionicons name="create-outline" size={16} color="white" />
+            </TouchableHighlight>
+          </View>
         </View>
       </View>
       {
         forCurrentUser
           ? (
-            <EditButton onPress={() => {
-              setEditingProfile(true);
-            }}
-            >
-              Edit Profile
-            </EditButton>
+            <></>
           )
           : (
             currentUser.followingIds.includes(profileBeingViewed.id)
