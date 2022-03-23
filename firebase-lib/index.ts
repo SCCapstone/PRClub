@@ -2,6 +2,7 @@ import { FirebaseOptions, initializeApp } from '@firebase/app';
 import { connectAuthEmulator, getAuth } from '@firebase/auth';
 import { connectFirestoreEmulator, getFirestore } from '@firebase/firestore';
 import { connectStorageEmulator, getStorage } from '@firebase/storage';
+import Constants from 'expo-constants';
 
 export const firebaseConfig: FirebaseOptions = {
   apiKey: 'AIzaSyAAVQd1H3QrQbrSXioon-Rr9OTR1_opb8Y',
@@ -19,6 +20,12 @@ export const firestore = getFirestore(app);
 export const auth = getAuth(app);
 export const storage = getStorage(app);
 
+
+  // if (
+  //   Constants.manifest
+  //     && Constants.manifest.extra
+  //     && Constants.manifest.extra.useEmulators
+  // ) {
 if (__DEV__) {
   connectFirestoreEmulator(firestore, 'localhost', 8080);
   connectAuthEmulator(auth, 'http://localhost:9099');
@@ -27,9 +34,5 @@ if (__DEV__) {
 
 
 
-// if (
-//   Constants.manifest
-//     && Constants.manifest.extra
-//     && Constants.manifest.extra.useEmulators
-// ) {
+
 
