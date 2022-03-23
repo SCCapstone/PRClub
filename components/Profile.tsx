@@ -113,7 +113,7 @@ export default function Profile({
         <View style={tw`p-2 flex flex-row`}>
           <View style={tw`m-2`}>
             <TouchableHighlight
-              style={tw`w-12 h-12 bg-gray-500 rounded-full justify-center items-center`}
+              style={tw`w-12 h-12 bg-[#67707e] rounded-full justify-center items-center`}
               onPress={() => {
                 setEditingProfile(false);
                 setNewName(currentUser.name);
@@ -188,7 +188,7 @@ export default function Profile({
           )
           : <></>
       }
-      <View style={tw`py-5 bg-gray-900`}>
+      <View style={tw`py-5 bg-[#22252a]`}>
         <View style={tw`flex flex-row justify-between`}>
           <View style={tw`m-1`}>
             {profileImageStatus === 'loading' || uploadingProfileImage
@@ -302,8 +302,8 @@ export default function Profile({
           {
             forCurrentUser
               ? (
-                <View style={tw`m-1`}>
-                  <TouchableHighlight style={tw`w-12 h-12 bg-gray-500 rounded-full justify-center items-center`} onPress={() => setEditingProfile(true)}>
+                <View style={tw`m-1 `}>
+                  <TouchableHighlight style={tw`w-12 h-12 bg-[#67707e] rounded-full justify-center items-center absolute bottom-0 right-0`} onPress={() => setEditingProfile(true)}>
                     <Ionicons name="create-outline" size={16} color="white" />
                   </TouchableHighlight>
                 </View>
