@@ -66,6 +66,7 @@ export default function HomeScreen() {
       posts={sortByDate(posts, (p) => p.createdDate)}
       postsStatus={postsStatus}
       forCurrentUser={false}
+      isHomeScreen
     />
   );
 }
