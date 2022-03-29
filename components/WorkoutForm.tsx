@@ -5,7 +5,7 @@ import React from 'react';
 import { View } from 'react-native';
 import 'react-native-get-random-values';
 import {
-  ActivityIndicator, Button, Text, TextInput,
+  ActivityIndicator, Button, Text, TextInput, Modal, Portal, Provider
 } from 'react-native-paper';
 import tw from 'twrnc';
 import { v4 as uuidv4 } from 'uuid';
@@ -51,6 +51,10 @@ export default function WorkoutForm({
   if (!currentUser) {
     return <></>;
   }
+  const [visible, setVisible] = React.useState(false);
+  const showModal = () => setVisible(true);
+  const hideModal = () => setVisible(false);
+  const containerStyle = {backgroundColor: 'white', padding: 20};
 
   return (
     <>
@@ -111,25 +115,55 @@ export default function WorkoutForm({
                                       </View>
                                     )
                                     : (
-                                      <Select
-                                        options={exerciseInfos.map(
-                                          (e) => ({
-                                            value: e.name,
-                                            label: e.name,
-                                          }),
-                                        )}
-                                        placeholderText="select an exercise..."
-                                        onSelect={(option: OptionType | null) => {
-                                          if (option) {
-                                            formikProps.setFieldValue(`exercises.${i}.name`, option.value);
-                                          }
-                                        }}
-                                        defaultOption={{
-                                          value: formikProps.values.exercises[i].name,
-                                          label: formikProps.values.exercises[i].name,
-                                        }}
-                                        clearable={false}
-                                      />
+                                      <>
+                                        {/* <Provider> */}
+                                          <Portal>
+                                            
+                                            <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={containerStyle}>
+                                              <Text>text</Text>
+
+                                              {/* <Select
+                                            options={exerciseInfos.map(
+                                              (e) => ({
+                                                value: e.name,
+                                                label: e.name,
+                                              }),
+                                            )}
+
+                                            /> */}
+                                              {/* < Select
+                                          options={exerciseInfos.map(
+                                            (e) => ({
+                                              value: e.name,
+                                              label: e.name,
+                                            }),
+                                          )}
+                                          placeholderText="select an exercise..."
+                                          onSelect={
+                                            (option: OptionType | null) => {
+                                              if (option) {
+                                                formikProps.setFieldValue(`exercises.${i}.name`, option.value);
+                                              }
+
+                                            }}
+
+                                          defaultOption={{
+                                            value: formikProps.values.exercises[i].name,
+                                            label: formikProps.values.exercises[i].name,
+                                          }}
+                                          clearable={false}
+                                        /> */}
+                                            </Modal>
+                                            
+                                          </Portal>
+
+
+                                          <Button style={tw`bg-gray-200`} onPress={showModal}>
+                                            Select Exercises...
+                                          </Button>
+                                        {/* </Provider> */}
+                                      </>
+
                                     )
                                 }
 
@@ -288,26 +322,6 @@ export default function WorkoutForm({
           </View>
         )}
       </Formik>
-      {/* <Snackbar
-        visible={!!upsertWorkoutResult}
-        duration={3000}
-        onDismiss={() => dispatch(clearUpsertWorkoutResult())}
-        action={upsertWorkoutResult && upsertWorkoutResult.success ? {
-          label: 'Undo',
-          onPress: () => {
-            if (submittedWorkout) {
-              dispatch(removeWorkout(submittedWorkout));
-              setSubmittedWorkout(null);
-            }
-          },
-        } : undefined}
-      >
-        {upsertWorkoutResult && (
-          upsertWorkoutResult.success
-            ? 'Workout Submitted!'
-            : `Error submitting workout: ${upsertWorkoutResult.error}`
-        )}
-      </Snackbar> */}
     </>
   );
 }
