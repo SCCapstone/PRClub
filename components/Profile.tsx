@@ -357,6 +357,8 @@ export default function Profile({
               {' '}
               |
               {' '}
+              <Ionicons name="checkbox" />
+              {' '}
               {profileBeingViewed.id === currentUser.id
                 ? currentUser.prIds.length
                 : profileBeingViewed.prIds.length}
@@ -421,7 +423,7 @@ export default function Profile({
                         }}
                         icon={() => <Ionicons name="heart" size={16} />}
                       >
-                        Liked Posts
+                        See Liked Posts
                       </Button>
                       <Button
                         mode="contained"
