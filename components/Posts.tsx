@@ -11,9 +11,8 @@ import WorkoutPost from './WorkoutPost';
 export default function Posts({
   posts,
   postsStatus,
-  forCurrentUser,
 }: {
-  posts: Post[], postsStatus: 'loading' | 'error' | 'success', forCurrentUser: boolean }) {
+  posts: Post[], postsStatus: 'loading' | 'error' | 'success' }) {
   if (postsStatus === 'loading') {
     return (
       <CenteredView>
@@ -27,10 +26,10 @@ export default function Posts({
       <ScrollView>
         {posts.map((p) => {
           if (p.prId) {
-            return <PRPost post={p} key={p.id} forCurrentUser={forCurrentUser} />;
+            return <PRPost post={p} key={p.id} />;
           }
 
-          return <WorkoutPost post={p} key={p.id} forCurrentUser={forCurrentUser} />;
+          return <WorkoutPost post={p} key={p.id} />;
         })}
         <View style={tw`h-100`} />
       </ScrollView>

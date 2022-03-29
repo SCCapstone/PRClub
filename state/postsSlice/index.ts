@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { initialState } from './state';
 import {
-  addComment, addImageToPost, likePost, removeComment, removePost, unlikePost, upsertPost,
+  addComment, addImageToPost, removeComment, removePost, upsertPost,
 } from './thunks';
 
 const postsSlice = createSlice({
@@ -43,28 +43,6 @@ const postsSlice = createSlice({
       .addCase(removePost.rejected, (state, action) => {
         state.removePostResult = { success: false, error: action.error };
         state.callingService = false;
-      });
-
-    builder
-      .addCase(likePost.pending, (state) => {
-        state.interactingWithPost = true;
-      })
-      .addCase(likePost.rejected, (state) => {
-        state.interactingWithPost = false;
-      })
-      .addCase(likePost.fulfilled, (state) => {
-        state.interactingWithPost = true;
-      });
-
-    builder
-      .addCase(unlikePost.pending, (state) => {
-        state.interactingWithPost = true;
-      })
-      .addCase(unlikePost.rejected, (state) => {
-        state.interactingWithPost = false;
-      })
-      .addCase(unlikePost.fulfilled, (state) => {
-        state.interactingWithPost = true;
       });
 
     builder

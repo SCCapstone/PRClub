@@ -5,9 +5,11 @@ import { CURRENT_USER_KEY } from '../../constants/async-storage';
 import { USERS_COLLECTION } from '../../constants/firestore';
 import { PROFILE_IMG_URI } from '../../constants/profile';
 import { firestore } from '../../firebase-lib';
+import Post from '../../models/firestore/Post';
 import User from '../../models/firestore/User';
 import AuthService from '../../services/AuthService';
 import ImagesService from '../../services/ImagesService';
+import PostsService from '../../services/PostsService';
 import UsersService from '../../services/UsersService';
 import type { AppDispatch, RootState } from '../store';
 
@@ -132,5 +134,21 @@ export const unfollowUser = createAsyncThunk<User, string, {state: RootState}>(
     const userToUnfollow = docSnap.data() as User;
 
     return userToUnfollow;
+  },
+);
+
+export const likePost = createAsyncThunk<Post, {post: Post, userId: string}>(
+  'user/likePost',
+  async ({ post, userId }): Promise<Post> => {
+    await PostsService.likePost(post, userId);
+    return post;
+  },
+);
+
+export const unlikePost = createAsyncThunk<Post, {post: Post, userId: string}>(
+  'user/unlikePost',
+  async ({ post, userId }): Promise<Post> => {
+    await PostsService.unlikePost(post, userId);
+    return post;
   },
 );
