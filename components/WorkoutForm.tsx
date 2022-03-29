@@ -1,7 +1,7 @@
 import { OptionType, Select } from '@mobile-reality/react-native-select-pro';
 import { Field, FieldArray, Formik } from 'formik';
 import _ from 'lodash';
-import React from 'react';
+import React, { useState } from 'react';
 import { View } from 'react-native';
 import 'react-native-get-random-values';
 import {
@@ -36,6 +36,10 @@ export default function WorkoutForm({
   const exerciseInfos: WgerExerciseInfo[] = useAppSelector(selectExerciseInfos);
   const exerciseInfosStatus: SliceStatus = useAppSelector(selectExericseInfosStatus);
 
+  const [selectExercise, setSelectExercise] = useState<boolean>(false);
+  const showSelect = () => setSelectExercise(true);
+  const hideSelect = () => setSelectExercise(false);
+
   const initialValues: WorkoutInput = {
     name: workoutToEdit?.name || '',
     exercises: workoutToEdit?.exercises.map((e) => ({
@@ -51,6 +55,19 @@ export default function WorkoutForm({
 
   if (!currentUser) {
     return <></>;
+  }
+
+  if(selectExercise){
+    return (
+      <>
+        <Button
+          style={tw`bg-gray-200`}
+          onPress={hideSelect}
+        >
+          Back
+        </Button>   
+      </>
+    )
   }
 
   return (
@@ -113,25 +130,14 @@ export default function WorkoutForm({
                                     )
                                     : (
                                       <>
-                                        {/* <Provider> */}
-                                          {/* <Portal>                                            */}
-                                            
-                                              <DropdownTreeSelect
-                                              data={exerciseInfos.map(
-                                                (e) => ({
-                                                  value: e.category.name,
-                                                  label: e.category.name,
-                                                  
-                                                })
-                                              )}
-
-                                              mode="radioSelect"
+                                      <Button
+                                      style = {tw`bg-gray-200`}
+                                      onPress = {showSelect}
+                                      >
+                                        Select Exercise
+                                      </Button>        
                                               
-                                              >
-                                              </DropdownTreeSelect>
-                                              
-                                              
-                                              {/* < Select
+                                        {/* {<Select
                                           options={exerciseInfos.map(
                                             (e) => ({
                                               value: e.name,
@@ -152,10 +158,8 @@ export default function WorkoutForm({
                                             label: formikProps.values.exercises[i].name,
                                           }}
                                           clearable={false}
-                                        /> */}
-                                                                                    
-                                          {/* </Portal> */}
-                                        {/* </Provider> */}
+                                        />} */}
+
                                       </>
 
                                     )
