@@ -5,7 +5,7 @@ import React from 'react';
 import { View } from 'react-native';
 import 'react-native-get-random-values';
 import {
-  ActivityIndicator, Button, Text, TextInput, Modal, Portal, Provider
+  ActivityIndicator, Button, Text, TextInput, Portal
 } from 'react-native-paper';
 import DropdownTreeSelect from 'react-dropdown-tree-select';
 import tw from 'twrnc';
@@ -52,10 +52,6 @@ export default function WorkoutForm({
   if (!currentUser) {
     return <></>;
   }
-  const [visible, setVisible] = React.useState(false);
-  const showModal = () => setVisible(true);
-  const hideModal = () => setVisible(false);
-  const containerStyle = {backgroundColor: 'white', padding: 20};
 
   return (
     <>
@@ -118,29 +114,22 @@ export default function WorkoutForm({
                                     : (
                                       <>
                                         {/* <Provider> */}
-                                          <Portal>                                           
-                                            <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={containerStyle}>
-                                              <Text>text</Text>
+                                          {/* <Portal>                                            */}
+                                            
                                               <DropdownTreeSelect
                                               data={exerciseInfos.map(
                                                 (e) => ({
-                                                  value: e.name,
-                                                  label: e.name,
+                                                  value: e.category.name,
+                                                  label: e.category.name,
+                                                  
                                                 })
                                               )}
 
-                                              // onChange=
-                                              // onNodeToggle=
                                               mode="radioSelect"
                                               
                                               >
-
-
-
                                               </DropdownTreeSelect>
-
                                               
-
                                               
                                               {/* < Select
                                           options={exerciseInfos.map(
@@ -164,11 +153,8 @@ export default function WorkoutForm({
                                           }}
                                           clearable={false}
                                         /> */}
-                                            </Modal>                                        
-                                          </Portal>
-                                          <Button style={tw`bg-gray-200`} onPress={showModal}>
-                                            Select Exercises...
-                                          </Button>
+                                                                                    
+                                          {/* </Portal> */}
                                         {/* </Provider> */}
                                       </>
 
