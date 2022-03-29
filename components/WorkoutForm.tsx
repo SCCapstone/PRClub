@@ -7,6 +7,7 @@ import 'react-native-get-random-values';
 import {
   ActivityIndicator, Button, Text, TextInput, Modal, Portal, Provider
 } from 'react-native-paper';
+import DropdownTreeSelect from 'react-dropdown-tree-select';
 import tw from 'twrnc';
 import { v4 as uuidv4 } from 'uuid';
 import { useAppDispatch, useAppSelector } from '../hooks/redux';
@@ -117,20 +118,30 @@ export default function WorkoutForm({
                                     : (
                                       <>
                                         {/* <Provider> */}
-                                          <Portal>
-                                            
+                                          <Portal>                                           
                                             <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={containerStyle}>
                                               <Text>text</Text>
+                                              <DropdownTreeSelect
+                                              data={exerciseInfos.map(
+                                                (e) => ({
+                                                  value: e.name,
+                                                  label: e.name,
+                                                })
+                                              )}
 
-                                              {/* <Select
-                                            options={exerciseInfos.map(
-                                              (e) => ({
-                                                value: e.name,
-                                                label: e.name,
-                                              }),
-                                            )}
+                                              // onChange=
+                                              // onNodeToggle=
+                                              mode="radioSelect"
+                                              
+                                              >
 
-                                            /> */}
+
+
+                                              </DropdownTreeSelect>
+
+                                              
+
+                                              
                                               {/* < Select
                                           options={exerciseInfos.map(
                                             (e) => ({
@@ -153,11 +164,8 @@ export default function WorkoutForm({
                                           }}
                                           clearable={false}
                                         /> */}
-                                            </Modal>
-                                            
+                                            </Modal>                                        
                                           </Portal>
-
-
                                           <Button style={tw`bg-gray-200`} onPress={showModal}>
                                             Select Exercises...
                                           </Button>
