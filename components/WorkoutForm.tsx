@@ -5,9 +5,8 @@ import React, { useState } from 'react';
 import { View } from 'react-native';
 import 'react-native-get-random-values';
 import {
-  ActivityIndicator, Button, Text, TextInput, Portal
+  ActivityIndicator, Button, Text, TextInput, List
 } from 'react-native-paper';
-import DropdownTreeSelect from 'react-dropdown-tree-select';
 import tw from 'twrnc';
 import { v4 as uuidv4 } from 'uuid';
 import { useAppDispatch, useAppSelector } from '../hooks/redux';
@@ -65,7 +64,47 @@ export default function WorkoutForm({
           onPress={hideSelect}
         >
           Back
-        </Button>   
+        </Button>
+
+        <List.AccordionGroup>
+          <List.Accordion title="Arms" id="1">
+              <Select
+                options={exerciseInfos.map(
+                  (e) => ({
+                    value: e.name,
+                    label: e.name,
+                  }),
+                )}
+                placeholderText="Select an Arms Exercise..."
+              />
+          </List.Accordion>
+          <List.Accordion title="Chest" id="2">
+              <Select
+                options={exerciseInfos.map(
+                  (e) => ({
+                    value: e.name,
+                    label: e.name,
+                  }),
+                )}
+                placeholderText="Select a Chest Exercise..."
+              />
+          </List.Accordion>
+          <List.Accordion title="Legs" id="3">
+              <Select
+                options={exerciseInfos.map(
+                  (e) => ({
+                    value: e.name,
+                    label: e.name,
+                  }),
+                )}
+                placeholderText="Select a Legs Exercise..."
+              />
+          </List.Accordion>
+
+        </List.AccordionGroup>
+
+
+        
       </>
     )
   }
@@ -137,7 +176,7 @@ export default function WorkoutForm({
                                         Select Exercise
                                       </Button>        
                                               
-                                        {/* {<Select
+                                        {/* <Select
                                           options={exerciseInfos.map(
                                             (e) => ({
                                               value: e.name,
@@ -158,7 +197,7 @@ export default function WorkoutForm({
                                             label: formikProps.values.exercises[i].name,
                                           }}
                                           clearable={false}
-                                        />} */}
+                                        /> */}
 
                                       </>
 
