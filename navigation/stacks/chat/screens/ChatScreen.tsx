@@ -1,55 +1,73 @@
 import {
-  orderByChild, query, ref, push, child, onValue, get, serverTimestamp,
+  ref, push, serverTimestamp, set,
 } from '@firebase/database';
 import React, { useState } from 'react';
-import { View, Text } from 'react-native';
-import { useDatabase, useDatabaseListData, useDatabaseObjectData } from 'reactfire';
+import { View } from 'react-native';
+import { useDatabaseListData } from 'reactfire';
 import { Button, TextInput } from 'react-native-paper';
 import { useAppSelector } from '../../../../hooks/redux';
 import { selectCurrentUser } from '../../../../state/userSlice/selectors';
-import { sortByDate } from '../../../../utils/arrays';
 import { database } from '../../../../firebase-lib';
 
 export default function ChatScreen() {
   // Redux-level state
   const currentUser = useAppSelector(selectCurrentUser);
-
+  const senderId = 'OOTsEWcooMYB8xScwbtBmfzDQDy1';
   if (!currentUser) {
     return <></>;
   }
 
   const [msg, setMsg] = useState('');
 
-  // ReactFire queries
-  // const database = useDatabase();
-  const messagesRef = ref(database, `messages/${currentUser.id}`);
-  const messagesQuery = query(messagesRef);
+  const chatsRef = ref(database, 'chats');
+  const { data: chats } = useDatabaseListData(chatsRef);
 
-  // const { status, data: msgs } = useDatabaseListData(messagesQuery, {
-  //   idField: 'teste',
-  // });
+  const messagesRef = ref(database, 'messages/-MzMEKa0YcQsy2RWaC4O');
 
   const { status, data: msgs } = useDatabaseListData(messagesRef);
-  console.log(msgs);
 
   // check status
   if (status === 'loading') {
     return <span>loading...</span>;
   }
 
-  // onValue(messagesRef, (snapshot) => {
-  //   console.log(snapshot.val());
-  // });
-
   const sendMessage = () => {
-    push(messagesRef, { message: msg, to: 'OOTsEWcooMYB8xScwbtBmfzDQDy1', timestamp: serverTimestamp() });
+    push(messagesRef, {
+      message: msg,
+      from: currentUser.username,
+      timestamp: serverTimestamp(),
+    });
+  };
+
+  const chatExists = () => {
+    let result = false;
+    chats?.forEach((chat) => {
+      if (Object.keys(chat.members).includes(currentUser.id)
+      && Object.keys(chat.members).includes(senderId)) {
+        result = true;
+      }
+    });
+    return result;
+  };
+
+  const newMessage = () => {
+    if (!chatExists()) {
+      const chatID = push(chatsRef,
+        { members: { [currentUser.id]: 'true', [senderId]: 'true' } }).key;
+
+      const userRef = ref(database, `users/${currentUser.id}/${chatID}`);
+      set(userRef, { [senderId]: 'true' });
+
+      const senderRef = ref(database, `users/${senderId}/${chatID}`);
+      set(senderRef, { [currentUser.id]: 'true' });
+    }
+    sendMessage();
   };
 
   if (!currentUser) {
     return <></>;
   }
 
-  // console.log(msg);
   return (
     <View>
       <span>
@@ -57,8 +75,12 @@ export default function ChatScreen() {
         {' '}
         {currentUser.username}
         <ul>
-          {msgs.map((m) => (
-            <li key={m.to}>{m.message}</li>
+          {msgs!.map((m) => (
+            <li key={m.from}>
+              {currentUser.username}
+              <br />
+              {m.message}
+            </li>
           ))}
         </ul>
       </span>
@@ -68,7 +90,7 @@ export default function ChatScreen() {
           onChangeText={setMsg}
           value={msg || ''}
         />
-        <Button onPress={sendMessage}> Press </Button>
+        <Button onPress={newMessage}> Press </Button>
       </span>
     </View>
   );
