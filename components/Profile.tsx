@@ -3,7 +3,7 @@ import {
 } from '@firebase/firestore';
 import { ref } from '@firebase/storage';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Image, TouchableHighlight, View,
 } from 'react-native';
