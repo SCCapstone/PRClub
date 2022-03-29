@@ -1,97 +1,40 @@
 import {
-  ref, push, serverTimestamp, set,
+  ref,
 } from '@firebase/database';
-import React, { useState } from 'react';
-import { View } from 'react-native';
+import React from 'react';
 import { useDatabaseListData } from 'reactfire';
-import { Button, TextInput } from 'react-native-paper';
+import { View } from 'react-native';
 import { useAppSelector } from '../../../../hooks/redux';
 import { selectCurrentUser } from '../../../../state/userSlice/selectors';
 import { database } from '../../../../firebase-lib';
+import ChatItem from '../../../../components/ChatItem';
+import ChatForm from '../../../../components/ChatForm';
 
 export default function ChatScreen() {
-  // Redux-level state
   const currentUser = useAppSelector(selectCurrentUser);
-  const senderId = 'OOTsEWcooMYB8xScwbtBmfzDQDy1';
   if (!currentUser) {
     return <></>;
   }
+  // Displaying all user's chats
+  // const getChats = () => {
+  const userRef = ref(database, `users/${currentUser!.id}`);
+  const { data: chats } = useDatabaseListData(userRef);
+  // chats?.forEach((chatIDs) => {
+  //   const chatID = Object.values(chatIDs)[1] as string;
+  //   // });
+  //   console.log(chatID);
+  // });
+  // };
+  // getChats();
+  //
 
-  const [msg, setMsg] = useState('');
-
-  const chatsRef = ref(database, 'chats');
-  const { data: chats } = useDatabaseListData(chatsRef);
-
-  const messagesRef = ref(database, 'messages/-MzMEKa0YcQsy2RWaC4O');
-
-  const { status, data: msgs } = useDatabaseListData(messagesRef);
-
-  // check status
-  if (status === 'loading') {
-    return <span>loading...</span>;
-  }
-
-  const sendMessage = () => {
-    push(messagesRef, {
-      message: msg,
-      from: currentUser.username,
-      timestamp: serverTimestamp(),
-    });
-  };
-
-  const chatExists = () => {
-    let result = false;
-    chats?.forEach((chat) => {
-      if (Object.keys(chat.members).includes(currentUser.id)
-      && Object.keys(chat.members).includes(senderId)) {
-        result = true;
-      }
-    });
-    return result;
-  };
-
-  const newMessage = () => {
-    if (!chatExists()) {
-      const chatID = push(chatsRef,
-        { members: { [currentUser.id]: 'true', [senderId]: 'true' } }).key;
-
-      const userRef = ref(database, `users/${currentUser.id}/${chatID}`);
-      set(userRef, { [senderId]: 'true' });
-
-      const senderRef = ref(database, `users/${senderId}/${chatID}`);
-      set(senderRef, { [currentUser.id]: 'true' });
-    }
-    sendMessage();
-  };
-
-  if (!currentUser) {
-    return <></>;
-  }
-
+  // const chatID = Object.values(chatIDs)[1] as string;
   return (
     <View>
-      <span>
-        Test Message:
-        {' '}
-        {currentUser.username}
-        <ul>
-          {msgs!.map((m) => (
-            <li key={m.from}>
-              {currentUser.username}
-              <br />
-              {m.message}
-            </li>
-          ))}
-        </ul>
-      </span>
-      <span>
-        <TextInput
-          placeholder="message"
-          onChangeText={setMsg}
-          value={msg || ''}
-        />
-        <Button onPress={newMessage}> Press </Button>
-      </span>
+      {chats?.map((chatIDs) => (
+        <ChatItem chatId={Object.values(chatIDs)[1] as string} />
+      ))}
     </View>
+
   );
 }

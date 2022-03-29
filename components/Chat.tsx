@@ -1,65 +1,43 @@
-// import React, { useState } from 'react';
-// import { Text, TouchableOpacity, View } from 'react-native';
-// import { Menu } from 'react-native-paper';
-// import Ionicons from 'react-native-vector-icons/Ionicons';
-// import tw from 'twrnc';
+import React from 'react';
+import tw from 'twrnc';
+import {
+  View, ActivityIndicator,
+} from 'react-native';
+import { useDatabaseListData } from 'reactfire';
+import { ref } from '@firebase/database';
+import { useAppSelector } from '../hooks/redux';
+import { selectCurrentUser } from '../state/userSlice/selectors';
+import { database } from '../firebase-lib';
+import MessageSent from './MessageSent';
+import MessageReceived from './MessageReceived';
+import ChatForm from './ChatForm';
 
-// import { collection, query, where } from '@firebase/firestore';
-// import _ from 'lodash';
-// import { useFirestore, useFirestoreCollectionData } from 'reactfire';
-// import { useAppSelector, useAppDispatch } from '../hooks/redux';
-// import { selectCurrentUser } from '../state/userSlice/selectors';
-// import { sortByDate } from '../../../../utils/arrays';
+export default function Chat({ chatId }: {chatId:string}) {
+  const currentUser = useAppSelector(selectCurrentUser);
+  const messagesRef = ref(database, `messages/${chatId}`);
+  const { status, data: msgs } = useDatabaseListData(messagesRef);
 
-// export default function Comment() {
-//     // Redux-level state
-//   const currentUser = useAppSelector(selectCurrentUser);
+  if (!currentUser) {
+    return <></>;
+  }
 
-//   // ReactFire queries
-//   const firestore = useFirestore();
-//   const postsCollection = collection(firestore, POSTS_COLLECTION);
+  if (status === 'loading') {
+    return <ActivityIndicator />;
+  }
 
-//   // get current user's following's posts
-//   const currentUserFollowingPostsQuery = query(
-//     postsCollection,
-//     where('userId', 'in',
-//       (!currentUser?.followingIds.length ? [''] : currentUser?.followingIds) || ['']),
-//   );
-//   const {
-//     status: currentUserFollowPostsStatus,
-//     data: currentUserFollowingPostsData,
-//   } = useFirestoreCollectionData(currentUserFollowingPostsQuery);
-//   const currentUserFollowingPosts = currentUserFollowingPostsData as Post[];
+  return (
+    <View>
+      {msgs!.map((m) => (
+        m.from === currentUser.id
+          ? (
+            <MessageSent message={m.message} />
+          )
+          : (
+            <MessageReceived message={m.message} />
+          )
+      ))}
+      <ChatForm />
+    </View>
 
-//   // get current user's posts:
-//   const currentUserPostsQuery = query(
-//     postsCollection,
-//     where('userId', '==', currentUser?.id || ''),
-//   );
-//   const {
-//     status: currentUserPostsStatus,
-//     data: currentUserPostsData,
-//   } = useFirestoreCollectionData(currentUserPostsQuery);
-//   const currentUserPosts = currentUserPostsData as Post[];
-
-//   // merge both queries
-//   const posts = _.unionBy(
-//     currentUserFollowingPosts,
-//     currentUserPosts,
-//     (p) => p.id,
-//   );
-
-//   // combine both queries' statuses
-//   let postsStatus: 'loading' | 'success' | 'error';
-//   if (currentUserFollowPostsStatus === 'success' && currentUserPostsStatus === 'success') {
-//     postsStatus = 'success';
-//   } else if (currentUserFollowPostsStatus === 'loading' || currentUserPostsStatus === 'loading') {
-//     postsStatus = 'loading';
-//   } else {
-//     postsStatus = 'error';
-//   }
-
-//   if (!currentUser) {
-//     return <></>;
-//   }
-// }
+  );
+}

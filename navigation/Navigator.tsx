@@ -24,6 +24,7 @@ import { selectUpsertWorkoutResult } from '../state/workoutsSlice/selectors';
 import AuthStack from './stacks/auth';
 import MainStack from './stacks/main';
 import ChatScreen from './stacks/chat/screens/ChatScreen';
+import ChatStack from './stacks/chat';
 
 const Stack = createStackNavigator();
 
@@ -53,7 +54,7 @@ export default function Navigator() {
           ? (
             <Stack.Screen
               name="Main"
-              component={ChatScreen}
+              component={ChatStack}
             />
           )
           : (
