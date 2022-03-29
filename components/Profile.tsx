@@ -8,7 +8,7 @@ import {
   Image, TouchableHighlight, View,
 } from 'react-native';
 import {
-  ActivityIndicator, Button, Text, TextInput,
+  ActivityIndicator, Button, Chip, Text, TextInput,
 } from 'react-native-paper';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {
@@ -33,6 +33,7 @@ import {
 import {
   followUser, unfollowUser, updateName, updateUsername, uploadProfileImage,
 } from '../state/userSlice/thunks';
+import { sortByDate } from '../utils/arrays';
 import { launchImagePicker } from '../utils/expo';
 import BackButton from './BackButton';
 import Followers from './Followers';
@@ -60,6 +61,7 @@ export default function Profile({
   const [newUsername, setNewUsername] = useState<string>(profileBeingViewed.username);
   const [viewOption, setViewOption] = useState<'likedPosts' | 'editing' | null>(null);
   const [showProfileNavigation, setShowProfileNavigation] = useState<boolean>(false);
+  const [showLikedPRPosts, setShowLikedPRPosts] = useState<boolean>(false);
 
   const forCurrentUser = currentUser ? (profileBeingViewed.id === currentUser.id) : false;
 
@@ -136,7 +138,9 @@ export default function Profile({
     status: likedPostsStatus,
     data: likedPostsData,
   } = useFirestoreCollectionData(likedPostsQuery);
-  const likedPosts = likedPostsData as Post[];
+  const likedPosts = likedPostsData as Post[] || [];
+  const likedWorkoutPosts = sortByDate(likedPosts.filter((p) => !p.prId), (p) => p.createdDate);
+  const likedPRPosts = sortByDate(likedPosts.filter((p) => !!p.prId), (p) => p.createdDate);
 
   if (!currentUser) {
     return <></>;
@@ -161,8 +165,30 @@ export default function Profile({
           </View>
           <View style={tw`p-2`} />
         </View>
+        <View style={tw`flex flex-row items-center`}>
+          <View style={tw`flex flex-1`}>
+            <Chip
+              icon={() => <Ionicons name="barbell" size={16} />}
+              textStyle={tw`text-center font-bold text-lg`}
+              selected={!showLikedPRPosts}
+              onPress={() => setShowLikedPRPosts(false)}
+            >
+              Workouts
+            </Chip>
+          </View>
+          <View style={tw`flex flex-1`}>
+            <Chip
+              icon={() => <Ionicons name="checkbox" size={16} />}
+              textStyle={tw`text-center font-bold text-lg`}
+              selected={showLikedPRPosts}
+              onPress={() => setShowLikedPRPosts(true)}
+            >
+              PRs
+            </Chip>
+          </View>
+        </View>
         <Posts
-          posts={likedPosts}
+          posts={showLikedPRPosts ? likedPRPosts : likedWorkoutPosts}
           postsStatus={
             currentUserLikedPostIdsStatus === 'success' && likedPostsStatus === 'success'
               ? 'success'
