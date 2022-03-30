@@ -37,13 +37,10 @@ export default function WorkoutForm({
   const exerciseInfos: WgerExerciseInfo[] = useAppSelector(selectExerciseInfos);
   const exerciseInfosStatus: SliceStatus = useAppSelector(selectExericseInfosStatus);
 
-  const [selectingExercise, setSelectingExercise] = useState<boolean>(false);
-  const showSelect = () => setSelectingExercise(true);
-  const hideSelect = () => setSelectingExercise(false);
-
   const [exerciseToUpdateIndex, setExerciseToUpdateIndex] = useState<number | null>(null);
 
-  const [selectedExercise, setSelectedExercise] = useState<string>("Select Exercise");
+  // Text of Button
+  const [buttonText, setButtonText] = useState<string>("Select Exercise");
 
   const categories: string[] = [];
   for (let i = 0; i < exerciseInfos.length; i++) {
@@ -96,6 +93,7 @@ export default function WorkoutForm({
                         updatedFormValues.exercises[exerciseToUpdateIndex].name = exerciseInfo.name;
                         setFormValues(updatedFormValues);
                         setExerciseToUpdateIndex(null);
+                        setButtonText(exerciseInfo.name);
                       }}
                     />
                   )
@@ -106,69 +104,6 @@ export default function WorkoutForm({
       </ScrollView>
     )
   }
-
-  // if (selectExercise) {
-  //   return (
-  //     <Formik
-  //       initialValues={initialValues}
-  //       onSubmit={(values) => {
-  //       }}
-  //     >
-  //       {(formikProps) => (
-  //         <>
-  //           <Button
-  //             style={tw`bg-gray-200`}
-  //             onPress={hideSelect}
-  //           >
-  //             Back
-  //           </Button>
-
-  //           {formikProps.values.exercises
-  //             && formikProps.values.exercises.length > 0 ? (
-  //               formikProps.values.exercises.map((exercise, i) => (
-  //                 <ScrollView>
-  //                   {/* ***Need to make a divider/counter for each workout or something, below is just a placeholder*** */}
-  //                   <Text>
-  //                     Workout Counter:------------------------------
-  //                   </Text>
-  //                   <List.AccordionGroup>
-  //                     {categories.map((category) => (
-  //                       <List.Accordion title={category} id={category}>
-  //                         <List.Item
-  //                           options={exerciseInfos.filter(exercise => exercise.category.name == category && exercise.language.fullName == "English").map(
-  //                             (e) => ({
-  //                               value: e.name,
-  //                               label: e.name,
-  //                             }),
-  //                           )}
-  //                           // what to update for onpress? 
-  //                           //*****Need to decide how to show the users selection now*****
-  //                           onSelect={
-  //                             (options: OptionType | null) => {
-  //                               if (options) {
-  //                                 formikProps.setFieldValue(`exercises.${i}.name`, options.value);
-  //                                 setSelectedExercise(options.value);
-  //                               }
-  //                               hideSelect();
-  //                             }}
-  //                           defaultOption={{
-  //                             value: formikProps.values.exercises[i].name,
-  //                             label: formikProps.values.exercises[i].name,
-  //                           }}
-  //                           // maybe a string concat here
-  //                           placeholderText="Select From Exercises..."
-  //                         />
-  //                       </List.Accordion>
-  //                     ))}
-  //                   </List.AccordionGroup>
-  //                 </ScrollView>
-  //               ))) : null}
-  //         </>
-  //       )}
-  //     </Formik>
-  //   )
-  // }
-  
 
   return (
     <>
@@ -237,7 +172,7 @@ export default function WorkoutForm({
                                           setExerciseToUpdateIndex(i);
                                         }}
                                       >
-                                        {selectedExercise}
+                                        {buttonText}
                                       </Button>
 
                                       {/* <Select
