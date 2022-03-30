@@ -67,41 +67,62 @@ export default function WorkoutForm({
 
   if (selectExercise) {
     return (
-      <>
-        <Button
-          style={tw`bg-gray-200`}
-          onPress={hideSelect}
-        >
-          Back
-        </Button>
+      <Formik
+        initialValues={initialValues}
+        onSubmit={(values) => {
+        }}
+      >
+        {(formikProps) => (
+          <>
+            <Button
+              style={tw`bg-gray-200`}
+              onPress={hideSelect}
+            >
+              Back
+            </Button>
 
-        <ScrollView>
-          <List.AccordionGroup>
-            {categories.map((category) => (
-              <List.Accordion title={category} id={category}>
-                <Select
-                  options={exerciseInfos.filter(exercise => exercise.category.name == category).map(
-                    (e) => ({
-                        value: e.name,
-                        label: e.name,
-                    }),
-                  )}
-                  // what to update for onpress? also make sure to call hideselect onpress
-                  // onSelect={
-                  //   (option: OptionType | null) => {
-                  //     if (option) {
-                  //       formikProps.setFieldValue(`exercises.${i}.name`, option.value);
-                  //     }
-
-                  //   }}
-                  // maybe a string concat here?
-                  placeholderText="Select From Exercises..."
-                />
-              </List.Accordion>
-            ))}
-          </List.AccordionGroup>
-        </ScrollView>
-      </>
+            {formikProps.values.exercises
+              && formikProps.values.exercises.length > 0 ? (
+                formikProps.values.exercises.map((exercise, i) => (
+                  <ScrollView>
+                    {/* ***Need to make a divider/counter for each workout or something, below is just a placeholder*** */}
+                    <Text>
+                      Workout Counter:------------------------------
+                    </Text>
+                    <List.AccordionGroup>
+                      {categories.map((category) => (
+                        <List.Accordion title={category} id={category}>
+                          <Select
+                            options={exerciseInfos.filter(exercise => exercise.category.name == category).map(
+                              (e) => ({
+                                value: e.name,
+                                label: e.name,
+                              }),
+                            )}
+                            // what to update for onpress? also make sure to call hideselect onpress
+                            //*****Need to decide how to show the users selection now*****
+                            onSelect={
+                              (options: OptionType | null) => {
+                                if (options) {
+                                  formikProps.setFieldValue(`exercises.${i}.name`, options.value);
+                                }
+                                hideSelect();
+                              }}
+                            defaultOption={{
+                              value: formikProps.values.exercises[i].name,
+                              label: formikProps.values.exercises[i].name,
+                            }}
+                            // maybe a string concat here
+                            placeholderText="Select From Exercises..."
+                          />
+                        </List.Accordion>
+                      ))}
+                    </List.AccordionGroup>
+                  </ScrollView>
+                ))) : null}
+          </>
+        )}
+      </Formik>
     )
   }
 
