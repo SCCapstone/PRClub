@@ -8,7 +8,6 @@ import { useAppSelector } from '../../../../hooks/redux';
 import { selectCurrentUser } from '../../../../state/userSlice/selectors';
 import { database } from '../../../../firebase-lib';
 import ChatItem from '../../../../components/ChatItem';
-import ChatForm from '../../../../components/ChatForm';
 
 export default function ChatScreen() {
   const currentUser = useAppSelector(selectCurrentUser);
@@ -24,15 +23,17 @@ export default function ChatScreen() {
   //   // });
   //   console.log(chatID);
   // });
-  // };
   // getChats();
   //
 
   // const chatID = Object.values(chatIDs)[1] as string;
   return (
     <View>
-      {chats?.map((chatIDs) => (
-        <ChatItem chatId={Object.values(chatIDs)[1] as string} />
+      {chats?.map((chat, i) => (
+        <View key={i}>
+          <ChatItem chatId={Object.values(chat)[1] as string} />
+        </View>
+
       ))}
     </View>
 

@@ -28,7 +28,7 @@ export default function Chat({ chatId }: {chatId:string}) {
   return (
     <View>
       {msgs!.map((m) => (
-        m.from === currentUser.id
+        m.from === currentUser.username
           ? (
             <MessageSent message={m.message} />
           )
