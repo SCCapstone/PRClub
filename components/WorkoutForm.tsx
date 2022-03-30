@@ -96,7 +96,7 @@ export default function WorkoutForm({
                       {categories.map((category) => (
                         <List.Accordion title={category} id={category}>
                           <Select
-                            options={exerciseInfos.filter(exercise => exercise.category.name == category).map(
+                            options={exerciseInfos.filter(exercise => exercise.category.name == category && exercise.language.fullName == "English").map(
                               (e) => ({
                                 value: e.name,
                                 label: e.name,
