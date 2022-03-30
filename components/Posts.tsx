@@ -34,10 +34,9 @@ function isPR(thing: PR | Workout): thing is PR {
 export default function Posts({
   posts,
   postsStatus,
-  forCurrentUser,
   isHomeScreen,
 }: {
-  posts: Post[], postsStatus: 'loading' | 'error' | 'success', forCurrentUser: boolean, isHomeScreen: boolean
+  posts: Post[], postsStatus: 'loading' | 'error' | 'success', isHomeScreen: boolean
 }) {
   const currentUser = useAppSelector(selectCurrentUser);
   if (!currentUser) {
@@ -303,10 +302,10 @@ export default function Posts({
               <>
                 {posts.map((p) => {
                   if (p.prId) {
-                    return <PRPost post={p} key={p.id} forCurrentUser={forCurrentUser} />;
+                    return <PRPost post={p} key={p.id} />;
                   }
 
-                  return <WorkoutPost post={p} key={p.id} forCurrentUser={forCurrentUser} />;
+                  return <WorkoutPost post={p} key={p.id} />;
                 })}
                 <View style={tw`h-100`} />
               </>
