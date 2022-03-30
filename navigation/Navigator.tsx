@@ -31,17 +31,12 @@ export default function Navigator() {
 
   const currentUser: User | null = useAppSelector(selectCurrentUser);
   const upsertWorkoutResult = useAppSelector(selectUpsertWorkoutResult);
-  const currentUserStatus = useAppSelector(selectCurrentUserStatus);
   const followResult = useAppSelector(selectFollowResult);
   const unfollowResult = useAppSelector(selectUnfollowResult);
   const updateProfileResult = useAppSelector(selectUpdateProfileResult);
   const upsertPostResult = useAppSelector(selectUpsertPostResult);
   const upsertPRResult = useAppSelector(selectUpsertPRResult);
   const uploadProfileImageResult = useAppSelector(selectUploadProfileImageResult);
-
-  if (currentUserStatus === 'fetching') {
-    return <ActivityIndicator />;
-  }
 
   return (
     <>
