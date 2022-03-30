@@ -13,9 +13,9 @@ import { useAppSelector } from '../hooks/redux';
 import { selectCurrentUser } from '../state/userSlice/selectors';
 import { database } from '../firebase-lib';
 
-export default function ChatForm() {
+export default function ChatForm({ id, senderId } : {id: string, senderId: string}) {
   const currentUser = useAppSelector(selectCurrentUser);
-  const senderId = 'OOTsEWcooMYB8xScwbtBmfzDQDy1';
+  // const senderId = 'OOTsEWcooMYB8xScwbtBmfzDQDy1';
   const [messageText, setMessageText] = useState<string>('');
 
   if (!currentUser) {
@@ -24,14 +24,7 @@ export default function ChatForm() {
   const chatsRef = ref(database, 'chats');
   const { data: chats } = useDatabaseListData(chatsRef);
 
-  const messagesRef = ref(database, 'messages/-MzMVv7ldqAcSUDiBVHZ');
-
-  // const { status, data: msgs } = useDatabaseListData(messagesRef);
-
-  // check status
-  // if (status === 'loading') {
-  //   return <span>loading...</span>;
-  // }
+  const messagesRef = ref(database, `messages/${id}`);
 
   const sendMessage = () => {
     push(messagesRef, {

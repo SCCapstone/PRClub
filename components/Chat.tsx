@@ -12,7 +12,7 @@ import MessageSent from './MessageSent';
 import MessageReceived from './MessageReceived';
 import ChatForm from './ChatForm';
 
-export default function Chat({ chatId }: {chatId:string}) {
+export default function Chat({ chatId, senderId }: {chatId:string, senderId: string}) {
   const currentUser = useAppSelector(selectCurrentUser);
   const messagesRef = ref(database, `messages/${chatId}`);
   const { status, data: msgs } = useDatabaseListData(messagesRef);
@@ -36,7 +36,7 @@ export default function Chat({ chatId }: {chatId:string}) {
             <MessageReceived message={m.message} />
           )
       ))}
-      <ChatForm />
+      <ChatForm id={chatId} senderId={senderId} />
     </View>
 
   );

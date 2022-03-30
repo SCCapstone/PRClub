@@ -36,7 +36,6 @@ export default function ChatScreen() {
   // get all chats
   const chatsRef = ref(database, 'chats');
   const { data: chatInfo } = useDatabaseListData(chatsRef);
-
   let myFilteredArray;
   const senderUsernames: string [] = [];
   // functions for getting chat data
@@ -90,14 +89,12 @@ export default function ChatScreen() {
     getUsernameFromId(id).then((res) => senderUsernames.push(res as string));
   });
   console.log(senderUsernames);
-  useEffect(() => {
-    // getUsernameFromId(senderId).then((res) => setSenderUsername(res as string));
-  });
+
   return (
     <View>
       {display === ChatOptions.ChatList && (
         <>
-          <View style={tw`border-b border-gray-800 border-solid p-2 flex flex-row`}>
+          {/* <View style={tw`border-b border-gray-800 border-solid p-2 flex flex-row`}>
             <Text style={tw`font-bold text-lg m-auto`}>Messages</Text>
             <Button onPress={() => {
               setDisplay(ChatOptions.NewChat);
@@ -105,13 +102,16 @@ export default function ChatScreen() {
             >
               <Ionicons name="create" size={20} color="black" />
             </Button>
-          </View>
+          </View> */}
           <View>
             {/* <TouchableOpacity onPress={() => setDisplay(ChatOptions.NewChat)}> */}
             {myFilteredArray?.map((chat, i) => (
               <View key={i} style={tw`flex flex-row border-b border-black border-solid p-2`}>
-                <ChatItem senderUsername={getSenderId(chat)} lastMessage={getLastMessage(chat)} />
-                <Button onPress={() => setDisplay(ChatOptions.ViewChat)}>View</Button>
+                <ChatItem
+                  chatId={getChatId(chat)}
+                  senderUsername={getSenderId(chat)}
+                  lastMessage={getLastMessage(chat)}
+                />
               </View>
 
             ))}
@@ -128,18 +128,6 @@ export default function ChatScreen() {
             </TouchableOpacity>
           </View>
           <CreateNewChat />
-
-        </>
-      )}
-      {display === ChatOptions.ViewChat && (
-        <>
-          <View style={tw`border-b border-gray-800 border-solid p-2 flex flex-row`}>
-            <TouchableOpacity onPress={() => setDisplay(ChatOptions.ChatList)}>
-              <Text>Back</Text>
-            </TouchableOpacity>
-            <Text style={tw`font-bold text-lg m-auto`}>Sender username here</Text>
-          </View>
-          <Chat chatId={chatId} />
 
         </>
       )}
