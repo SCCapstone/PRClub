@@ -196,6 +196,7 @@ export default function Profile({
                 ? 'error'
                 : 'loading'
           }
+          isHomeScreen={false}
         />
       </>
     );
@@ -501,6 +502,7 @@ export default function Profile({
             <Posts
               posts={posts}
               postsStatus={postsStatus}
+              isHomeScreen={false}
             />
           )}
         </Tab.Screen>
