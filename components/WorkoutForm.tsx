@@ -3,6 +3,7 @@ import { Field, FieldArray, Formik } from 'formik';
 import _ from 'lodash';
 import React, { useState } from 'react';
 import { View } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 import 'react-native-get-random-values';
 import {
   ActivityIndicator, Button, Text, TextInput, List
@@ -39,6 +40,14 @@ export default function WorkoutForm({
   const showSelect = () => setSelectExercise(true);
   const hideSelect = () => setSelectExercise(false);
 
+  const categories: string[] = [];
+  for (let i = 0; i < exerciseInfos.length; i++) {
+    let category = exerciseInfos[i].category.name;
+    if(!categories.includes(category)) {
+      categories.push(category)
+    }
+  } 
+
   const initialValues: WorkoutInput = {
     name: workoutToEdit?.name || '',
     exercises: workoutToEdit?.exercises.map((e) => ({
@@ -56,7 +65,7 @@ export default function WorkoutForm({
     return <></>;
   }
 
-  if(selectExercise){
+  if (selectExercise) {
     return (
       <>
         <Button
@@ -66,45 +75,30 @@ export default function WorkoutForm({
           Back
         </Button>
 
-        <List.AccordionGroup>
-          <List.Accordion title="Arms" id="1">
-              <Select
-                options={exerciseInfos.map(
-                  (e) => ({
-                    value: e.name,
-                    label: e.name,
-                  }),
-                )}
-                placeholderText="Select an Arms Exercise..."
-              />
-          </List.Accordion>
-          <List.Accordion title="Chest" id="2">
-              <Select
-                options={exerciseInfos.map(
-                  (e) => ({
-                    value: e.name,
-                    label: e.name,
-                  }),
-                )}
-                placeholderText="Select a Chest Exercise..."
-              />
-          </List.Accordion>
-          <List.Accordion title="Legs" id="3">
-              <Select
-                options={exerciseInfos.map(
-                  (e) => ({
-                    value: e.name,
-                    label: e.name,
-                  }),
-                )}
-                placeholderText="Select a Legs Exercise..."
-              />
-          </List.Accordion>
+        <ScrollView>
+          <List.AccordionGroup>
+            {categories.map((category) => (
+              <List.Accordion title={category} id={category}>
+                <Select
+                  options={exerciseInfos.filter(exercise => exercise.category.name == category).map(
+                    (e) => ({
+                        value: e.name,
+                        label: e.name,
+                    }),
+                  )}
+                  // onSelect={
+                  //   (option: OptionType | null) => {
+                  //     if (option) {
+                  //       formikProps.setFieldValue(`exercises.${i}.name`, option.value);
+                  //     }
 
-        </List.AccordionGroup>
-
-
-        
+                  //   }}
+                  placeholderText="Select From Exercises..."
+                />
+              </List.Accordion>
+            ))}
+          </List.AccordionGroup>
+        </ScrollView>
       </>
     )
   }
@@ -151,32 +145,32 @@ export default function WorkoutForm({
                   <>
                     {formikProps.values.exercises
                       && formikProps.values.exercises.length > 0 ? (
-                        formikProps.values.exercises.map((exercise, i) => (
-                          <View key={exercise.id} style={tw`bg-gray-300 p-3`}>
-                            <View style={tw`flex flex-row`}>
-                              <View style={tw`flex flex-3 p-2`}>
-                                {
-                                  exerciseInfosStatus === 'fetching'
-                                    ? (
-                                      <View style={tw`flex flex-row`}>
-                                        <View style={tw`flex flex-3`}>
-                                          <Text style={tw`text-right font-bold`}>Fetching exercises...</Text>
-                                        </View>
-                                        <View style={tw`flex flex-2 items-center`}>
-                                          <ActivityIndicator />
-                                        </View>
+                      formikProps.values.exercises.map((exercise, i) => (
+                        <View key={exercise.id} style={tw`bg-gray-300 p-3`}>
+                          <View style={tw`flex flex-row`}>
+                            <View style={tw`flex flex-3 p-2`}>
+                              {
+                                exerciseInfosStatus === 'fetching'
+                                  ? (
+                                    <View style={tw`flex flex-row`}>
+                                      <View style={tw`flex flex-3`}>
+                                        <Text style={tw`text-right font-bold`}>Fetching exercises...</Text>
                                       </View>
-                                    )
-                                    : (
-                                      <>
+                                      <View style={tw`flex flex-2 items-center`}>
+                                        <ActivityIndicator />
+                                      </View>
+                                    </View>
+                                  )
+                                  : (
+                                    <>
                                       <Button
-                                      style = {tw`bg-gray-200`}
-                                      onPress = {showSelect}
+                                        style={tw`bg-gray-200`}
+                                        onPress={showSelect}
                                       >
                                         Select Exercise
-                                      </Button>        
-                                              
-                                        {/* <Select
+                                      </Button>
+
+                                      {/* <Select
                                           options={exerciseInfos.map(
                                             (e) => ({
                                               value: e.name,
@@ -199,117 +193,116 @@ export default function WorkoutForm({
                                           clearable={false}
                                         /> */}
 
-                                      </>
+                                    </>
+                                  )
+                              }
 
-                                    )
-                                }
-
-                              </View>
-                              <View style={tw`flex flex-1 p-2`}>
-                                <DeleteButton onPress={() => exercisesHelpers.remove(i)} />
-                              </View>
                             </View>
-                            <FieldArray name={`exercises.${i}.exerciseSets`}>
-                              {(exerciseSetsHelpers) => (
-                                <View style={tw`bg-gray-400 p-3`}>
-                                  <View style={tw`flex flex-row`}>
-                                    <View style={tw`flex flex-1`}>
-                                      <Text style={tw`text-center text-xl font-bold`}>Set #</Text>
-                                    </View>
-                                    <View style={tw`flex flex-2`}>
-                                      <Text style={tw`text-center text-xl font-bold`}>Weight</Text>
-                                    </View>
-                                    <View style={tw`flex flex-2`}>
-                                      <Text style={tw`text-center text-xl font-bold`}>Reps</Text>
-                                    </View>
-                                    <View style={tw`flex flex-1`} />
-                                  </View>
-                                  {formikProps.values.exercises[i]
-                                    && formikProps.values.exercises[i].exerciseSets
-                                    && formikProps.values.exercises[i].exerciseSets.length > 0 ? (
-                                      formikProps.values.exercises[i].exerciseSets.map(
-                                        (exerciseSet, j) => (
-                                          <View key={exerciseSet.id} style={tw`flex flex-row justify-center items-center`}>
-                                            <View style={tw`flex flex-1`}>
-                                              <Text style={tw`text-center text-xl`}>{j + 1}</Text>
-                                            </View>
-                                            <View style={tw`flex flex-2 p-1`}>
-                                              <Field name={`exercises.${i}.exerciseSets.${j}.weight`}>
-                                                {() => (
-                                                  <TextInput
-                                                    mode="outlined"
-                                                    placeholder="weight (lbs)"
-                                                    onChangeText={(input) => {
-                                                      if (input.match(/(^$)|([1-9][0-9]*)/g)) {
-                                                        formikProps.setFieldValue(
-                                                          `exercises.${i}.exerciseSets.${j}.weight`,
-                                                          input === '' ? input : Number(input),
-                                                        );
-                                                      }
-                                                    }}
-                                                    value={String(formikProps
-                                                      .values
-                                                      .exercises[i]
-                                                      .exerciseSets[j]
-                                                      .weight)}
-                                                    keyboardType="numeric"
-                                                  />
-                                                )}
-                                              </Field>
-                                            </View>
-                                            <View style={tw`flex flex-2 p-1`}>
-                                              <Field name={`exercises.${i}.exerciseSets.${j}.reps`}>
-                                                {() => (
-                                                  <TextInput
-                                                    mode="outlined"
-                                                    placeholder="reps"
-                                                    onChangeText={(input) => {
-                                                      if (input.match(/(^$)|([1-9][0-9]*)/g)) {
-                                                        formikProps.setFieldValue(
-                                                          `exercises.${i}.exerciseSets.${j}.reps`,
-                                                          input === '' ? input : Number(input),
-                                                        );
-                                                      }
-                                                    }}
-                                                    value={String(formikProps
-                                                      .values
-                                                      .exercises[i]
-                                                      .exerciseSets[j]
-                                                      .reps)}
-                                                    keyboardType="numeric"
-                                                  />
-                                                )}
-                                              </Field>
-                                            </View>
-                                            <View style={tw`flex flex-1 p-1`}>
-                                              <DeleteButton
-                                                onPress={() => exerciseSetsHelpers.remove(j)}
-                                              />
-                                            </View>
-                                          </View>
-                                        ),
-                                      )
-                                    ) : <></>}
-                                  <View style={tw`pt-3`}>
-                                    <Button
-                                      mode="contained"
-                                      icon="plus"
-                                      color="green"
-                                      onPress={() => exerciseSetsHelpers.push({
-                                        id: uuidv4(),
-                                        weight: '',
-                                        reps: '',
-                                      } as ExerciseSetInput)}
-                                    >
-                                      add set
-                                    </Button>
-                                  </View>
-                                </View>
-                              )}
-                            </FieldArray>
+                            <View style={tw`flex flex-1 p-2`}>
+                              <DeleteButton onPress={() => exercisesHelpers.remove(i)} />
+                            </View>
                           </View>
-                        ))
-                      ) : <></>}
+                          <FieldArray name={`exercises.${i}.exerciseSets`}>
+                            {(exerciseSetsHelpers) => (
+                              <View style={tw`bg-gray-400 p-3`}>
+                                <View style={tw`flex flex-row`}>
+                                  <View style={tw`flex flex-1`}>
+                                    <Text style={tw`text-center text-xl font-bold`}>Set #</Text>
+                                  </View>
+                                  <View style={tw`flex flex-2`}>
+                                    <Text style={tw`text-center text-xl font-bold`}>Weight</Text>
+                                  </View>
+                                  <View style={tw`flex flex-2`}>
+                                    <Text style={tw`text-center text-xl font-bold`}>Reps</Text>
+                                  </View>
+                                  <View style={tw`flex flex-1`} />
+                                </View>
+                                {formikProps.values.exercises[i]
+                                  && formikProps.values.exercises[i].exerciseSets
+                                  && formikProps.values.exercises[i].exerciseSets.length > 0 ? (
+                                  formikProps.values.exercises[i].exerciseSets.map(
+                                    (exerciseSet, j) => (
+                                      <View key={exerciseSet.id} style={tw`flex flex-row justify-center items-center`}>
+                                        <View style={tw`flex flex-1`}>
+                                          <Text style={tw`text-center text-xl`}>{j + 1}</Text>
+                                        </View>
+                                        <View style={tw`flex flex-2 p-1`}>
+                                          <Field name={`exercises.${i}.exerciseSets.${j}.weight`}>
+                                            {() => (
+                                              <TextInput
+                                                mode="outlined"
+                                                placeholder="weight (lbs)"
+                                                onChangeText={(input) => {
+                                                  if (input.match(/(^$)|([1-9][0-9]*)/g)) {
+                                                    formikProps.setFieldValue(
+                                                      `exercises.${i}.exerciseSets.${j}.weight`,
+                                                      input === '' ? input : Number(input),
+                                                    );
+                                                  }
+                                                }}
+                                                value={String(formikProps
+                                                  .values
+                                                  .exercises[i]
+                                                  .exerciseSets[j]
+                                                  .weight)}
+                                                keyboardType="numeric"
+                                              />
+                                            )}
+                                          </Field>
+                                        </View>
+                                        <View style={tw`flex flex-2 p-1`}>
+                                          <Field name={`exercises.${i}.exerciseSets.${j}.reps`}>
+                                            {() => (
+                                              <TextInput
+                                                mode="outlined"
+                                                placeholder="reps"
+                                                onChangeText={(input) => {
+                                                  if (input.match(/(^$)|([1-9][0-9]*)/g)) {
+                                                    formikProps.setFieldValue(
+                                                      `exercises.${i}.exerciseSets.${j}.reps`,
+                                                      input === '' ? input : Number(input),
+                                                    );
+                                                  }
+                                                }}
+                                                value={String(formikProps
+                                                  .values
+                                                  .exercises[i]
+                                                  .exerciseSets[j]
+                                                  .reps)}
+                                                keyboardType="numeric"
+                                              />
+                                            )}
+                                          </Field>
+                                        </View>
+                                        <View style={tw`flex flex-1 p-1`}>
+                                          <DeleteButton
+                                            onPress={() => exerciseSetsHelpers.remove(j)}
+                                          />
+                                        </View>
+                                      </View>
+                                    ),
+                                  )
+                                ) : <></>}
+                                <View style={tw`pt-3`}>
+                                  <Button
+                                    mode="contained"
+                                    icon="plus"
+                                    color="green"
+                                    onPress={() => exerciseSetsHelpers.push({
+                                      id: uuidv4(),
+                                      weight: '',
+                                      reps: '',
+                                    } as ExerciseSetInput)}
+                                  >
+                                    add set
+                                  </Button>
+                                </View>
+                              </View>
+                            )}
+                          </FieldArray>
+                        </View>
+                      ))
+                    ) : <></>}
                   </>
                   <View style={tw`p-3`}>
                     <Button
