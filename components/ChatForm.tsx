@@ -72,7 +72,11 @@ export default function ChatForm() {
         onChangeText={setMessageText}
         value={messageText}
       />
-      <Button onPress={() => newMessage()}>
+      <Button onPress={() => {
+        newMessage();
+        setMessageText('');
+      }}
+      >
         <Ionicons name="send" />
       </Button>
     </View>
