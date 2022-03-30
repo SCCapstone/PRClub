@@ -361,6 +361,7 @@ export default function Profile({
               posts={posts}
               postsStatus={postsStatus}
               forCurrentUser={forCurrentUser}
+              isHomeScreen={false}
             />
           )}
         </Tab.Screen>
