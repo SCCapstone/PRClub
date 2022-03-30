@@ -10,6 +10,7 @@ import {
 } from 'react-native-paper';
 import tw from 'twrnc';
 import { v4 as uuidv4 } from 'uuid';
+import { string } from 'yup/lib/locale';
 import { useAppDispatch, useAppSelector } from '../hooks/redux';
 import User from '../models/firestore/User';
 import Workout from '../models/firestore/Workout';
@@ -39,6 +40,8 @@ export default function WorkoutForm({
   const [selectExercise, setSelectExercise] = useState<boolean>(false);
   const showSelect = () => setSelectExercise(true);
   const hideSelect = () => setSelectExercise(false);
+
+  const [selectedExercise, setSelectedExercise] = useState<string>("Select Exercise");
 
   const categories: string[] = [];
   for (let i = 0; i < exerciseInfos.length; i++) {
@@ -99,12 +102,13 @@ export default function WorkoutForm({
                                 label: e.name,
                               }),
                             )}
-                            // what to update for onpress? also make sure to call hideselect onpress
+                            // what to update for onpress? 
                             //*****Need to decide how to show the users selection now*****
                             onSelect={
                               (options: OptionType | null) => {
                                 if (options) {
                                   formikProps.setFieldValue(`exercises.${i}.name`, options.value);
+                                  setSelectedExercise(options.value);
                                 }
                                 hideSelect();
                               }}
@@ -190,7 +194,7 @@ export default function WorkoutForm({
                                         style={tw`bg-gray-200`}
                                         onPress={showSelect}
                                       >
-                                        Select Exercise
+                                        {selectedExercise}
                                       </Button>
 
                                       {/* <Select
