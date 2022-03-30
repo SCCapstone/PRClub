@@ -71,6 +71,7 @@ export default function ChatForm() {
         placeholder="message"
         onChangeText={setMessageText}
         value={messageText}
+        style={tw`w-full`}
       />
       <Button onPress={() => {
         newMessage();
