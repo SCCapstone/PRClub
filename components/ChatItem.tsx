@@ -30,7 +30,6 @@ export default function ChatItem({ chatId }:
   const { status, data: msgs } = useDatabaseListData(messagesRef);
   const messageLength = msgs?.length;
   const lastMessage = msgs?.at(messageLength - 1)?.message;
-  const [chatClicked, setChatClicked] = useState<boolean>(false);
   useEffect(() => {
     chats?.forEach((chat) => {
       const members = Object.keys(chat);
@@ -54,17 +53,9 @@ export default function ChatItem({ chatId }:
   });
 
   return (
-
-    <View style={tw`border-b border-black border-solid p-2`}>
-      <TouchableOpacity onPress={() => {
-        setChatClicked(!chatClicked);
-      }}
-      >
-        <Text style={tw`font-bold`}>{senderUsername}</Text>
-        <Text style={tw`text-sm text-gray-800`}>{lastMessage}</Text>
-      </TouchableOpacity>
-      {chatClicked && <Chat chatId={tempChatId} />}
+    <View style={tw`w-11/12`}>
+      <Text style={tw`font-bold`}>{senderUsername}</Text>
+      <Text style={tw`text-sm text-gray-800`}>{lastMessage}</Text>
     </View>
-
   );
 }
