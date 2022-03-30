@@ -90,7 +90,7 @@ export default function WorkoutForm({
                   <ScrollView>
                     {/* ***Need to make a divider/counter for each workout or something, below is just a placeholder*** */}
                     <Text>
-                      Workout Counter:------------------------------
+                      Workout Count:
                     </Text>
                     <List.AccordionGroup>
                       {categories.map((category) => (
@@ -122,6 +122,14 @@ export default function WorkoutForm({
                         </List.Accordion>
                       ))}
                     </List.AccordionGroup>
+                    <View
+                    style={
+                        // tw`border-bottom-color:black border-bottom-width:1px`}
+                        {
+                        borderBottomColor: 'black',
+                        borderBottomWidth: 1,
+                      }}
+                      />
                   </ScrollView>
                 ))) : null}
           </>
