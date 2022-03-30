@@ -37,9 +37,11 @@ export default function WorkoutForm({
   const exerciseInfos: WgerExerciseInfo[] = useAppSelector(selectExerciseInfos);
   const exerciseInfosStatus: SliceStatus = useAppSelector(selectExericseInfosStatus);
 
-  const [selectExercise, setSelectExercise] = useState<boolean>(false);
-  const showSelect = () => setSelectExercise(true);
-  const hideSelect = () => setSelectExercise(false);
+  const [selectingExercise, setSelectingExercise] = useState<boolean>(false);
+  const showSelect = () => setSelectingExercise(true);
+  const hideSelect = () => setSelectingExercise(false);
+
+  const [exerciseToUpdateIndex, setExerciseToUpdateIndex] = useState<number | null>(null);
 
   const [selectedExercise, setSelectedExercise] = useState<string>("Select Exercise");
 
@@ -49,9 +51,9 @@ export default function WorkoutForm({
     if(!categories.includes(category)) {
       categories.push(category)
     }
-  } 
+  }
 
-  const initialValues: WorkoutInput = {
+  const [formValues, setFormValues] = useState<WorkoutInput>({
     name: workoutToEdit?.name || '',
     exercises: workoutToEdit?.exercises.map((e) => ({
       id: e.id,
@@ -62,78 +64,116 @@ export default function WorkoutForm({
         reps: s.reps,
       })),
     })) || [],
-  };
+  });
 
   if (!currentUser) {
     return <></>;
   }
 
-  if (selectExercise) {
+  if (!_.isNull(exerciseToUpdateIndex)) {
     return (
-      <Formik
-        initialValues={initialValues}
-        onSubmit={(values) => {
-        }}
-      >
-        {(formikProps) => (
-          <>
-            <Button
-              style={tw`bg-gray-200`}
-              onPress={hideSelect}
+      <ScrollView>
+        <List.AccordionGroup>
+          {categories.map((category) => (
+            <List.Accordion
+              key={category}
+              title={category}
+              id={category}
             >
-              Back
-            </Button>
-
-            {formikProps.values.exercises
-              && formikProps.values.exercises.length > 0 ? (
-                formikProps.values.exercises.map((exercise, i) => (
-                  <ScrollView>
-                    {/* ***Need to make a divider/counter for each workout or something, below is just a placeholder*** */}
-                    <Text>
-                      Workout Counter:------------------------------
-                    </Text>
-                    <List.AccordionGroup>
-                      {categories.map((category) => (
-                        <List.Accordion title={category} id={category}>
-                          <Select
-                            options={exerciseInfos.filter(exercise => exercise.category.name == category && exercise.language.fullName == "English").map(
-                              (e) => ({
-                                value: e.name,
-                                label: e.name,
-                              }),
-                            )}
-                            // what to update for onpress? 
-                            //*****Need to decide how to show the users selection now*****
-                            onSelect={
-                              (options: OptionType | null) => {
-                                if (options) {
-                                  formikProps.setFieldValue(`exercises.${i}.name`, options.value);
-                                  setSelectedExercise(options.value);
-                                }
-                                hideSelect();
-                              }}
-                            defaultOption={{
-                              value: formikProps.values.exercises[i].name,
-                              label: formikProps.values.exercises[i].name,
-                            }}
-                            // maybe a string concat here
-                            placeholderText="Select From Exercises..."
-                          />
-                        </List.Accordion>
-                      ))}
-                    </List.AccordionGroup>
-                  </ScrollView>
-                ))) : null}
-          </>
-        )}
-      </Formik>
+              {exerciseInfos
+                .filter(
+                  (exerciseInfo) => (
+                    exerciseInfo.category.name === category
+                      && exerciseInfo.language.fullName === "English"
+                  )
+                ).map(
+                  (exerciseInfo) => (
+                    <List.Item
+                      key={exerciseInfo.id}
+                      title={exerciseInfo.name}
+                      onPress={() => {
+                        let updatedFormValues = _.cloneDeep(formValues);
+                        updatedFormValues.exercises[exerciseToUpdateIndex].name = exerciseInfo.name;
+                        setFormValues(updatedFormValues);
+                        setExerciseToUpdateIndex(null);
+                      }}
+                    />
+                  )
+                )}
+            </List.Accordion>
+          ))}
+        </List.AccordionGroup>
+      </ScrollView>
     )
   }
+
+  // if (selectExercise) {
+  //   return (
+  //     <Formik
+  //       initialValues={initialValues}
+  //       onSubmit={(values) => {
+  //       }}
+  //     >
+  //       {(formikProps) => (
+  //         <>
+  //           <Button
+  //             style={tw`bg-gray-200`}
+  //             onPress={hideSelect}
+  //           >
+  //             Back
+  //           </Button>
+
+  //           {formikProps.values.exercises
+  //             && formikProps.values.exercises.length > 0 ? (
+  //               formikProps.values.exercises.map((exercise, i) => (
+  //                 <ScrollView>
+  //                   {/* ***Need to make a divider/counter for each workout or something, below is just a placeholder*** */}
+  //                   <Text>
+  //                     Workout Counter:------------------------------
+  //                   </Text>
+  //                   <List.AccordionGroup>
+  //                     {categories.map((category) => (
+  //                       <List.Accordion title={category} id={category}>
+  //                         <List.Item
+  //                           options={exerciseInfos.filter(exercise => exercise.category.name == category && exercise.language.fullName == "English").map(
+  //                             (e) => ({
+  //                               value: e.name,
+  //                               label: e.name,
+  //                             }),
+  //                           )}
+  //                           // what to update for onpress? 
+  //                           //*****Need to decide how to show the users selection now*****
+  //                           onSelect={
+  //                             (options: OptionType | null) => {
+  //                               if (options) {
+  //                                 formikProps.setFieldValue(`exercises.${i}.name`, options.value);
+  //                                 setSelectedExercise(options.value);
+  //                               }
+  //                               hideSelect();
+  //                             }}
+  //                           defaultOption={{
+  //                             value: formikProps.values.exercises[i].name,
+  //                             label: formikProps.values.exercises[i].name,
+  //                           }}
+  //                           // maybe a string concat here
+  //                           placeholderText="Select From Exercises..."
+  //                         />
+  //                       </List.Accordion>
+  //                     ))}
+  //                   </List.AccordionGroup>
+  //                 </ScrollView>
+  //               ))) : null}
+  //         </>
+  //       )}
+  //     </Formik>
+  //   )
+  // }
+  
 
   return (
     <>
       <Formik
-        initialValues={initialValues}
+        initialValues={formValues}
         validationSchema={WorkoutInputSchema}
         onSubmit={(values) => {
           const workout: Workout = {
@@ -192,7 +232,10 @@ export default function WorkoutForm({
                                     <>
                                       <Button
                                         style={tw`bg-gray-200`}
-                                        onPress={showSelect}
+                                        onPress={() => {
+                                          setFormValues(formikProps.values);
+                                          setExerciseToUpdateIndex(i);
+                                        }}
                                       >
                                         {selectedExercise}
                                       </Button>
@@ -372,7 +415,7 @@ export default function WorkoutForm({
                     )
                   )
                 )
-                || (workoutToEdit && _.isEqual(initialValues, formikProps.values))}
+                || (workoutToEdit && _.isEqual(formValues, formikProps.values))}
             >
               save workout
             </Button>
