@@ -86,6 +86,7 @@ export default function WorkoutForm({
                         label: e.name,
                     }),
                   )}
+                  // what to update for onpress? also make sure to call hideselect onpress
                   // onSelect={
                   //   (option: OptionType | null) => {
                   //     if (option) {
@@ -93,6 +94,7 @@ export default function WorkoutForm({
                   //     }
 
                   //   }}
+                  // maybe a string concat here?
                   placeholderText="Select From Exercises..."
                 />
               </List.Accordion>
