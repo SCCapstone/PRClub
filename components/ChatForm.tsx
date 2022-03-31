@@ -17,6 +17,7 @@ export default function ChatForm({ id, senderId } : {id: string, senderId: strin
   const currentUser = useAppSelector(selectCurrentUser);
   // const senderId = 'OOTsEWcooMYB8xScwbtBmfzDQDy1';
   const [messageText, setMessageText] = useState<string>('');
+  const [newChatID, setNewChatID] = useState<string>(id);
 
   if (!currentUser) {
     return <></>;
@@ -24,9 +25,8 @@ export default function ChatForm({ id, senderId } : {id: string, senderId: strin
   const chatsRef = ref(database, 'chats');
   const { data: chats } = useDatabaseListData(chatsRef);
 
-  const messagesRef = ref(database, `messages/${id}`);
-
   const sendMessage = () => {
+    const messagesRef = ref(database, `messages/${newChatID}`);
     push(messagesRef, {
       message: messageText,
       from: currentUser.username,
@@ -56,7 +56,7 @@ export default function ChatForm({ id, senderId } : {id: string, senderId: strin
     if (!chatExists()) {
       const chatID = push(chatsRef,
         { members: { [currentUser.id]: 'true', [senderId]: 'true' }, lastMessage: messageText }).key;
-
+      setNewChatID(chatID!);
       const userRef = ref(database, `users/${currentUser.id}/${chatID}`);
       set(userRef, { [senderId]: 'true' });
 
@@ -64,7 +64,7 @@ export default function ChatForm({ id, senderId } : {id: string, senderId: strin
       set(senderRef, { [currentUser.id]: 'true' });
     }
     sendMessage();
-    setLastMessage('-MzMVv7ldqAcSUDiBVHZ');
+    setLastMessage(newChatID);
   };
   return (
     <View style={tw`flex flex-row`}>

@@ -6,7 +6,7 @@ export default function CreateNewChat() {
   return (
     <View>
       {/* add some search component */}
-      <ChatForm />
+      <ChatForm id="-MzMVv7ldqAcSUDiBVHZ" senderId="OOTsEWcooMYB8xScwbtBmfzDQDy1" />
     </View>
   );
 }

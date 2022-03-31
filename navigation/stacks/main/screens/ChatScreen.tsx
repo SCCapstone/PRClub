@@ -1,10 +1,12 @@
 import {
   ref,
 } from '@firebase/database';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import tw from 'twrnc';
 import { useDatabaseListData } from 'reactfire';
-import { View, Text, TouchableOpacity } from 'react-native';
+import {
+  View, Text, TouchableOpacity, ScrollView,
+} from 'react-native';
 import { Button } from 'react-native-paper';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { doc, getDoc } from '@firebase/firestore';
@@ -13,14 +15,11 @@ import { selectCurrentUser } from '../../../../state/userSlice/selectors';
 import { database, firestore } from '../../../../firebase-lib';
 import ChatItem from '../../../../components/ChatItem';
 import CreateNewChat from '../../../../components/CreateNewChat';
-import Chat from '../../../../components/Chat';
 import { USERS_COLLECTION } from '../../../../constants/firestore';
 import User from '../../../../models/firestore/User';
 import ChatModel from '../../../../models/firestore/ChatModel';
 
 export default function ChatScreen() {
-  // const tempChatId = '-MzMEKa0YcQsy2RWaC4O';
-  // const chatId = '-MzMVv7ldqAcSUDiBVHZ';
   const currentUser = useAppSelector(selectCurrentUser);
   if (!currentUser) {
     return <></>;
@@ -31,15 +30,17 @@ export default function ChatScreen() {
     NewChat,
   }
   const [display, setDisplay] = useState<ChatOptions>(ChatOptions.ChatList);
+
   // get current user's chats
   const userRef = ref(database, `users/${currentUser!.id}`);
   const { data: myChats } = useDatabaseListData(userRef);
+
   // get all chats
   const chatsRef = ref(database, 'chats');
   const { data: chatInfo } = useDatabaseListData(chatsRef);
   let myFilteredArray: ChatModel[] = [];
   const [senderUsernames, setSenderUsernames] = useState<string[]>([]);
-  // const senderUsernames: string [] = [];
+
   // functions for getting chat data
   const getChatId = (chat:ChatModel):string => chat!.NO_ID_FIELD;
   const getSenderId = (chat:ChatModel):string => {
@@ -95,52 +96,53 @@ export default function ChatScreen() {
         setSenderUsernames([...senderUsernames, res as string]);
       }
     });
-
-    // console.log('usernames of chat people', senderUsernames);
   });
 
   return (
-    <View>
-      {display === ChatOptions.ChatList && (
-        <>
-          {/* <View style={tw`border-b border-gray-800 border-solid p-2 flex flex-row`}>
-            <Text style={tw`font-bold text-lg m-auto`}>Messages</Text>
-            <Button onPress={() => {
-              setDisplay(ChatOptions.NewChat);
-            }}
-            >
-              <Ionicons name="create" size={20} color="black" />
-            </Button>
-          </View> */}
-          <View>
-            {/* <TouchableOpacity onPress={() => setDisplay(ChatOptions.NewChat)}> */}
-            {myFilteredArray?.map((chat, i) => (
-              <View key={i} style={tw`flex flex-row border-b border-black border-solid p-2`}>
-                <ChatItem
-                  chatId={getChatId(chat)}
-                  senderUsername={senderUsernames[i]}
-                  lastMessage={getLastMessage(chat)}
-                />
-              </View>
+    <ScrollView>
+      <View>
+        {display === ChatOptions.ChatList && (
+          <>
+            <View>
+              <Button onPress={() => {
+                setDisplay(ChatOptions.NewChat);
+              }}
+              >
+                <Text>Create new chat</Text>
+                <Ionicons name="create" size={20} color="black" />
+              </Button>
+            </View>
+            <View>
+              {/* <TouchableOpacity onPress={() => setDisplay(ChatOptions.NewChat)}> */}
+              {myFilteredArray?.map((chat, i) => (
+                <View key={i} style={tw`flex flex-row border-b border-black border-solid p-2`}>
+                  <ChatItem
+                    chatId={getChatId(chat)}
+                    senderId={getSenderId(chat)}
+                    senderUsername={senderUsernames[i]}
+                    lastMessage={getLastMessage(chat)}
+                  />
+                </View>
 
-            ))}
-            {/* </TouchableOpacity> */}
-          </View>
+              ))}
+              {/* </TouchableOpacity> */}
+            </View>
 
-        </>
-      )}
-      {display === ChatOptions.NewChat && (
-        <>
-          <View>
-            <TouchableOpacity onPress={() => setDisplay(ChatOptions.ChatList)}>
-              <Text>Cancel</Text>
-            </TouchableOpacity>
-          </View>
-          <CreateNewChat />
+          </>
+        )}
+        {display === ChatOptions.NewChat && (
+          <>
+            <View>
+              <TouchableOpacity onPress={() => setDisplay(ChatOptions.ChatList)}>
+                <Text>Cancel</Text>
+              </TouchableOpacity>
+            </View>
+            <CreateNewChat />
 
-        </>
-      )}
-    </View>
-
+          </>
+        )}
+      </View>
+      <View style={tw`h-100`} />
+    </ScrollView>
   );
 }

@@ -3,8 +3,10 @@ import tw from 'twrnc';
 import { View, Text, TouchableOpacity } from 'react-native';
 import Chat from './Chat';
 
-export default function ChatItem({ chatId, senderUsername, lastMessage }:
-{chatId: string, senderUsername: string, lastMessage:string}) {
+export default function ChatItem({
+  chatId, senderId, senderUsername, lastMessage,
+}:
+{chatId: string, senderId: string, senderUsername: string, lastMessage:string}) {
   enum DisplayOptions {
     DisplayAll,
     DisplayOne,
@@ -31,7 +33,7 @@ export default function ChatItem({ chatId, senderUsername, lastMessage }:
             </View>
 
           </TouchableOpacity>
-          <Chat chatId={chatId} senderId={senderUsername} />
+          <Chat chatId={chatId} senderId={senderId} />
         </View>
       )}
     </View>
