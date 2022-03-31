@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import tw from 'twrnc';
 import {
   View, TextInput,
@@ -12,12 +12,14 @@ import {
 import { useAppSelector } from '../hooks/redux';
 import { selectCurrentUser } from '../state/userSlice/selectors';
 import { database } from '../firebase-lib';
+import ChatModel from '../models/firestore/ChatModel';
 
 export default function ChatForm({ id, senderId } : {id: string, senderId: string}) {
   const currentUser = useAppSelector(selectCurrentUser);
   // const senderId = 'OOTsEWcooMYB8xScwbtBmfzDQDy1';
   const [messageText, setMessageText] = useState<string>('');
   const [newChatID, setNewChatID] = useState<string>(id);
+  const [chatExists, setChatExists] = useState<boolean>(false);
 
   if (!currentUser) {
     return <></>;
@@ -25,8 +27,8 @@ export default function ChatForm({ id, senderId } : {id: string, senderId: strin
   const chatsRef = ref(database, 'chats');
   const { data: chats } = useDatabaseListData(chatsRef);
 
-  const sendMessage = () => {
-    const messagesRef = ref(database, `messages/${newChatID}`);
+  const sendMessage = (chatID:string) => {
+    const messagesRef = ref(database, `messages/${chatID}`);
     push(messagesRef, {
       message: messageText,
       from: currentUser.username,
@@ -41,19 +43,24 @@ export default function ChatForm({ id, senderId } : {id: string, senderId: strin
     });
   };
 
-  const chatExists = () => {
-    let result = false;
-    chats?.forEach((chat) => {
-      if (Object.keys(chat.members).includes(currentUser.id)
-        && Object.keys(chat.members).includes(senderId)) {
-        result = true;
-      }
-    });
-    return result;
-  };
+  // const chatExists = () => {
+  //   let result = false;
+  //   console.log(chats);
+  //   if (chats !== null && chats.length) {
+  //     chats?.forEach((chat) => {
+  //       if (Object.keys(chat.members).includes(currentUser.id)
+  //       && Object.keys(chat.members).includes(senderId)) {
+  //         setNewChatID(chat.NO_ID_FIELD);
+  //         result = true;
+  //       }
+  //     });
+  //   }
+  //   return result;
+  // };
 
   const newMessage = () => {
-    if (!chatExists()) {
+    if (!chatExists) {
+      console.log('Returning FALSE!!!');
       const chatID = push(chatsRef,
         { members: { [currentUser.id]: 'true', [senderId]: 'true' }, lastMessage: messageText }).key;
       setNewChatID(chatID!);
@@ -62,10 +69,32 @@ export default function ChatForm({ id, senderId } : {id: string, senderId: strin
 
       const senderRef = ref(database, `users/${senderId}/${chatID}`);
       set(senderRef, { [currentUser.id]: 'true' });
+      sendMessage(chatID!);
+      setLastMessage(chatID!);
     }
-    sendMessage();
-    setLastMessage(newChatID);
+    // console.log('Should be second message');
+    else if (id.length > 0) {
+      sendMessage(id);
+      setLastMessage(id);
+    } else {
+      sendMessage(newChatID);
+      setLastMessage(newChatID);
+    }
   };
+
+  useEffect(() => {
+    console.log(chats);
+    if (chats !== null && chats.length) {
+      chats?.forEach((chat) => {
+        if (Object.keys(chat.members).includes(currentUser.id)
+        && Object.keys(chat.members).includes(senderId)) {
+          setNewChatID(chat.NO_ID_FIELD);
+          setChatExists(true);
+        }
+      });
+    }
+  }, [newChatID, chatExists]);
+
   return (
     <View style={tw`flex flex-row`}>
       <TextInput
