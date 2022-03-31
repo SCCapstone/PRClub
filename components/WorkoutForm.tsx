@@ -69,6 +69,14 @@ export default function WorkoutForm({
 
   if (!_.isNull(exerciseToUpdateIndex)) {
     return (
+      <> 
+      <Button
+      onPress={() => {
+        setExerciseToUpdateIndex(null);
+      }}
+        >
+        Back
+      </Button>
       <ScrollView>
         <List.AccordionGroup>
           {categories.map((category) => (
@@ -102,6 +110,7 @@ export default function WorkoutForm({
           ))}
         </List.AccordionGroup>
       </ScrollView>
+      </>
     )
   }
 
