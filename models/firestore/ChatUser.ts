@@ -1,4 +1,4 @@
 export default interface ChatUser {
-  [key:string]: { [key:string]: string, value: boolean }[],
+  [key:string]: { [key:string]: string, value: string }[],
 
 }

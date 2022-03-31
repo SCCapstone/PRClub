@@ -16,6 +16,7 @@ import CreateNewChat from '../../../../components/CreateNewChat';
 import Chat from '../../../../components/Chat';
 import { USERS_COLLECTION } from '../../../../constants/firestore';
 import User from '../../../../models/firestore/User';
+import ChatModel from '../../../../models/firestore/ChatModel';
 
 export default function ChatScreen() {
   // const tempChatId = '-MzMEKa0YcQsy2RWaC4O';
@@ -36,11 +37,12 @@ export default function ChatScreen() {
   // get all chats
   const chatsRef = ref(database, 'chats');
   const { data: chatInfo } = useDatabaseListData(chatsRef);
-  let myFilteredArray;
-  const senderUsernames: string [] = [];
+  let myFilteredArray: ChatModel[] = [];
+  const [senderUsernames, setSenderUsernames] = useState<string[]>([]);
+  // const senderUsernames: string [] = [];
   // functions for getting chat data
-  const getChatId = (chat):string => chat!.NO_ID_FIELD;
-  const getSenderId = (chat):string => {
+  const getChatId = (chat:ChatModel):string => chat!.NO_ID_FIELD;
+  const getSenderId = (chat:ChatModel):string => {
     let val = '';
     const members = Object.keys(chat.members);
     members?.forEach((id:string) => {
@@ -50,7 +52,7 @@ export default function ChatScreen() {
     });
     return val;
   }; // may need to refactor for group chats
-  const getLastMessage = (chat): string => chat!.lastMessage;
+  const getLastMessage = (chat:ChatModel): string => chat!.lastMessage;
   const getMyChatIds = (): string[] => {
     const idArray: unknown = [];
     myChats?.forEach((chat) => {
@@ -59,7 +61,7 @@ export default function ChatScreen() {
     return idArray;
   };
   const filterMyChats = (chats:string[]) => {
-    const filteredChats = [];
+    const filteredChats: ChatModel[] = [];
     chatInfo?.forEach((chat) => {
       if (chats.includes(getChatId(chat))) {
         filteredChats.push(chat);
@@ -69,10 +71,6 @@ export default function ChatScreen() {
       return filteredChats;
     }
   };
-  if (myChats && filterMyChats(getMyChatIds())?.length > 0) {
-    myFilteredArray = filterMyChats(getMyChatIds());
-    console.log(myFilteredArray);
-  }
   const getUsernameFromId = async (userId:string) => {
     const userDocRef = doc(firestore, USERS_COLLECTION, userId);
     const userDocSnap = await getDoc(userDocRef);
@@ -84,11 +82,22 @@ export default function ChatScreen() {
     const user = userDocSnap.data() as User;
     return user.username;
   };
+
+  if (myChats && filterMyChats(getMyChatIds())?.length > 0) {
+    myFilteredArray = filterMyChats(getMyChatIds());
+    console.log('My chats filtered', myFilteredArray);
+  }
   myFilteredArray?.forEach((chat) => {
     const id = getSenderId(chat);
-    getUsernameFromId(id).then((res) => senderUsernames.push(res as string));
+    // getUsernameFromId(id).then((res) => senderUsernames.push(res as string));
+    getUsernameFromId(id).then((res) => {
+      if (!senderUsernames.includes(res)) {
+        setSenderUsernames([...senderUsernames, res as string]);
+      }
+    });
+
+    // console.log('usernames of chat people', senderUsernames);
   });
-  console.log(senderUsernames);
 
   return (
     <View>
@@ -109,7 +118,7 @@ export default function ChatScreen() {
               <View key={i} style={tw`flex flex-row border-b border-black border-solid p-2`}>
                 <ChatItem
                   chatId={getChatId(chat)}
-                  senderUsername={getSenderId(chat)}
+                  senderUsername={senderUsernames[i]}
                   lastMessage={getLastMessage(chat)}
                 />
               </View>
