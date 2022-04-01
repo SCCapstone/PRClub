@@ -1,11 +1,11 @@
-import { OptionType, Select } from '@mobile-reality/react-native-select-pro';
 import { Field, FieldArray, Formik } from 'formik';
 import _ from 'lodash';
-import React from 'react';
+import React, { useState } from 'react';
 import { View } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 import 'react-native-get-random-values';
 import {
-  ActivityIndicator, Button, Text, TextInput,
+  ActivityIndicator, Button, Text, TextInput, List,
 } from 'react-native-paper';
 import tw from 'twrnc';
 import { v4 as uuidv4 } from 'uuid';
@@ -35,7 +35,17 @@ export default function WorkoutForm({
   const exerciseInfos: WgerExerciseInfo[] = useAppSelector(selectExerciseInfos);
   const exerciseInfosStatus: SliceStatus = useAppSelector(selectExericseInfosStatus);
 
-  const initialValues: WorkoutInput = {
+  const [exerciseToUpdateIndex, setExerciseToUpdateIndex] = useState<number | null>(null);
+
+  const categories: string[] = [];
+  for (let i = 0; i < exerciseInfos.length; i += 1) {
+    const category = exerciseInfos[i].category.name;
+    if (!categories.includes(category)) {
+      categories.push(category);
+    }
+  }
+
+  const [formValues, setFormValues] = useState<WorkoutInput>({
     name: workoutToEdit?.name || '',
     exercises: workoutToEdit?.exercises.map((e) => ({
       id: e.id,
@@ -46,16 +56,64 @@ export default function WorkoutForm({
         reps: s.reps,
       })),
     })) || [],
-  };
+  });
 
   if (!currentUser) {
     return <></>;
   }
 
+  if (!_.isNull(exerciseToUpdateIndex)) {
+    return (
+      <>
+        <Button
+          onPress={() => {
+            setExerciseToUpdateIndex(null);
+          }}
+        >
+          Back
+        </Button>
+        <Text style={tw`text-lg font-bold`}>{`Exercise #${exerciseToUpdateIndex + 1}`}</Text>
+        <ScrollView>
+          <List.AccordionGroup>
+            {categories.map((category) => (
+              <List.Accordion
+                key={category}
+                title={category}
+                id={category}
+              >
+                {exerciseInfos
+                  .filter(
+                    (exerciseInfo) => (
+                      exerciseInfo.category.name === category
+                      && exerciseInfo.language.fullName === 'English'
+                    ),
+                  ).map(
+                    (exerciseInfo) => (
+                      <List.Item
+                        key={exerciseInfo.id}
+                        title={exerciseInfo.name}
+                        onPress={() => {
+                          const updatedFormValues = _.cloneDeep(formValues);
+                          updatedFormValues
+                            .exercises[exerciseToUpdateIndex].name = exerciseInfo.name;
+                          setFormValues(updatedFormValues);
+                          setExerciseToUpdateIndex(null);
+                        }}
+                      />
+                    ),
+                  )}
+              </List.Accordion>
+            ))}
+          </List.AccordionGroup>
+        </ScrollView>
+      </>
+    );
+  }
+
   return (
     <>
       <Formik
-        initialValues={initialValues}
+        initialValues={formValues}
         validationSchema={WorkoutInputSchema}
         onSubmit={(values) => {
           const workout: Workout = {
@@ -111,28 +169,19 @@ export default function WorkoutForm({
                                       </View>
                                     )
                                     : (
-                                      <Select
-                                        options={exerciseInfos.map(
-                                          (e) => ({
-                                            value: e.name,
-                                            label: e.name,
-                                          }),
-                                        )}
-                                        placeholderText="select an exercise..."
-                                        onSelect={(option: OptionType | null) => {
-                                          if (option) {
-                                            formikProps.setFieldValue(`exercises.${i}.name`, option.value);
-                                          }
-                                        }}
-                                        defaultOption={{
-                                          value: formikProps.values.exercises[i].name,
-                                          label: formikProps.values.exercises[i].name,
-                                        }}
-                                        clearable={false}
-                                      />
+                                      <>
+                                        <Button
+                                          style={tw`bg-gray-200`}
+                                          onPress={() => {
+                                            setFormValues(formikProps.values);
+                                            setExerciseToUpdateIndex(i);
+                                          }}
+                                        >
+                                          {formikProps.values.exercises[i].name || 'Select Exercise'}
+                                        </Button>
+                                      </>
                                     )
                                 }
-
                               </View>
                               <View style={tw`flex flex-1 p-2`}>
                                 <DeleteButton onPress={() => exercisesHelpers.remove(i)} />
@@ -154,8 +203,8 @@ export default function WorkoutForm({
                                     <View style={tw`flex flex-1`} />
                                   </View>
                                   {formikProps.values.exercises[i]
-                                    && formikProps.values.exercises[i].exerciseSets
-                                    && formikProps.values.exercises[i].exerciseSets.length > 0 ? (
+                                  && formikProps.values.exercises[i].exerciseSets
+                                  && formikProps.values.exercises[i].exerciseSets.length > 0 ? (
                                       formikProps.values.exercises[i].exerciseSets.map(
                                         (exerciseSet, j) => (
                                           <View key={exerciseSet.id} style={tw`flex flex-row justify-center items-center`}>
@@ -281,33 +330,13 @@ export default function WorkoutForm({
                     )
                   )
                 )
-                || (workoutToEdit && _.isEqual(initialValues, formikProps.values))}
+                || (workoutToEdit && _.isEqual(formValues, formikProps.values))}
             >
               save workout
             </Button>
           </View>
         )}
       </Formik>
-      {/* <Snackbar
-        visible={!!upsertWorkoutResult}
-        duration={3000}
-        onDismiss={() => dispatch(clearUpsertWorkoutResult())}
-        action={upsertWorkoutResult && upsertWorkoutResult.success ? {
-          label: 'Undo',
-          onPress: () => {
-            if (submittedWorkout) {
-              dispatch(removeWorkout(submittedWorkout));
-              setSubmittedWorkout(null);
-            }
-          },
-        } : undefined}
-      >
-        {upsertWorkoutResult && (
-          upsertWorkoutResult.success
-            ? 'Workout Submitted!'
-            : `Error submitting workout: ${upsertWorkoutResult.error}`
-        )}
-      </Snackbar> */}
     </>
   );
 }
