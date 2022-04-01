@@ -1,7 +1,7 @@
 import {
   ref,
 } from '@firebase/database';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import tw from 'twrnc';
 import { useDatabaseListData } from 'reactfire';
 import {
@@ -19,6 +19,8 @@ import { USERS_COLLECTION } from '../../../../constants/firestore';
 import User from '../../../../models/firestore/User';
 import ChatModel from '../../../../models/firestore/ChatModel';
 import Chat from '../../../../components/Chat';
+import ChatForm from '../../../../components/ChatForm';
+import Search from '../../../../components/Search';
 
 export default function ChatScreen() {
   const currentUser = useAppSelector(selectCurrentUser);
@@ -64,6 +66,7 @@ export default function ChatScreen() {
     });
     return idArray;
   };
+  // eslint-disable-next-line consistent-return
   const filterMyChats = (chats:string[]) => {
     const filteredChats: ChatModel[] = [];
     chatInfo?.forEach((chat) => {
@@ -117,21 +120,21 @@ export default function ChatScreen() {
             </View>
             <View>
               {myFilteredArray?.map((chat, i) => (
-                <View key={i} style={tw`flex flex-row border-b border-black border-solid p-2`}>
-                  <ChatItem
-                    senderUsername={senderUsernames[i]}
-                    lastMessage={getLastMessage(chat)}
-                  />
-                  <Button onPress={() => {
-                    setClickedChatId(getChatId(chat));
-                    setClickedSenderId(getSenderId(chat));
-                    setClickedSenderUsername(senderUsernames[i]);
-                    setDisplay(ChatOptions.ViewChat);
-                  }}
-                  >
-                    View
-                  </Button>
-                </View>
+                <TouchableOpacity onPress={() => {
+                  setClickedChatId(getChatId(chat));
+                  setClickedSenderId(getSenderId(chat));
+                  setClickedSenderUsername(senderUsernames[i]);
+                  setDisplay(ChatOptions.ViewChat);
+                }}
+                >
+                  <View key={i} style={tw`flex flex-row border-b border-black border-solid p-2`}>
+
+                    <ChatItem
+                      senderUsername={senderUsernames[i]}
+                      lastMessage={getLastMessage(chat)}
+                    />
+                  </View>
+                </TouchableOpacity>
 
               ))}
             </View>
@@ -152,13 +155,16 @@ export default function ChatScreen() {
       </View>
       {display === ChatOptions.ViewChat && (
         <View>
-          <View style={tw`border-b border-gray-800 border-solid p-2 flex flex-row`}>
-            <TouchableOpacity onPress={() => setDisplay(ChatOptions.ChatList)}>
-              <Text>Back</Text>
-            </TouchableOpacity>
-            <Text style={tw`font-bold text-lg m-auto`}>{clickedSenderUsername}</Text>
+          <View>
+            <View style={tw`border-b border-gray-800 border-solid p-2 flex flex-row`}>
+              <TouchableOpacity onPress={() => setDisplay(ChatOptions.ChatList)}>
+                <Text>Back</Text>
+              </TouchableOpacity>
+              <Text style={tw`font-bold text-lg m-auto`}>{clickedSenderUsername}</Text>
+            </View>
+            <Chat chatId={clickedChatId} senderId={clickedSenderId} />
           </View>
-          <Chat chatId={clickedChatId} senderId={clickedSenderId} />
+          <ChatForm id={clickedChatId} senderId={clickedSenderId} />
         </View>
 
       )}

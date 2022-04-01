@@ -10,7 +10,6 @@ import { selectCurrentUser } from '../state/userSlice/selectors';
 import { database } from '../firebase-lib';
 import MessageSent from './MessageSent';
 import MessageReceived from './MessageReceived';
-import ChatForm from './ChatForm';
 
 export default function Chat({ chatId, senderId }: {chatId:string, senderId: string}) {
   const currentUser = useAppSelector(selectCurrentUser);
@@ -36,7 +35,6 @@ export default function Chat({ chatId, senderId }: {chatId:string, senderId: str
             <MessageReceived message={m.message} />
           )
       ))}
-      <ChatForm id={chatId} senderId={senderId} />
     </View>
 
   );

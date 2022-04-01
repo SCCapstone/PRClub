@@ -16,7 +16,6 @@ import ChatModel from '../models/firestore/ChatModel';
 
 export default function ChatForm({ id, senderId } : {id: string, senderId: string}) {
   const currentUser = useAppSelector(selectCurrentUser);
-  // const senderId = 'OOTsEWcooMYB8xScwbtBmfzDQDy1';
   const [messageText, setMessageText] = useState<string>('');
   const [newChatID, setNewChatID] = useState<string>(id);
   const [chatExists, setChatExists] = useState<boolean>(false);
@@ -27,7 +26,7 @@ export default function ChatForm({ id, senderId } : {id: string, senderId: strin
   const chatsRef = ref(database, 'chats');
   const { data: chats } = useDatabaseListData(chatsRef);
 
-  const sendMessage = (chatID:string) => {
+  const sendMessage = (chatID: string) => {
     const messagesRef = ref(database, `messages/${chatID}`);
     push(messagesRef, {
       message: messageText,
@@ -43,24 +42,8 @@ export default function ChatForm({ id, senderId } : {id: string, senderId: strin
     });
   };
 
-  // const chatExists = () => {
-  //   let result = false;
-  //   console.log(chats);
-  //   if (chats !== null && chats.length) {
-  //     chats?.forEach((chat) => {
-  //       if (Object.keys(chat.members).includes(currentUser.id)
-  //       && Object.keys(chat.members).includes(senderId)) {
-  //         setNewChatID(chat.NO_ID_FIELD);
-  //         result = true;
-  //       }
-  //     });
-  //   }
-  //   return result;
-  // };
-
   const newMessage = () => {
     if (!chatExists) {
-      console.log('Returning FALSE!!!');
       const chatID = push(chatsRef,
         { members: { [currentUser.id]: 'true', [senderId]: 'true' }, lastMessage: messageText }).key;
       setNewChatID(chatID!);
@@ -69,23 +52,24 @@ export default function ChatForm({ id, senderId } : {id: string, senderId: strin
 
       const senderRef = ref(database, `users/${senderId}/${chatID}`);
       set(senderRef, { [currentUser.id]: 'true' });
+      console.log(`if: ${chatID!}`);
       sendMessage(chatID!);
       setLastMessage(chatID!);
-    }
-    // console.log('Should be second message');
-    else if (id.length > 0) {
+    } else if (id.length > 0) {
+      console.log(`else if: ${id}`);
       sendMessage(id);
       setLastMessage(id);
     } else {
+      console.log(`else: ${newChatID}`);
       sendMessage(newChatID);
       setLastMessage(newChatID);
     }
   };
 
   useEffect(() => {
-    console.log(chats);
-    if (chats !== null && chats.length) {
-      chats?.forEach((chat) => {
+    // Check if chat already exists
+    if (chats && chats.length) {
+      chats?.forEach((chat: ChatModel) => {
         if (Object.keys(chat.members).includes(currentUser.id)
         && Object.keys(chat.members).includes(senderId)) {
           setNewChatID(chat.NO_ID_FIELD);

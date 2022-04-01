@@ -1,7 +1,7 @@
 import { collection, query, where } from '@firebase/firestore';
 import _ from 'lodash';
 import React, { useState } from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 import {
   ActivityIndicator, Searchbar, Text,
 } from 'react-native-paper';
@@ -16,11 +16,11 @@ import CenteredView from './CenteredView';
 import Profile from './Profile';
 
 function SearchResults(
-  { searchForChat, queryString, onUserPress }: {searchForChat: boolean, queryString: string, onUserPress: (user: User) => void},
+  { queryString, onUserPress }: {queryString: string, onUserPress: (user: User) => void},
 ) {
   // Redux-based state
   const currentUser = useAppSelector(selectCurrentUser);
-  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+
   // ReactFire query
   const firestore = useFirestore();
   const usersCollection = collection(firestore, USERS_COLLECTION);
@@ -74,11 +74,9 @@ function SearchResults(
               <TouchableOpacity
                 key={user.id}
                 style={tw`p-2 border-b`}
-                onPress={searchForChat
-                  ? () => {
-                    setSelectedUsers([...selectedUsers, user.id]);
-                  }
-                  : onUserPress(user)}
+                onPress={() => {
+                  onUserPress(user);
+                }}
               >
                 <>
                   <Text style={tw`font-bold text-lg`}>
@@ -92,11 +90,6 @@ function SearchResults(
               </TouchableOpacity>
             ))
           }
-
-          {selectedUsers.map((userId) => (
-            <Text>{userId}</Text>
-          ))}
-
         </>
       );
     }
@@ -111,24 +104,23 @@ function SearchResults(
   return <></>;
 }
 
-export default function Search({ searchForChat }:{searchForChat:boolean}) {
+export default function Search() {
   // component-level state
   const [userBeingViewedInSearch, setUserBeingViewedInSearch] = useState<User | null>(null);
   const [queryString, setQueryString] = useState<string>('');
-  if (!searchForChat) {
-    if (userBeingViewedInSearch) {
-      return (
-        <>
-          <BackButton
-            onPress={() => {
-              setUserBeingViewedInSearch(null);
-              setQueryString('');
-            }}
-          />
-          <Profile user={userBeingViewedInSearch} isProfileScreen={false} />
-        </>
-      );
-    }
+
+  if (userBeingViewedInSearch) {
+    return (
+      <>
+        <BackButton
+          onPress={() => {
+            setUserBeingViewedInSearch(null);
+            setQueryString('');
+          }}
+        />
+        <Profile user={userBeingViewedInSearch} isProfileScreen={false} />
+      </>
+    );
   }
 
   return (
@@ -142,12 +134,11 @@ export default function Search({ searchForChat }:{searchForChat:boolean}) {
         queryString.length > 0
           ? (
             <SearchResults
-              searchForChat={searchForChat}
               queryString={queryString}
               onUserPress={setUserBeingViewedInSearch}
             />
           )
-          : !searchForChat && (
+          : (
             <CenteredView>
               <Text style={tw`text-lg text-center`}>Start searching for users by typing in the search bar above!</Text>
             </CenteredView>
