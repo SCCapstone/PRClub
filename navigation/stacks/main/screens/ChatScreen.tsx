@@ -1,7 +1,7 @@
 import {
   ref,
 } from '@firebase/database';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import tw from 'twrnc';
 import { useDatabaseListData } from 'reactfire';
 import {
@@ -18,6 +18,7 @@ import CreateNewChat from '../../../../components/CreateNewChat';
 import { USERS_COLLECTION } from '../../../../constants/firestore';
 import User from '../../../../models/firestore/User';
 import ChatModel from '../../../../models/firestore/ChatModel';
+import Chat from '../../../../components/Chat';
 
 export default function ChatScreen() {
   const currentUser = useAppSelector(selectCurrentUser);
@@ -40,7 +41,9 @@ export default function ChatScreen() {
   const { data: chatInfo } = useDatabaseListData(chatsRef);
   let myFilteredArray: ChatModel[] = [];
   const [senderUsernames, setSenderUsernames] = useState<string[]>([]);
-
+  const [clickedChatId, setClickedChatId] = useState<string>('');
+  const [clickedSenderId, setClickedSenderId] = useState<string>('');
+  const [clickedSenderUsername, setClickedSenderUsername] = useState<string>('');
   // functions for getting chat data
   const getChatId = (chat:ChatModel):string => chat!.NO_ID_FIELD;
   const getSenderId = (chat:ChatModel):string => {
@@ -86,7 +89,7 @@ export default function ChatScreen() {
 
   if (myChats && filterMyChats(getMyChatIds())?.length > 0) {
     myFilteredArray = filterMyChats(getMyChatIds());
-    console.log('My chats filtered', myFilteredArray);
+    // console.log('My chats filtered', myFilteredArray);
   }
   myFilteredArray?.forEach((chat) => {
     const id = getSenderId(chat);
@@ -113,19 +116,24 @@ export default function ChatScreen() {
               </Button>
             </View>
             <View>
-              {/* <TouchableOpacity onPress={() => setDisplay(ChatOptions.NewChat)}> */}
               {myFilteredArray?.map((chat, i) => (
                 <View key={i} style={tw`flex flex-row border-b border-black border-solid p-2`}>
                   <ChatItem
-                    chatId={getChatId(chat)}
-                    senderId={getSenderId(chat)}
                     senderUsername={senderUsernames[i]}
                     lastMessage={getLastMessage(chat)}
                   />
+                  <Button onPress={() => {
+                    setClickedChatId(getChatId(chat));
+                    setClickedSenderId(getSenderId(chat));
+                    setClickedSenderUsername(senderUsernames[i]);
+                    setDisplay(ChatOptions.ViewChat);
+                  }}
+                  >
+                    View
+                  </Button>
                 </View>
 
               ))}
-              {/* </TouchableOpacity> */}
             </View>
 
           </>
@@ -142,6 +150,18 @@ export default function ChatScreen() {
           </>
         )}
       </View>
+      {display === ChatOptions.ViewChat && (
+        <View>
+          <View style={tw`border-b border-gray-800 border-solid p-2 flex flex-row`}>
+            <TouchableOpacity onPress={() => setDisplay(ChatOptions.ChatList)}>
+              <Text>Back</Text>
+            </TouchableOpacity>
+            <Text style={tw`font-bold text-lg m-auto`}>{clickedSenderUsername}</Text>
+          </View>
+          <Chat chatId={clickedChatId} senderId={clickedSenderId} />
+        </View>
+
+      )}
       <View style={tw`h-100`} />
     </ScrollView>
   );
