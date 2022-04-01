@@ -10,5 +10,5 @@ export default function SearchScreen() {
     return <></>;
   }
 
-  return <Search />;
+  return <Search searchForChat={false} />;
 }
