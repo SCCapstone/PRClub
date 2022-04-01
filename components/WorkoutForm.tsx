@@ -39,9 +39,6 @@ export default function WorkoutForm({
 
   const [exerciseToUpdateIndex, setExerciseToUpdateIndex] = useState<number | null>(null);
 
-  // Text of Button
-  const [buttonText, setButtonText] = useState<string>("Select Exercise");
-
   const categories: string[] = [];
   for (let i = 0; i < exerciseInfos.length; i++) {
     let category = exerciseInfos[i].category.name;
@@ -71,12 +68,13 @@ export default function WorkoutForm({
     return (
       <> 
       <Button
-      onPress={() => {
-        setExerciseToUpdateIndex(null);
-      }}
-        >
+        onPress={() => {
+          setExerciseToUpdateIndex(null);
+        }}
+      >
         Back
       </Button>
+      <Text style={tw`text-lg font-bold`}>{`Exercise #${exerciseToUpdateIndex + 1}`}</Text>
       <ScrollView>
         <List.AccordionGroup>
           {categories.map((category) => (
@@ -101,7 +99,6 @@ export default function WorkoutForm({
                         updatedFormValues.exercises[exerciseToUpdateIndex].name = exerciseInfo.name;
                         setFormValues(updatedFormValues);
                         setExerciseToUpdateIndex(null);
-                        setButtonText(exerciseInfo.name);
                       }}
                     />
                   )
@@ -181,36 +178,11 @@ export default function WorkoutForm({
                                           setExerciseToUpdateIndex(i);
                                         }}
                                       >
-                                        {buttonText}
+                                        {formikProps.values.exercises[i].name || "Select Exercise"}
                                       </Button>
-
-                                      {/* <Select
-                                          options={exerciseInfos.map(
-                                            (e) => ({
-                                              value: e.name,
-                                              label: e.name,
-                                            }),
-                                          )}
-                                          placeholderText="select an exercise..."
-                                          onSelect={
-                                            (option: OptionType | null) => {
-                                              if (option) {
-                                                formikProps.setFieldValue(`exercises.${i}.name`, option.value);
-                                              }
-
-                                            }}
-
-                                          defaultOption={{
-                                            value: formikProps.values.exercises[i].name,
-                                            label: formikProps.values.exercises[i].name,
-                                          }}
-                                          clearable={false}
-                                        /> */}
-
                                     </>
                                   )
                               }
-
                             </View>
                             <View style={tw`flex flex-1 p-2`}>
                               <DeleteButton onPress={() => exercisesHelpers.remove(i)} />
