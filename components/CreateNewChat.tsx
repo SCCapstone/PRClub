@@ -109,6 +109,13 @@ export default function CreateNewChat() {
     console.log(userBeingViewedInSearch);
     return (
       <>
+        <CenteredView>
+          <Text style={tw`text-lg text-center`}>
+            Send a message to
+            {' '}
+            {userBeingViewedInSearch.username}
+          </Text>
+        </CenteredView>
         <ChatForm id="" senderId={userBeingViewedInSearch.id} />
       </>
     );

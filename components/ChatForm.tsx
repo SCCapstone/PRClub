@@ -87,10 +87,12 @@ export default function ChatForm({ id, senderId } : {id: string, senderId: strin
         value={messageText}
         style={tw`w-full`}
       />
-      <Button onPress={() => {
-        newMessage();
-        setMessageText('');
-      }}
+      <Button
+        disabled={messageText.length === 0}
+        onPress={() => {
+          newMessage();
+          setMessageText('');
+        }}
       >
         <Ionicons name="send" />
       </Button>
