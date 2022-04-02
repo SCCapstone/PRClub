@@ -10,11 +10,12 @@ import { selectCurrentUser } from '../state/userSlice/selectors';
 import { database } from '../firebase-lib';
 import MessageSent from './MessageSent';
 import MessageReceived from './MessageReceived';
+import MessageModel from '../models/firestore/MessageModel';
 
 export default function Chat({ chatId, senderId }: {chatId:string, senderId: string}) {
   const currentUser = useAppSelector(selectCurrentUser);
   const messagesRef = ref(database, `messages/${chatId}`);
-  const { status, data: msgs } = useDatabaseListData(messagesRef);
+  const { status, data: msgs } = useDatabaseListData<MessageModel>(messagesRef);
 
   if (!currentUser) {
     return <></>;
@@ -29,10 +30,10 @@ export default function Chat({ chatId, senderId }: {chatId:string, senderId: str
       {msgs!.map((m) => (
         m.from === currentUser.username
           ? (
-            <MessageSent message={m.message} />
+            <MessageSent key={m.NO_ID_FIELD} message={m.message} />
           )
           : (
-            <MessageReceived message={m.message} />
+            <MessageReceived key={m.NO_ID_FIELD} message={m.message} />
           )
       ))}
     </View>

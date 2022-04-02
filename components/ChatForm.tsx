@@ -24,7 +24,7 @@ export default function ChatForm({ id, sendersId } : {id: string, sendersId: str
     return <></>;
   }
   const chatsRef = ref(database, 'chats');
-  const { data: chats } = useDatabaseListData(chatsRef);
+  const { data: chats } = useDatabaseListData<ChatModel>(chatsRef);
 
   const sendMessage = (chatID: string) => {
     const messagesRef = ref(database, `messages/${chatID}`);
@@ -70,7 +70,7 @@ export default function ChatForm({ id, sendersId } : {id: string, sendersId: str
   useEffect(() => {
     // Check if chat already exists
     if (chats && chats.length) {
-      chats?.forEach((chat: ChatModel) => {
+      chats.forEach((chat: ChatModel) => {
         if (Object.keys(chat.members).includes(currentUser.id)
         && Object.keys(chat.members).includes(sendersId[0])) {
           setNewChatID(chat.NO_ID_FIELD);
