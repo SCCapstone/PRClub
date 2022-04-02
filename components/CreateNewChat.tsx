@@ -15,7 +15,7 @@ import CenteredView from './CenteredView';
 import ChatForm from './ChatForm';
 
 function FollowerSearchResults(
-  { queryString, onUserPress }: {queryString: string, onUserPress: (user: User) => void},
+  { queryString, onUserPress }: {queryString: string, onUserPress: (users: User) => void},
 ) {
 // Redux-based state
   const currentUser = useAppSelector(selectCurrentUser);
@@ -102,26 +102,32 @@ function FollowerSearchResults(
 }
 
 export default function CreateNewChat() {
-  const [userBeingViewedInSearch, setUserBeingViewedInSearch] = useState<User | null>(null);
+  const [usersBeingViewedInSearch, setUsersBeingViewedInSearch] = useState<User[]>([]);
   const [queryString, setQueryString] = useState<string>('');
 
-  if (userBeingViewedInSearch) {
-    console.log(userBeingViewedInSearch);
+  const addUser = (users:User) => {
+    setUsersBeingViewedInSearch([...usersBeingViewedInSearch, users]);
+  };
+
+  const getUsernames = (): string[] => usersBeingViewedInSearch.map((user: User) => user.username);
+
+  if (usersBeingViewedInSearch.length > 1) {
+    console.log(usersBeingViewedInSearch);
     return (
       <>
         <CenteredView>
           <Text style={tw`text-lg text-center`}>
             Send a message to
             {' '}
-            {userBeingViewedInSearch.username}
+            {/* {userBeingViewedInSearch.username} */}
           </Text>
         </CenteredView>
-        <ChatForm id="" senderId={userBeingViewedInSearch.id} />
+        <ChatForm id="" sendersId={getUsernames()} />
       </>
     );
   }
 
-  if (!userBeingViewedInSearch) {
+  if (!usersBeingViewedInSearch) {
     return (
       <View>
         <Searchbar
@@ -135,7 +141,7 @@ export default function CreateNewChat() {
               <>
                 <FollowerSearchResults
                   queryString={queryString}
-                  onUserPress={setUserBeingViewedInSearch}
+                  onUserPress={addUser}
                 />
               </>
             )

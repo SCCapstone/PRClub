@@ -14,7 +14,7 @@ import { selectCurrentUser } from '../state/userSlice/selectors';
 import { database } from '../firebase-lib';
 import ChatModel from '../models/firestore/ChatModel';
 
-export default function ChatForm({ id, senderId } : {id: string, senderId: string}) {
+export default function ChatForm({ id, sendersId } : {id: string, sendersId: string[]}) {
   const currentUser = useAppSelector(selectCurrentUser);
   const [messageText, setMessageText] = useState<string>('');
   const [newChatID, setNewChatID] = useState<string>(id);
@@ -44,13 +44,14 @@ export default function ChatForm({ id, senderId } : {id: string, senderId: strin
 
   const newMessage = () => {
     if (!chatExists) {
+      // If no chat exists, create new chat
       const chatID = push(chatsRef,
-        { members: { [currentUser.id]: 'true', [senderId]: 'true' }, lastMessage: messageText }).key;
+        { members: { [currentUser.id]: 'true', [sendersId[0]]: 'true' }, lastMessage: messageText }).key;
       setNewChatID(chatID!);
       const userRef = ref(database, `users/${currentUser.id}/${chatID}`);
-      set(userRef, { [senderId]: 'true' });
+      set(userRef, { [sendersId[0]]: 'true' });
 
-      const senderRef = ref(database, `users/${senderId}/${chatID}`);
+      const senderRef = ref(database, `users/${sendersId[0]}/${chatID}`);
       set(senderRef, { [currentUser.id]: 'true' });
       console.log(`if: ${chatID!}`);
       sendMessage(chatID!);
@@ -71,7 +72,7 @@ export default function ChatForm({ id, senderId } : {id: string, senderId: strin
     if (chats && chats.length) {
       chats?.forEach((chat: ChatModel) => {
         if (Object.keys(chat.members).includes(currentUser.id)
-        && Object.keys(chat.members).includes(senderId)) {
+        && Object.keys(chat.members).includes(sendersId[0])) {
           setNewChatID(chat.NO_ID_FIELD);
           setChatExists(true);
         }
