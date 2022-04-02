@@ -23,8 +23,6 @@ import { clearUpsertWorkoutResult } from '../state/workoutsSlice';
 import { selectUpsertWorkoutResult } from '../state/workoutsSlice/selectors';
 import AuthStack from './stacks/auth';
 import MainStack from './stacks/main';
-import ChatScreen from './stacks/main/screens/ChatScreen';
-import ChatStack from './stacks/chat';
 
 const Stack = createStackNavigator();
 

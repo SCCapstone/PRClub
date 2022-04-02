@@ -22,13 +22,13 @@ export const auth = getAuth(app);
 export const storage = getStorage(app);
 export const database = getDatabase(app);
 
-// if (
-//   Constants.manifest
-//     && Constants.manifest.extra
-//     && Constants.manifest.extra.useEmulators
-// ) {
-// connectFirestoreEmulator(firestore, 'localhost', 8080);
-// connectAuthEmulator(auth, 'http://localhost:9099');
-// connectStorageEmulator(storage, 'localhost', 9199);
-// connectDatabaseEmulator(database, 'localhost', 10);
-// // }
+if (
+  Constants.manifest
+    && Constants.manifest.extra
+    && Constants.manifest.extra.useEmulators
+) {
+  connectFirestoreEmulator(firestore, 'localhost', 8080);
+  connectAuthEmulator(auth, 'http://localhost:9099');
+  connectStorageEmulator(storage, 'localhost', 9199);
+  connectDatabaseEmulator(database, 'localhost', 10);
+}

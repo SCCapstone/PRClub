@@ -52,15 +52,12 @@ export default function ChatForm({ id, senderId } : {id: string, senderId: strin
 
       const senderRef = ref(database, `users/${senderId}/${chatID}`);
       set(senderRef, { [currentUser.id]: 'true' });
-      console.log(`if: ${chatID!}`);
       sendMessage(chatID!);
       setLastMessage(chatID!);
     } else if (id.length > 0) {
-      console.log(`else if: ${id}`);
       sendMessage(id);
       setLastMessage(id);
     } else {
-      console.log(`else: ${newChatID}`);
       sendMessage(newChatID);
       setLastMessage(newChatID);
     }

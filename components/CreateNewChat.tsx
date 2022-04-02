@@ -106,7 +106,6 @@ export default function CreateNewChat() {
   const [queryString, setQueryString] = useState<string>('');
 
   if (userBeingViewedInSearch) {
-    console.log(userBeingViewedInSearch);
     return (
       <>
         <CenteredView>

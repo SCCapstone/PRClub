@@ -1,5 +1,4 @@
 import React from 'react';
-import tw from 'twrnc';
 import {
   View, ActivityIndicator,
 } from 'react-native';
