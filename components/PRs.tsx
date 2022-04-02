@@ -31,7 +31,7 @@ function PRsByExerciseListItem({
       key={pr.id}
       title={`Total volume: ${pr.volume} lbs`}
       description={
-        `${new Date(pr.date).getMonth()}`
+        `${new Date(pr.date).getMonth() + 1}`
     + `/${new Date(pr.date).getDate()}`
     + `/${new Date(pr.date).getFullYear()}`
       }
