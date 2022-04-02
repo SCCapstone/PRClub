@@ -158,7 +158,6 @@ export default function PRs({
                   </View>
                 )
             }
-            <View style={tw`h-100`} />
           </ScrollView>
           <Button
             mode="contained"
