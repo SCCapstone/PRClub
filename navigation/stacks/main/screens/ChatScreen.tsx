@@ -1,7 +1,7 @@
 import {
   ref,
 } from '@firebase/database';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import tw from 'twrnc';
 import { useDatabaseListData } from 'reactfire';
 import {
@@ -35,13 +35,13 @@ export default function ChatScreen() {
   const [display, setDisplay] = useState<ChatOptions>(ChatOptions.ChatList);
 
   // get current user's chats
-  const userRef = ref(database, `users/${currentUser!.id}`);
+  const userRef = ref(database, `users/${currentUser.id}`);
   const { data: myChats } = useDatabaseListData(userRef);
 
   // get all chats
   const chatsRef = ref(database, 'chats');
   const { data: chatInfo } = useDatabaseListData(chatsRef);
-  let myFilteredArray: ChatModel[] = [];
+  let myFilteredArray: {Chat:ChatModel};
   const [senderUsernames, setSenderUsernames] = useState<string[]>([]);
   const [clickedChatId, setClickedChatId] = useState<string>('');
   const [clickedSenderId, setClickedSenderId] = useState<string>('');
@@ -92,16 +92,19 @@ export default function ChatScreen() {
 
   if (myChats && filterMyChats(getMyChatIds())?.length > 0) {
     myFilteredArray = filterMyChats(getMyChatIds());
-    // console.log('My chats filtered', myFilteredArray);
+    console.log('My chats filtered', myFilteredArray);
   }
-  myFilteredArray?.forEach((chat) => {
-    const id = getSenderId(chat);
-    // getUsernameFromId(id).then((res) => senderUsernames.push(res as string));
-    getUsernameFromId(id).then((res) => {
-      if (!senderUsernames.includes(res)) {
-        setSenderUsernames([...senderUsernames, res as string]);
-      }
-    });
+  useEffect(() => {
+    myFilteredArray?.forEach((chat) => {
+      const id = getSenderId(chat);
+      // getUsernameFromId(id).then((res) => senderUsernames.push(res as string));
+      getUsernameFromId(id).then((res) => {
+        if (!senderUsernames.includes(res)) {
+          setSenderUsernames([...senderUsernames, res as string]);
+        }
+      });
+    }, [senderUsernames]);
+    console.log(senderUsernames);
   });
 
   return (
@@ -127,6 +130,7 @@ export default function ChatScreen() {
                   setDisplay(ChatOptions.ViewChat);
                 }}
                 >
+                  {/* eslint-disable-next-line react/no-array-index-key */}
                   <View key={i} style={tw`flex flex-row border-b border-black border-solid p-2`}>
 
                     <ChatItem
