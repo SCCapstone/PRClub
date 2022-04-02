@@ -147,11 +147,7 @@ export default function ChatScreen() {
         )}
         {display === ChatOptions.NewChat && (
           <>
-            <View>
-              <TouchableOpacity onPress={() => setDisplay(ChatOptions.ChatList)}>
-                <Text>Cancel</Text>
-              </TouchableOpacity>
-            </View>
+            <Button onPress={() => setDisplay(ChatOptions.ChatList)}>Back</Button>
             <CreateNewChat />
 
           </>
@@ -161,9 +157,7 @@ export default function ChatScreen() {
         <View>
           <View>
             <View style={tw`border-b border-gray-800 border-solid p-2 flex flex-row`}>
-              <TouchableOpacity onPress={() => setDisplay(ChatOptions.ChatList)}>
-                <Text>Back</Text>
-              </TouchableOpacity>
+              <Button onPress={() => setDisplay(ChatOptions.ChatList)}>Back</Button>
               <Text style={tw`font-bold text-lg m-auto`}>{clickedSenderUsername}</Text>
             </View>
             <Chat chatId={clickedChatId} senderId={clickedSenderId} />
