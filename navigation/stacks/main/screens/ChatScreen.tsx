@@ -113,11 +113,11 @@ export default function ChatScreen() {
       setSenderUsernames(usernames.filter((u): u is string => !_.isNull(u)));
       setFetchingUsernames(false);
     }
-  }, [chatInfo, display === ChatOptions.ChatList]);
+  }, [chatInfo, display]);
 
   useEffect(() => {
     fetchUsernames();
-  }, [chatInfo, display === ChatOptions.ChatList]);
+  }, [chatInfo, display]);
 
   if (!currentUser) {
     return <></>;

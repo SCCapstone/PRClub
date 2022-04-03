@@ -46,7 +46,10 @@ export default function Chat({ chatId }: { chatId: string }) {
             <>
               <TouchableOpacity
                 onPress={() => {
-                  update(messagesRef, { ...m, liked: !m.liked });
+                  const messageRef = ref(database, `messages/${chatId}/${m.NO_ID_FIELD}`);
+                  update(messageRef, {
+                    liked: !m.liked,
+                  });
                 }}
               >
                 <MessageReceived key={m.NO_ID_FIELD} message={m.message} />
