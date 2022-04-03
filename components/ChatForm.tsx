@@ -96,9 +96,8 @@ export default function ChatForm({ id, senderIds } : {id: string, senderIds: str
       if (ids.includes(senderId)) return true;
       return false;
     });
-    if (result) { return false; }
 
-    return true;
+    return result;
   };
 
   useEffect(() => {
