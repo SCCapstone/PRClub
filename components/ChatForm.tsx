@@ -93,8 +93,8 @@ export default function ChatForm({ id, senderIds } : {id: string, senderIds: str
 
   const areSendersInChat = (ids: string[]) => {
     const result = senderIds.every((senderId) => {
-      if (!ids.includes(senderId)) return false;
-      return true;
+      if (ids.includes(senderId)) return true;
+      return false;
     });
     if (result) { return false; }
 
