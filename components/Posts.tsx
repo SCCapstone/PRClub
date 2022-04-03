@@ -215,7 +215,6 @@ export default function Posts({
               </>
             ) : <></>
           }
-          <View style={tw`h-100`} />
         </ScrollView>
         <Button
           mode="contained"
@@ -302,7 +301,6 @@ export default function Posts({
 
                   return <WorkoutPost post={p} key={p.id} />;
                 })}
-                <View style={tw`h-100`} />
               </>
             )
             : (
