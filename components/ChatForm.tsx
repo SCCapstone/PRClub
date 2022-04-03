@@ -60,10 +60,10 @@ export default function ChatForm({ id, senderIds } : {id: string, senderIds: str
         senderIds.forEach((thisID) => {
           const userRef = ref(database, `users/${currentUser.id}/${chatID}`);
           set(userRef, { [thisID]: 'true' });
+          const otherUserRef = ref(database, `users/${thisID}/${chatID}`);
+          set(otherUserRef, { [currentUser.id]: 'true' });
 
           senderIds.forEach((otherID) => {
-            const otherUserRef = ref(database, `users/${thisID}/${chatID}`);
-            set(otherUserRef, { [currentUser.id]: 'true' });
             if (thisID !== otherID) { set(otherUserRef, { [otherID]: 'true' }); }
           });
         });
