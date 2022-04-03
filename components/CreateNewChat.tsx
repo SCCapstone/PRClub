@@ -109,7 +109,7 @@ export default function CreateNewChat() {
     setUsersBeingViewedInSearch([...usersBeingViewedInSearch, users]);
   };
 
-  const getUsernames = (): string[] => usersBeingViewedInSearch.map((user: User) => user.username);
+  const getIds = (): string[] => usersBeingViewedInSearch.map((user: User) => user.id);
 
   if (usersBeingViewedInSearch.length > 1) {
     console.log(usersBeingViewedInSearch);
@@ -122,7 +122,7 @@ export default function CreateNewChat() {
             {/* {userBeingViewedInSearch.username} */}
           </Text>
         </CenteredView>
-        <ChatForm id="" sendersId={getUsernames()} />
+        <ChatForm id="" senderIds={getIds()} />
       </>
     );
   }

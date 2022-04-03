@@ -41,21 +41,20 @@ export default function ChatScreen() {
   let myFilteredArray: ChatModel[] = [];
   const [senderUsernames, setSenderUsernames] = useState<string[]>([]);
   const [clickedChatId, setClickedChatId] = useState<string>('');
-  const [clickedSenderId, setClickedSenderId] = useState<string>('');
+  const [clickedSenderIds, setClickedSenderIds] = useState<string[]>([]);
   const [clickedSenderUsername, setClickedSenderUsername] = useState<string>('');
 
   // functions for getting chat data
   const getChatId = (chat:ChatModel):string => chat.NO_ID_FIELD;
-
-  const getSenderId = (chat:ChatModel):string => {
-    let val = '';
-    const members = Object.keys(chat.members);
-    members?.forEach((id:string) => {
+  const getChatMembers = (chat:ChatModel) => Object.keys(chat.members);
+  const getSenderIds = (members:string[]):string[] => {
+    const otherMembers = members?.map((id:string) => {
       if (id !== 'NO_ID_FIELD' && currentUser?.id !== id) {
-        val = id;
+        return id;
       }
+      return '';
     });
-    return val;
+    return otherMembers.filter((member) => member);
   }; // may need to refactor for group chats
 
   const getLastMessage = (chat:ChatModel): string => chat.lastMessage;
@@ -84,16 +83,21 @@ export default function ChatScreen() {
       return filteredChats;
     }
   };
-  const getUsernameFromId = async (userId:string) => {
-    const userDocRef = doc(firestore, USERS_COLLECTION, userId);
-    const userDocSnap = await getDoc(userDocRef);
+  const getUsernameFromIds = async (userIds:string[]) => {
+    const snaps = await Promise.all(userIds.map((userId) => {
+      const userDocRef = doc(firestore, USERS_COLLECTION, userId);
+      const userDocSnap = getDoc(userDocRef);
 
-    if (!userDocSnap.exists()) {
-      return null;
-    }
+      return userDocSnap;
+    }));
 
-    const user = userDocSnap.data() as User;
-    return user.username;
+    return snaps.map((snap) => {
+      if (!snap.exists()) {
+        return null;
+      }
+      const user = snap.data() as User;
+      return user.username;
+    });
   };
 
   const filteredChats = filterMyChats(getMyChatIds());
@@ -106,12 +110,12 @@ export default function ChatScreen() {
   const fetchUsernames = useCallback(async () => {
     setFetchingUsernames(true);
     if (filteredChats) {
-      const usernames = await Promise.all(filteredChats.map(async (chat) => {
-        const id = getSenderId(chat);
-        return getUsernameFromId(id);
-      }));
+      const u = filteredChats
+        .map((chat:ChatModel) => getSenderIds(getChatMembers(chat)));
+      const usernames2d = await Promise.all(u.map((id) => getUsernameFromIds(id)));
+      const usernames = usernames2d.flat();
 
-      setSenderUsernames(usernames.filter((u): u is string => !_.isNull(u)));
+      setSenderUsernames(usernames.filter((i): i is string => !_.isNull(i)));
       setFetchingUsernames(false);
     }
   }, [chatInfo]);
@@ -148,7 +152,7 @@ export default function ChatScreen() {
                   key={chat.NO_ID_FIELD}
                   onPress={() => {
                     setClickedChatId(getChatId(chat));
-                    setClickedSenderId(getSenderId(chat));
+                    setClickedSenderIds(getSenderIds(getChatMembers(chat)));
                     setClickedSenderUsername(senderUsernames[i]);
                     setDisplay(ChatOptions.ViewChat);
                   }}
@@ -182,9 +186,9 @@ export default function ChatScreen() {
               <Button onPress={() => setDisplay(ChatOptions.ChatList)}>Back</Button>
               <Text style={tw`font-bold text-lg m-auto`}>{clickedSenderUsername}</Text>
             </View>
-            <Chat chatId={clickedChatId} senderId={clickedSenderId} />
+            <Chat chatId={clickedChatId} />
           </View>
-          <ChatForm id={clickedChatId} senderId={clickedSenderId} />
+          <ChatForm id={clickedChatId} senderIds={clickedSenderIds} />
         </View>
 
       )}

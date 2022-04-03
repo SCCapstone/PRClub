@@ -1,5 +1,4 @@
 import React from 'react';
-import tw from 'twrnc';
 import {
   View, ActivityIndicator,
 } from 'react-native';
@@ -12,7 +11,7 @@ import MessageSent from './MessageSent';
 import MessageReceived from './MessageReceived';
 import MessageModel from '../models/firestore/MessageModel';
 
-export default function Chat({ chatId, senderId }: {chatId:string, senderId: string}) {
+export default function Chat({ chatId }: {chatId:string}) {
   const currentUser = useAppSelector(selectCurrentUser);
   const messagesRef = ref(database, `messages/${chatId}`);
   const { status, data: msgs } = useDatabaseListData<MessageModel>(messagesRef);
