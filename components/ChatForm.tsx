@@ -32,6 +32,7 @@ export default function ChatForm({ id, senderId }: { id: string, senderId: strin
       message: messageText,
       from: currentUser.username,
       timestamp: serverTimestamp(),
+      liked: '',
     });
   };
 
