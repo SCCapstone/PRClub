@@ -2,8 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import User from '../../models/firestore/User';
 import { initialState } from './state';
 import {
-  followUser,
-  tryFetchCurrentUser,
+  followUser, tryFetchCurrentUser,
   unfollowUser, updateName, updateUsername, uploadProfileImage, userLogOut, userSignIn,
   userSignUp,
 } from './thunks';
