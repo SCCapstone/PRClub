@@ -27,7 +27,7 @@ export default function Chat({ chatId, senderId }: {chatId:string, senderId: str
     return <ActivityIndicator />;
   }
   const isMessageLiked = (msg: MessageModel): boolean => {
-    if (msg.liked.length === 0) {
+    if (msg.liked.length === 0 || msg.liked === 'false') {
       return false;
     }
     return true;
