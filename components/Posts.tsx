@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Image, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import {
-  ActivityIndicator, Button, RadioButton, Text, TextInput,
+  ActivityIndicator, Button, Chip, Text, TextInput,
 } from 'react-native-paper';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useFirestoreCollectionData } from 'reactfire';
@@ -100,37 +100,32 @@ export default function Posts({
               <View style={tw`flex flex-1`} />
             </View>
           </View>
-          <View style={tw`flex flex-row p-3 items-center`}>
+          <View style={tw`flex flex-row items-center`}>
             <View style={tw`flex flex-1`}>
-              <Text style={tw`text-center font-bold`}>Post type:</Text>
+              <Chip
+                icon={() => <Ionicons name="barbell" size={16} />}
+                textStyle={tw`text-center font-bold text-lg`}
+                selected={postType === 'workout'}
+                onPress={() => {
+                  setPostType('workout');
+                  setThingToPost(null);
+                }}
+              >
+                Post a workout
+              </Chip>
             </View>
             <View style={tw`flex flex-1`}>
-              <View style={tw`flex flex-row items-center`}>
-                <View style={tw`flex flex-1`}>
-                  <RadioButton
-                    value="workout"
-                    status={postType === 'workout' ? 'checked' : 'unchecked'}
-                    onPress={() => setPostType('workout')}
-                  />
-                </View>
-                <View style={tw`flex flex-1`}>
-                  <Text>Workout</Text>
-                </View>
-              </View>
-            </View>
-            <View style={tw`flex flex-1`}>
-              <View style={tw`flex flex-row items-center`}>
-                <View style={tw`flex flex-1`}>
-                  <RadioButton
-                    value="pr"
-                    status={postType === 'pr' ? 'checked' : 'unchecked'}
-                    onPress={() => setPostType('pr')}
-                  />
-                </View>
-                <View style={tw`flex flex-1`}>
-                  <Text>PR</Text>
-                </View>
-              </View>
+              <Chip
+                icon={() => <Ionicons name="checkbox" size={16} />}
+                textStyle={tw`text-center font-bold text-lg`}
+                selected={postType === 'pr'}
+                onPress={() => {
+                  setPostType('pr');
+                  setThingToPost(null);
+                }}
+              >
+                Post a PR
+              </Chip>
             </View>
           </View>
           {
