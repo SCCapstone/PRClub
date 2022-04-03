@@ -26,7 +26,12 @@ export default function Chat({ chatId, senderId }: {chatId:string, senderId: str
   if (status === 'loading') {
     return <ActivityIndicator />;
   }
-  const isMessageLiked = (msg: MessageModel): boolean => msg.liked;
+  const isMessageLiked = (msg: MessageModel): boolean => {
+    if (msg.liked.length === 0) {
+      return false;
+    }
+    return true;
+  };
   const likeMessage = (msg: MessageModel) => {
     const msgRef = ref(database, `messages/${chatId}/${msg.NO_ID_FIELD}`);
     update(msgRef, {
