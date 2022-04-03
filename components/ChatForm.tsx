@@ -14,7 +14,7 @@ import { selectCurrentUser } from '../state/userSlice/selectors';
 import { database } from '../firebase-lib';
 import ChatModel from '../models/firestore/ChatModel';
 
-export default function ChatForm({ id, senderId } : {id: string, senderId: string}) {
+export default function ChatForm({ id, senderId }: { id: string, senderId: string }) {
   const currentUser = useAppSelector(selectCurrentUser);
   const [messageText, setMessageText] = useState<string>('');
   const [newChatID, setNewChatID] = useState<string>(id);
@@ -68,7 +68,7 @@ export default function ChatForm({ id, senderId } : {id: string, senderId: strin
     if (chats && chats.length) {
       chats.forEach((chat: ChatModel) => {
         if (Object.keys(chat.members).includes(currentUser.id)
-        && Object.keys(chat.members).includes(senderId)) {
+          && Object.keys(chat.members).includes(senderId)) {
           setNewChatID(chat.NO_ID_FIELD);
           setChatExists(true);
         }
@@ -78,21 +78,26 @@ export default function ChatForm({ id, senderId } : {id: string, senderId: strin
 
   return (
     <View style={tw`flex flex-row`}>
-      <TextInput
-        placeholder="message"
-        onChangeText={setMessageText}
-        value={messageText}
-        style={tw`w-full`}
-      />
-      <Button
-        disabled={messageText.length === 0}
-        onPress={() => {
-          newMessage();
-          setMessageText('');
-        }}
-      >
-        <Ionicons name="send" />
-      </Button>
+      <View style={tw`flex flex-3`}>
+        <TextInput
+          placeholder="message"
+          onChangeText={setMessageText}
+          value={messageText}
+          multiline
+        />
+      </View>
+      <View style={tw`flex flex-1`}>
+        <Button
+          mode="contained"
+          disabled={messageText.length === 0}
+          onPress={() => {
+            newMessage();
+            setMessageText('');
+          }}
+        >
+          <Ionicons name="send" />
+        </Button>
+      </View>
     </View>
   );
 }
