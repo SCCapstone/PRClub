@@ -2,6 +2,7 @@ import { FirebaseOptions, initializeApp } from '@firebase/app';
 import { connectAuthEmulator, getAuth } from '@firebase/auth';
 import { connectFirestoreEmulator, getFirestore } from '@firebase/firestore';
 import { connectStorageEmulator, getStorage } from '@firebase/storage';
+import { connectDatabaseEmulator, getDatabase } from 'firebase/database';
 import Constants from 'expo-constants';
 
 export const firebaseConfig: FirebaseOptions = {
@@ -19,6 +20,7 @@ export const app = initializeApp(firebaseConfig);
 export const firestore = getFirestore(app);
 export const auth = getAuth(app);
 export const storage = getStorage(app);
+export const database = getDatabase(app);
 
 if (
   Constants.manifest
@@ -28,4 +30,5 @@ if (
   connectFirestoreEmulator(firestore, 'localhost', 8080);
   connectAuthEmulator(auth, 'http://localhost:9099');
   connectStorageEmulator(storage, 'localhost', 9199);
+  connectDatabaseEmulator(database, 'localhost', 10);
 }

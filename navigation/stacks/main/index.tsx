@@ -8,6 +8,7 @@ import HomeScreen from './screens/HomeScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import SearchScreen from './screens/SearchScreen';
 import SettingsScreen from './screens/SettingsScreen';
+import ChatScreen from './screens/ChatScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -34,6 +35,8 @@ export default function MainStack() {
             iconName = focused ? 'search' : 'search-outline';
           } else if (route.name === 'Home') {
             iconName = focused ? 'home' : 'home-outline';
+          } else if (route.name === 'Messages') {
+            iconName = focused ? 'chatbox' : 'chatbox-outline';
           }
 
           return <Ionicons name={iconName} size={size} color={color} />;
@@ -60,6 +63,11 @@ export default function MainStack() {
       <Tab.Screen
         name="Profile"
         component={ProfileScreen}
+        options={{ tabBarShowLabel: false }}
+      />
+      <Tab.Screen
+        name="Messages"
+        component={ChatScreen}
         options={{ tabBarShowLabel: false }}
       />
       <Tab.Screen
