@@ -45,12 +45,12 @@ export default function ChatScreen() {
   const [clickedSenderUsername, setClickedSenderUsername] = useState<string>('');
 
   // functions for getting chat data
-  const getChatId = (chat:ChatModel):string => chat.NO_ID_FIELD;
+  const getChatId = (chat: ChatModel): string => chat.NO_ID_FIELD;
 
-  const getSenderId = (chat:ChatModel):string => {
+  const getSenderId = (chat: ChatModel): string => {
     let val = '';
     const members = Object.keys(chat.members);
-    members?.forEach((id:string) => {
+    members?.forEach((id: string) => {
       if (id !== 'NO_ID_FIELD' && currentUser?.id !== id) {
         val = id;
       }
@@ -58,7 +58,7 @@ export default function ChatScreen() {
     return val;
   };
 
-  const getLastMessage = (chat:ChatModel): string => chat.lastMessage;
+  const getLastMessage = (chat: ChatModel): string => chat.lastMessage;
 
   const getMyChatIds = (): string[] => {
     const idArray: string[] = [];
@@ -71,7 +71,7 @@ export default function ChatScreen() {
   };
 
   // eslint-disable-next-line consistent-return
-  const filterMyChats = (chats:string[]) => {
+  const filterMyChats = (chats: string[]) => {
     const filteredChats: ChatModel[] = [];
     if (chatInfo) {
       chatInfo.forEach((chat) => {
@@ -84,7 +84,7 @@ export default function ChatScreen() {
       return filteredChats;
     }
   };
-  const getUsernameFromId = async (userId:string) => {
+  const getUsernameFromId = async (userId: string) => {
     const userDocRef = doc(firestore, USERS_COLLECTION, userId);
     const userDocSnap = await getDoc(userDocRef);
 
@@ -103,8 +103,8 @@ export default function ChatScreen() {
 
   const [fetchingUsernames, setFetchingUsernames] = useState<boolean>(false);
   const fetchUsernames = useCallback(async () => {
-    setFetchingUsernames(true);
     if (filteredChats) {
+      setFetchingUsernames(true);
       const usernames = await Promise.all(filteredChats.map(async (chat) => {
         const id = getSenderId(chat);
         return getUsernameFromId(id);
@@ -113,17 +113,17 @@ export default function ChatScreen() {
       setSenderUsernames(usernames.filter((u): u is string => !_.isNull(u)));
       setFetchingUsernames(false);
     }
-  }, [chatInfo]);
+  }, [chatInfo, display]);
 
   useEffect(() => {
     fetchUsernames();
-  }, [chatInfo]);
+  }, [chatInfo, display]);
 
   if (!currentUser) {
     return <></>;
   }
 
-  if (chatInfoStatus === 'loading' || myChatsStatus === 'loading' || fetchingUsernames) {
+  if (fetchingUsernames) {
     return <ActivityIndicator />;
   }
 
@@ -141,29 +141,34 @@ export default function ChatScreen() {
                 <Ionicons name="create" size={20} color="black" />
               </Button>
             </View>
-            <View>
-              {myFilteredArray?.map((chat, i) => (
-                <TouchableOpacity
-                  key={chat.NO_ID_FIELD}
-                  onPress={() => {
-                    setClickedChatId(getChatId(chat));
-                    setClickedSenderId(getSenderId(chat));
-                    setClickedSenderUsername(senderUsernames[i]);
-                    setDisplay(ChatOptions.ViewChat);
-                  }}
-                >
-                  {/* eslint-disable-next-line react/no-array-index-key */}
-                  <View key={chat.NO_ID_FIELD} style={tw`flex flex-row border-b border-black border-solid p-2`}>
-                    <ChatItem
-                      senderUsername={senderUsernames[i]}
-                      lastMessage={getLastMessage(chat)}
-                    />
+            {
+              senderUsernames.length === 0
+                ? <Text>No chats</Text>
+                : (
+                  <View>
+                    {myFilteredArray?.map((chat, i) => (
+                      <TouchableOpacity
+                        key={chat.NO_ID_FIELD}
+                        onPress={() => {
+                          setClickedChatId(getChatId(chat));
+                          setClickedSenderId(getSenderId(chat));
+                          setClickedSenderUsername(senderUsernames[i]);
+                          setDisplay(ChatOptions.ViewChat);
+                        }}
+                      >
+                        {/* eslint-disable-next-line react/no-array-index-key */}
+                        <View key={chat.NO_ID_FIELD} style={tw`flex flex-row border-b border-black border-solid p-2`}>
+                          <ChatItem
+                            senderUsername={senderUsernames[i]}
+                            lastMessage={getLastMessage(chat)}
+                          />
+                        </View>
+                      </TouchableOpacity>
+
+                    ))}
                   </View>
-                </TouchableOpacity>
-
-              ))}
-            </View>
-
+                )
+            }
           </>
         )}
         {display === ChatOptions.NewChat && (
