@@ -1,24 +1,21 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 import { Dimensions, View } from 'react-native';
-import {
-  ActivityIndicator, Snackbar, Text,
-} from 'react-native-paper';
+import { Snackbar, Text } from 'react-native-paper';
 import tw from 'twrnc';
 import { useAppDispatch, useAppSelector } from '../hooks/redux';
 import User from '../models/firestore/User';
-import {
-  clearUploadProfileImageResult, clearFollowResult, clearUnfollowResult, clearUpdateProfileResult,
-} from '../state/userSlice';
-import {
-  selectUploadProfileImageResult,
-  selectCurrentUser, selectCurrentUserStatus, selectFollowResult,
-  selectUnfollowResult, selectUpdateProfileResult,
-} from '../state/userSlice/selectors';
 import { clearUpsertPostResult } from '../state/postsSlice';
 import { selectUpsertPostResult } from '../state/postsSlice/selectors';
 import { clearUpsertPRResult } from '../state/prsSlice';
 import { selectUpsertPRResult } from '../state/prsSlice/selectors';
+import {
+  clearFollowResult, clearUnfollowResult, clearUpdateProfileResult, clearUploadProfileImageResult,
+} from '../state/userSlice';
+import {
+  selectCurrentUser, selectFollowResult,
+  selectUnfollowResult, selectUpdateProfileResult, selectUploadProfileImageResult,
+} from '../state/userSlice/selectors';
 import { clearUpsertWorkoutResult } from '../state/workoutsSlice';
 import { selectUpsertWorkoutResult } from '../state/workoutsSlice/selectors';
 import AuthStack from './stacks/auth';

@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Image, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import {
-  ActivityIndicator, Button, Chip, RadioButton, Text, TextInput,
+  ActivityIndicator, Button, Chip, Text, TextInput,
 } from 'react-native-paper';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useFirestoreCollectionData } from 'reactfire';
