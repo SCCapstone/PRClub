@@ -45,17 +45,41 @@ export default function ChatForm({ id, senderIds } : {id: string, senderIds: str
   const newMessage = () => {
     if (!chatExists) {
       // If no chat exists, create new chat
-      const chatID = push(chatsRef,
-        { members: { [currentUser.id]: 'true', [senderIds[0]]: 'true' }, lastMessage: messageText }).key;
-      setNewChatID(chatID!);
-      const userRef = ref(database, `users/${currentUser.id}/${chatID}`);
-      set(userRef, { [senderIds[0]]: 'true' });
+      if (senderIds.length > 1) {
+        const chatID = push(chatsRef,
+          {
+            members: { [currentUser.id]: 'true', [senderIds[0]]: 'true' },
+            lastMessage: messageText,
+          }).key;
+        setNewChatID(chatID!);
+        const newChatRef = ref(database, `chats/${chatID}/members`);
+        senderIds.slice(1).forEach((thisID) => {
+          update(newChatRef, { [thisID]: 'true' });
+        });
 
-      const senderRef = ref(database, `users/${senderIds[0]}/${chatID}`);
-      set(senderRef, { [currentUser.id]: 'true' });
-      console.log(`if: ${chatID!}`);
-      sendMessage(chatID!);
-      setLastMessage(chatID!);
+        senderIds.forEach((thisID) => {
+          const userRef = ref(database, `users/${currentUser.id}/${chatID}`);
+          set(userRef, { [thisID]: 'true' });
+
+          senderIds.forEach((otherID) => {
+            const otherUserRef = ref(database, `users/${thisID}/${chatID}`);
+            set(otherUserRef, { [currentUser.id]: 'true' });
+            if (thisID !== otherID) { set(otherUserRef, { [otherID]: 'true' }); }
+          });
+        });
+        console.log(`GM: ${chatID}`);
+      } else {
+        const chatID = push(chatsRef,
+          { members: { [currentUser.id]: 'true', [senderIds[0]]: 'true' }, lastMessage: messageText }).key;
+        setNewChatID(chatID!);
+        const userRef = ref(database, `users/${currentUser.id}/${chatID}`);
+        set(userRef, { [senderIds[0]]: 'true' });
+        const senderRef = ref(database, `users/${senderIds[0]}/${chatID}`);
+        set(senderRef, { [currentUser.id]: 'true' });
+        console.log(`DM: ${chatID!}`);
+        sendMessage(chatID!);
+        setLastMessage(chatID!);
+      }
     } else if (id.length > 0) {
       console.log(`else if: ${id}`);
       sendMessage(id);

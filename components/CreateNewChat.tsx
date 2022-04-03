@@ -50,8 +50,6 @@ function FollowerSearchResults(
     (u) => u.id,
   ).filter(
     (u) => u.id !== currentUser?.id,
-  ).filter(
-    (u) => currentUser?.followingIds.includes(u.id),
   );
 
   if (nameQueryStatus === 'loading' || usernameQueryStatus === 'loading') {
@@ -72,6 +70,7 @@ function FollowerSearchResults(
                 key={user.id}
                 style={tw`p-2 border-b`}
                 onPress={() => {
+                  console.log(queriedUsers.splice(0, queriedUsers.length));
                   onUserPress(user);
                 }}
               >
@@ -105,55 +104,82 @@ export default function CreateNewChat() {
   const [usersBeingViewedInSearch, setUsersBeingViewedInSearch] = useState<User[]>([]);
   const [queryString, setQueryString] = useState<string>('');
 
-  const addUser = (users:User) => {
-    setUsersBeingViewedInSearch([...usersBeingViewedInSearch, users]);
+  const addUser = (user:User) => {
+    setQueryString('');
+    console.log(usersBeingViewedInSearch);
+    if (!usersBeingViewedInSearch.includes(user)) {
+      setUsersBeingViewedInSearch([...usersBeingViewedInSearch,
+        user]);
+    }
+    console.log(usersBeingViewedInSearch);
   };
 
   const getIds = (): string[] => usersBeingViewedInSearch.map((user: User) => user.id);
 
-  if (usersBeingViewedInSearch.length > 1) {
-    console.log(usersBeingViewedInSearch);
-    return (
-      <>
-        <CenteredView>
-          <Text style={tw`text-lg text-center`}>
-            Send a message to
-            {' '}
-            {/* {userBeingViewedInSearch.username} */}
-          </Text>
-        </CenteredView>
-        <ChatForm id="" senderIds={getIds()} />
-      </>
-    );
-  }
-
-  if (!usersBeingViewedInSearch) {
-    return (
-      <View>
-        <Searchbar
-          placeholder="search for users..."
-          onChangeText={setQueryString}
-          value={queryString}
-        />
-        {
-          queryString.length > 0
-            ? (
-              <>
-                <FollowerSearchResults
-                  queryString={queryString}
-                  onUserPress={addUser}
-                />
-              </>
-            )
-            : (
+  // if (usersBeingViewedInSearch.length < 1) {
+  return (
+    <View>
+      <Searchbar
+        placeholder="search for users..."
+        onChangeText={setQueryString}
+        value={queryString}
+      />
+      {
+        queryString.length > 0
+          ? (
+            <>
+              <FollowerSearchResults
+                queryString={queryString}
+                onUserPress={addUser}
+              />
+            </>
+          )
+          : (
+            <>
+            </>
+          )
+      }
+      {
+        usersBeingViewedInSearch.length === 0
+          ? (
+            <CenteredView>
+              <Text style={tw`text-lg text-center`}>Start searching for users by typing in the search bar above!</Text>
+            </CenteredView>
+          )
+          : (
+            <>
+            </>
+          )
+      }
+      {
+        usersBeingViewedInSearch.length > 0
+          ? (
+            <>
               <CenteredView>
-                <Text style={tw`text-lg text-center`}>Start searching for users by typing in the search bar above!</Text>
+                <Text style={tw`text-lg text-center`}>
+                  Send a new message to:
+                  {' '}
+                  {usersBeingViewedInSearch.map((u) => u.username).join(', ')}
+                  {/* {usersBeingViewedInSearch.map((u) => (
+                    <View>
+                      {u.username}
+                    </View>
+                  ))} */}
+                  {/* {userBeingViewedInSearch.username} */}
+                </Text>
               </CenteredView>
-            )
-        }
-      </View>
-    );
-  }
+              <ChatForm id="" senderIds={getIds()} />
+            </>
+          )
+          : (
+            <>
+            </>
+          )
+
+      }
+    </View>
+  );
+  // }
 
   return (
     <></>
