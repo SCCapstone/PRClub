@@ -113,17 +113,17 @@ export default function ChatScreen() {
       setSenderUsernames(usernames.filter((u): u is string => !_.isNull(u)));
       setFetchingUsernames(false);
     }
-  }, [chatInfo, display]);
+  }, [chatInfo, display === ChatOptions.ChatList]);
 
   useEffect(() => {
     fetchUsernames();
-  }, [chatInfo, display]);
+  }, [chatInfo, display === ChatOptions.ChatList]);
 
   if (!currentUser) {
     return <></>;
   }
 
-  if (fetchingUsernames) {
+  if (myChatsStatus === 'loading' || chatInfoStatus === 'loading' || fetchingUsernames) {
     return <ActivityIndicator />;
   }
 
@@ -186,7 +186,7 @@ export default function ChatScreen() {
               <Button onPress={() => setDisplay(ChatOptions.ChatList)}>Back</Button>
               <Text style={tw`font-bold text-lg m-auto`}>{clickedSenderUsername}</Text>
             </View>
-            <Chat chatId={clickedChatId} senderId={clickedSenderId} />
+            <Chat chatId={clickedChatId} />
           </View>
           <ChatForm id={clickedChatId} senderId={clickedSenderId} />
         </View>
