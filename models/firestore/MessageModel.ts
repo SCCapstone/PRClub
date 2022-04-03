@@ -3,4 +3,5 @@ export default interface MessageModel {
   from: string,
   message: string,
   timestamp: number,
+  likedBy: { [key:string]: string, value: string }[]
 }
