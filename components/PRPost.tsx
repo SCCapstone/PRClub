@@ -10,13 +10,14 @@ import { useAppDispatch, useAppSelector } from '../hooks/redux';
 import Post from '../models/firestore/Post';
 import PR from '../models/firestore/PR';
 import Workout from '../models/firestore/Workout';
-import { likePost, removePost, unlikePost } from '../state/postsSlice/thunks';
+import { removePost } from '../state/postsSlice/thunks';
 import { selectCurrentUser } from '../state/userSlice/selectors';
+import { likePost, unlikePost } from '../state/userSlice/thunks';
 import CenteredView from './CenteredView';
 import CommentForm from './CommentForm';
 import Comments from './Comments';
 
-export default function PRPost({ post, forCurrentUser }: {post: Post, forCurrentUser: boolean}) {
+export default function PRPost({ post }: {post: Post}) {
   // Redux-level state
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(selectCurrentUser);
@@ -64,7 +65,7 @@ export default function PRPost({ post, forCurrentUser }: {post: Post, forCurrent
         </View>
         <View style={tw`flex flex-1`}>
           {
-            forCurrentUser
+            post.userId === currentUser.id
             && (
               <Button onPress={() => dispatch(removePost(post))}>
                 <Ionicons name="trash" size={24} style={tw`text-black`} />
@@ -79,11 +80,12 @@ export default function PRPost({ post, forCurrentUser }: {post: Post, forCurrent
             <>
               {
                 post.image
-                  && (
+                  ? (
                     <View style={tw`items-center p-2`}>
                       <Image source={{ uri: post.image }} style={tw`h-50 w-50`} />
                     </View>
                   )
+                  : <></>
               }
               <View style={tw`bg-gray-300 p-3`}>
                 <>

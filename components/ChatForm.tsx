@@ -116,15 +116,18 @@ export default function ChatForm({ id, senderIds } : {id: string, senderIds: str
   }, [newChatID, chatExists]);
 
   return (
-    <>
-      <View style={tw`flex flex-row`}>
+    <View style={tw`flex flex-row`}>
+      <View style={tw`flex flex-3`}>
         <TextInput
           placeholder="message"
           onChangeText={setMessageText}
           value={messageText}
-          style={tw`w-full`}
+          multiline
         />
+      </View>
+      <View style={tw`flex flex-1`}>
         <Button
+          mode="contained"
           disabled={messageText.length === 0}
           onPress={() => {
             newMessage();
@@ -134,7 +137,6 @@ export default function ChatForm({ id, senderIds } : {id: string, senderIds: str
           <Ionicons name="send" />
         </Button>
       </View>
-      <View style={tw`h-100`} />
-    </>
+    </View>
   );
 }

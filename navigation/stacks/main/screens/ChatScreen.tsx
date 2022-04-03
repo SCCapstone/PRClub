@@ -103,7 +103,6 @@ export default function ChatScreen() {
   const filteredChats = filterMyChats(getMyChatIds());
   if (myChats && filteredChats && filteredChats.length > 0) {
     myFilteredArray = filteredChats;
-    console.log('My chats filtered', myFilteredArray);
   }
 
   const [fetchingUsernames, setFetchingUsernames] = useState<boolean>(false);
@@ -128,7 +127,7 @@ export default function ChatScreen() {
     return <></>;
   }
 
-  if (chatInfoStatus === 'loading' || fetchingUsernames) {
+  if (chatInfoStatus === 'loading' || myChatsStatus === 'loading' || fetchingUsernames) {
     return <ActivityIndicator />;
   }
 
