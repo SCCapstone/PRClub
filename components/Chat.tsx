@@ -73,9 +73,8 @@ export default function Chat({ chatId, senderId }: {chatId:string, senderId: str
           ? (
             <View>
               <View style={tw`flex flex-row max-w-xs ml-auto`}>
-                <TouchableOpacity onPress={
-                  isLikedByCurrentUser(m) ? unlikeMessage(m) : likeMessage(m)
-                }
+                <TouchableOpacity onPress={() => (isLikedByCurrentUser(m)
+                  ? unlikeMessage(m) : likeMessage(m))}
                 >
                   <Ionicons name={isLikedByCurrentUser(m) ? 'heart' : 'heart-outline'} size={20} style={tw`mt-auto`} />
                 </TouchableOpacity>
@@ -97,9 +96,8 @@ export default function Chat({ chatId, senderId }: {chatId:string, senderId: str
             <View>
               <View style={tw`flex flex-row`}>
                 <MessageReceived key={m.NO_ID_FIELD} message={m.message} />
-                <TouchableOpacity onPress={
-                  isLikedByCurrentUser(m) ? unlikeMessage(m) : likeMessage(m)
-                }
+                <TouchableOpacity onPress={() => (isLikedByCurrentUser(m)
+                  ? unlikeMessage(m) : likeMessage(m))}
                 >
                   <Ionicons name={isLikedByCurrentUser(m) ? 'heart' : 'heart-outline'} size={20} style={tw`mt-auto`} />
                 </TouchableOpacity>
