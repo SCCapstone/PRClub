@@ -81,22 +81,33 @@ export default function ChatForm({ id, senderIds } : {id: string, senderIds: str
         setLastMessage(chatID!);
       }
     } else if (id.length > 0) {
-      console.log(`else if: ${id}`);
+      console.log(`Group Message: ${id}`);
       sendMessage(id);
       setLastMessage(id);
     } else {
-      console.log(`else: ${newChatID}`);
+      console.log(`Chat found: ${newChatID}`);
       sendMessage(newChatID);
       setLastMessage(newChatID);
     }
   };
 
+  const areSendersInChat = (ids: string[]) => {
+    const result = senderIds.every((senderId) => {
+      if (!ids.includes(senderId)) return false;
+      return true;
+    });
+    if (result) { return false; }
+
+    return true;
+  };
+
   useEffect(() => {
     // Check if chat already exists
-    if (chats && chats.length) {
+    if (chats) {
+      console.log(senderIds);
       chats.forEach((chat: ChatModel) => {
         if (Object.keys(chat.members).includes(currentUser.id)
-        && Object.keys(chat.members).includes(senderIds[0])) {
+          && areSendersInChat(Object.keys(chat.members))) {
           setNewChatID(chat.NO_ID_FIELD);
           setChatExists(true);
         }
@@ -105,22 +116,25 @@ export default function ChatForm({ id, senderIds } : {id: string, senderIds: str
   }, [newChatID, chatExists]);
 
   return (
-    <View style={tw`flex flex-row`}>
-      <TextInput
-        placeholder="message"
-        onChangeText={setMessageText}
-        value={messageText}
-        style={tw`w-full`}
-      />
-      <Button
-        disabled={messageText.length === 0}
-        onPress={() => {
-          newMessage();
-          setMessageText('');
-        }}
-      >
-        <Ionicons name="send" />
-      </Button>
-    </View>
+    <>
+      <View style={tw`flex flex-row`}>
+        <TextInput
+          placeholder="message"
+          onChangeText={setMessageText}
+          value={messageText}
+          style={tw`w-full`}
+        />
+        <Button
+          disabled={messageText.length === 0}
+          onPress={() => {
+            newMessage();
+            setMessageText('');
+          }}
+        >
+          <Ionicons name="send" />
+        </Button>
+      </View>
+      <View style={tw`h-100`} />
+    </>
   );
 }

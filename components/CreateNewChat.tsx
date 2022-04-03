@@ -70,7 +70,6 @@ function FollowerSearchResults(
                 key={user.id}
                 style={tw`p-2 border-b`}
                 onPress={() => {
-                  console.log(queriedUsers.splice(0, queriedUsers.length));
                   onUserPress(user);
                 }}
               >
@@ -106,12 +105,10 @@ export default function CreateNewChat() {
 
   const addUser = (user:User) => {
     setQueryString('');
-    console.log(usersBeingViewedInSearch);
     if (!usersBeingViewedInSearch.includes(user)) {
       setUsersBeingViewedInSearch([...usersBeingViewedInSearch,
         user]);
     }
-    console.log(usersBeingViewedInSearch);
   };
 
   const getIds = (): string[] => usersBeingViewedInSearch.map((user: User) => user.id);
