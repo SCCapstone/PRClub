@@ -5,6 +5,7 @@ import { useAppSelector } from '../../../hooks/redux';
 import { selectCurrentUser } from '../../../state/userSlice/selectors';
 import CreateWorkoutScreen from './screens/CreateWorkoutScreen';
 import HomeScreen from './screens/HomeScreen';
+import MessagesScreen from './screens/MessagesScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import SearchScreen from './screens/SearchScreen';
 import SettingsScreen from './screens/SettingsScreen';
@@ -34,6 +35,8 @@ export default function MainStack() {
             iconName = focused ? 'search' : 'search-outline';
           } else if (route.name === 'Home') {
             iconName = focused ? 'home' : 'home-outline';
+          } else if (route.name === 'Messages') {
+            iconName = focused ? 'chatbox' : 'chatbox-outline';
           }
 
           return <Ionicons name={iconName} size={size} color={color} />;
@@ -45,6 +48,11 @@ export default function MainStack() {
       <Tab.Screen
         name="Home"
         component={HomeScreen}
+        options={{ tabBarShowLabel: false }}
+      />
+      <Tab.Screen
+        name="Messages"
+        component={MessagesScreen}
         options={{ tabBarShowLabel: false }}
       />
       <Tab.Screen

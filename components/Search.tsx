@@ -104,7 +104,9 @@ function SearchResults(
   return <></>;
 }
 
-export default function Search() {
+export default function Search({
+  onUserPress = undefined,
+}: { onUserPress?: (user: User) => void }) {
   // component-level state
   const [userBeingViewedInSearch, setUserBeingViewedInSearch] = useState<User | null>(null);
   const [queryString, setQueryString] = useState<string>('');
@@ -135,7 +137,7 @@ export default function Search() {
           ? (
             <SearchResults
               queryString={queryString}
-              onUserPress={setUserBeingViewedInSearch}
+              onUserPress={onUserPress || setUserBeingViewedInSearch}
             />
           )
           : (
