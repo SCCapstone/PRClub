@@ -2,7 +2,7 @@ import {
   collection, doc, query, where,
 } from '@firebase/firestore';
 import React, { useState } from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { KeyboardAvoidingView, TouchableOpacity, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import {
   ActivityIndicator, Button, Text, TextInput,
@@ -136,6 +136,21 @@ function ChatView({ chatId }: { chatId: string }) {
   if (currentUser && chatStatus === 'success' && messagesStatus === 'success') {
     return (
       <>
+        <TextInput
+          onChangeText={(text) => setMessageText(text)}
+          placeholder="enter a message..."
+          value={messageText}
+          right={(
+            <TextInput.Icon
+              name="send"
+              onPress={() => {
+                MessagesService.sendMessage(chatId, currentUser.id, messageText)
+                  .then(() => setMessageText(''));
+              }}
+              disabled={messageText === ''}
+            />
+          )}
+        />
         {
           messages.length === 0
             ? (
@@ -144,7 +159,7 @@ function ChatView({ chatId }: { chatId: string }) {
               </CenteredView>
             )
             : (
-              <View>
+              <ScrollView>
                 {
                   sortByDate(messages, (m) => m.date, true).map((m) => (
                     m.userId === currentUser.id
@@ -184,25 +199,9 @@ function ChatView({ chatId }: { chatId: string }) {
                       )
                   ))
                 }
-              </View>
+              </ScrollView>
             )
         }
-
-        <TextInput
-          onChangeText={(text) => setMessageText(text)}
-          placeholder="enter a message..."
-          value={messageText}
-          right={(
-            <TextInput.Icon
-              name="send"
-              onPress={() => {
-                MessagesService.sendMessage(chatId, currentUser.id, messageText)
-                  .then(() => setMessageText(''));
-              }}
-              disabled={messageText === ''}
-            />
-          )}
-        />
       </>
     );
   }
