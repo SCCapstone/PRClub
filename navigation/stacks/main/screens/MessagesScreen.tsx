@@ -37,10 +37,10 @@ function ChatPreview({
   } = useFirestoreDocData(chatDoc);
   const chat = chatData as Chat;
 
+  const chatMessages = chatStatus === 'success' ? chat.messageIds : [];
   const [otherChatUsername, setOtherChatUsername] = useState<string | null>(null);
 
   const chatUsers = chatStatus === 'success' ? chat.userIds : [];
-  const chatMessages = chatStatus === 'success' ? chat.messageIds : [];
   if (currentUser && chatUsers.length > 0) {
     UsersService
       .fetchUser(chatUsers.filter((c) => c !== currentUser.id)[0])
@@ -62,7 +62,11 @@ function ChatPreview({
               </Text>
               <Text style={chatMessages.length > 0 ? {} : tw`italic`}>
                 {
-                  chatMessages.length > 0 ? chatMessages[chatMessages.length - 1].messageId : 'No messages'
+                  chat.lastMessage
+                    ? (
+                      `${chat.lastMessage.date}: ${chat.lastMessage.text}`
+                    )
+                    : 'No messages'
                 }
               </Text>
             </TouchableOpacity>
@@ -180,25 +184,25 @@ function ChatView({ chatId }: { chatId: string }) {
                       )
                   ))
                 }
-
-                <TextInput
-                  onChangeText={(text) => setMessageText(text)}
-                  placeholder="enter a message..."
-                  value={messageText}
-                  right={(
-                    <TextInput.Icon
-                      name="send"
-                      onPress={() => {
-                        MessagesService.sendMessage(chatId, currentUser.id, messageText)
-                          .then(() => setMessageText(''));
-                      }}
-                      disabled={messageText === ''}
-                    />
-                  )}
-                />
               </View>
             )
         }
+
+        <TextInput
+          onChangeText={(text) => setMessageText(text)}
+          placeholder="enter a message..."
+          value={messageText}
+          right={(
+            <TextInput.Icon
+              name="send"
+              onPress={() => {
+                MessagesService.sendMessage(chatId, currentUser.id, messageText)
+                  .then(() => setMessageText(''));
+              }}
+              disabled={messageText === ''}
+            />
+          )}
+        />
       </>
     );
   }

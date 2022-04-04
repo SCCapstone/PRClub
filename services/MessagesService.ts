@@ -32,6 +32,7 @@ export default {
         date: message.date,
         messageId: message.id,
       }),
+      lastMessage: message,
     });
     await setDoc(doc(firestore, MESSAGES_COLLECTION, message.id), message);
   },
