@@ -9,6 +9,7 @@ import MessagesScreen from './screens/MessagesScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import SearchScreen from './screens/SearchScreen';
 import SettingsScreen from './screens/SettingsScreen';
+import ChatScreen from './screens/ChatScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -68,6 +69,11 @@ export default function MainStack() {
       <Tab.Screen
         name="Profile"
         component={ProfileScreen}
+        options={{ tabBarShowLabel: false }}
+      />
+      <Tab.Screen
+        name="Messages"
+        component={ChatScreen}
         options={{ tabBarShowLabel: false }}
       />
       <Tab.Screen

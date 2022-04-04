@@ -2,7 +2,7 @@ import {
   collection, doc, query, where,
 } from '@firebase/firestore';
 import React, { useState } from 'react';
-import { KeyboardAvoidingView, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import {
   ActivityIndicator, Button, Text, TextInput,
