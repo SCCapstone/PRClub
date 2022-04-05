@@ -16,7 +16,7 @@ import CenteredView from './CenteredView';
 import Profile from './Profile';
 
 function SearchResults(
-  { queryString, onUserPress }: {queryString: string, onUserPress: (user: User) => void},
+  { queryString, onUserPress }: { queryString: string, onUserPress: (user: User) => void },
 ) {
   // Redux-based state
   const currentUser = useAppSelector(selectCurrentUser);
@@ -50,7 +50,7 @@ function SearchResults(
     nameQueryData as User[],
     (u) => u.id,
   ).filter(
-    (u) => u.id !== currentUser?.id,
+    (u) => u.id !== currentUser?.id || '',
   );
 
   if (!currentUser) {
