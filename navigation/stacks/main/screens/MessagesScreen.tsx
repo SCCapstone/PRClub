@@ -76,7 +76,7 @@ function ChatPreview({
   );
 }
 
-function MessageReceived({ message }: {message:string}) {
+function MessageReceived({ message }: { message: string }) {
   return (
     <View style={tw`bg-[#8e8e93] m-2 p-4 max-w-xs rounded-md`}>
       <Text>{message}</Text>
@@ -84,7 +84,7 @@ function MessageReceived({ message }: {message:string}) {
   );
 }
 
-function MessageSent({ message }: {message:string}) {
+function MessageSent({ message }: { message: string }) {
   return (
     <View>
       <View style={tw`bg-[#147efb] m-2 p-4 max-w-xs ml-auto rounded-md`}>
@@ -107,25 +107,14 @@ function ChatView({ chatId }: { chatId: string }) {
   const chat = chatData as Chat;
 
   const messagesCollection = collection(firestore, MESSAGES_COLLECTION);
-  const messagesQuery = query(
-    messagesCollection,
-    where(
-      'id',
-      'in',
-      chat.messageIds.length > 0
-        ? (
-          chat.messageIds.length > 10
-            ? sortByDate(chat.messageIds, (c) => c.date).slice(0, 10).map((m) => m.messageId)
-            : chat.messageIds.map((m) => m.messageId)
-        )
-        : [''],
-    ),
-  );
   const {
     status: messagesStatus,
-    data: messagesData,
-  } = useFirestoreCollectionData(messagesQuery);
-  const messages = messagesData as Message[];
+    data: allMessagesData,
+  } = useFirestoreCollectionData(messagesCollection);
+  const allMessages = allMessagesData as Message[];
+  const messages = !!chat && !!allMessages
+    ? allMessages.filter((m) => chat.messageIds.map((i) => i.messageId).includes(m.id))
+    : [];
 
   const [messageText, setMessageText] = useState<string>('');
 
