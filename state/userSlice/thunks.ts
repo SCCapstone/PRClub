@@ -1,17 +1,17 @@
 import { doc, getDoc } from '@firebase/firestore';
+import { getDownloadURL, ref } from '@firebase/storage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { CURRENT_USER_KEY } from '../../constants/async-storage';
 import { USERS_COLLECTION } from '../../constants/firestore';
-import { PROFILE_IMG_URI } from '../../constants/profile';
-import { firestore } from '../../firebase-lib';
+import { firestore, storage } from '../../firebase-lib';
 import Post from '../../models/firestore/Post';
 import User from '../../models/firestore/User';
 import AuthService from '../../services/AuthService';
 import ImagesService from '../../services/ImagesService';
 import PostsService from '../../services/PostsService';
 import UsersService from '../../services/UsersService';
-import type { AppDispatch, RootState } from '../store';
+import type { RootState } from '../store';
 
 export const tryFetchCurrentUser = createAsyncThunk<User | null, void>(
   'users/tryFetchCurrentUser',
@@ -34,6 +34,17 @@ export const userSignIn = createAsyncThunk<
   'users/signIn',
   async ({ email, password }): Promise<User> => {
     const user = await AuthService.signIn(email, password);
+
+    const defaultProfileImageRef = ref(storage, 'images/default-profile-pic.png');
+    const expectedProfileImageRef = ref(storage, `images/${user.id}/profile`);
+
+    try {
+      await getDownloadURL(expectedProfileImageRef);
+    } catch {
+      const defaultProfilePicUrl = await getDownloadURL(defaultProfileImageRef);
+      await ImagesService.uploadImage(defaultProfilePicUrl, user.id);
+    }
+
     await AsyncStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user.id));
     return user;
   },
@@ -41,20 +52,15 @@ export const userSignIn = createAsyncThunk<
 
 export const userSignUp = createAsyncThunk<
   User,
-  { name: string, username: string, email: string, password: string },
-  { dispatch: AppDispatch }
+  { name: string, username: string, email: string, password: string }
 >(
   'users/signUp',
   async ({
     name, username, email, password,
-  }, { dispatch }): Promise<User> => {
+  }): Promise<User> => {
     const user = await AuthService.signUp(name, username, email, password);
-
-    dispatch(uploadProfileImage({
-      image: PROFILE_IMG_URI,
-      userId: user.id,
-    }));
-
+    const defaultProfilePicUrl = await getDownloadURL(ref(storage, 'images/default-profile-pic.png'));
+    await ImagesService.uploadImage(defaultProfilePicUrl, user.id);
     await AsyncStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user.id));
 
     return user;
@@ -70,11 +76,14 @@ export const userLogOut = createAsyncThunk<void, void>(
 );
 
 export const uploadProfileImage = createAsyncThunk<
-  string,
+  { imageURL: string, userId: string },
   { image: string, userId: string }
 >(
   'image/uploadProfileImage',
-  async ({ image, userId }): Promise<string> => ImagesService.uploadImage(image, userId),
+  async ({ image, userId }): Promise<{ imageURL: string, userId: string }> => {
+    const imageURL = await ImagesService.uploadImage(image, userId);
+    return { imageURL, userId };
+  },
 );
 
 export const updateName = createAsyncThunk<string, string, { state: RootState }>(
@@ -103,7 +112,7 @@ export const updateUsername = createAsyncThunk<string, string, { state: RootStat
   },
 );
 
-export const followUser = createAsyncThunk<User, string, {state: RootState}>(
+export const followUser = createAsyncThunk<User, string, { state: RootState }>(
   'users/followUser',
   async (userToFollowId: string, { getState }): Promise<User> => {
     const { currentUser } = getState().user;
@@ -120,7 +129,7 @@ export const followUser = createAsyncThunk<User, string, {state: RootState}>(
   },
 );
 
-export const unfollowUser = createAsyncThunk<User, string, {state: RootState}>(
+export const unfollowUser = createAsyncThunk<User, string, { state: RootState }>(
   'users/unfollowUser',
   async (userToUnfollowId: string, { getState }): Promise<User> => {
     const { currentUser } = getState().user;
@@ -137,7 +146,7 @@ export const unfollowUser = createAsyncThunk<User, string, {state: RootState}>(
   },
 );
 
-export const likePost = createAsyncThunk<Post, {post: Post, userId: string}>(
+export const likePost = createAsyncThunk<Post, { post: Post, userId: string }>(
   'user/likePost',
   async ({ post, userId }): Promise<Post> => {
     await PostsService.likePost(post, userId);
@@ -145,7 +154,7 @@ export const likePost = createAsyncThunk<Post, {post: Post, userId: string}>(
   },
 );
 
-export const unlikePost = createAsyncThunk<Post, {post: Post, userId: string}>(
+export const unlikePost = createAsyncThunk<Post, { post: Post, userId: string }>(
   'user/unlikePost',
   async ({ post, userId }): Promise<Post> => {
     await PostsService.unlikePost(post, userId);

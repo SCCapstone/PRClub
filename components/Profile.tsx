@@ -51,11 +51,13 @@ export default function Profile({
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(selectCurrentUser);
   const currentUserStatus = useAppSelector(selectCurrentUserStatus);
-  const uploadedProfileImage = useAppSelector(selectUploadedProfileImage);
   const uploadingProfileImage = useAppSelector(selectUploadingProfileImage);
 
   // component-level state
   const [profileBeingViewed, setProfileBeingViewed] = useState<User>(user);
+  const uploadedProfileImage = useAppSelector(
+    (state) => selectUploadedProfileImage(state, profileBeingViewed.id),
+  );
 
   const [newName, setNewName] = useState<string>(profileBeingViewed.name);
   const [newUsername, setNewUsername] = useState<string>(profileBeingViewed.username);
