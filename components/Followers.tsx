@@ -1,9 +1,9 @@
-import { collection } from '@firebase/firestore';
+import { collection, doc } from '@firebase/firestore';
 import React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { ActivityIndicator, Button, Text } from 'react-native-paper';
-import { useFirestore, useFirestoreCollectionData } from 'reactfire';
+import { useFirestore, useFirestoreCollectionData, useFirestoreDocData } from 'reactfire';
 import tw from 'twrnc';
 import { USERS_COLLECTION } from '../constants/firestore';
 import { useAppDispatch, useAppSelector } from '../hooks/redux';
@@ -21,10 +21,17 @@ export default function Followers({
   // ReactFire
   const firestore = useFirestore();
   const usersCollection = collection(firestore, USERS_COLLECTION);
+
+  const updatedUserDoc = doc(firestore, USERS_COLLECTION, user.id);
+  const {
+    data: updatedUserData,
+  } = useFirestoreDocData(updatedUserDoc);
+  const updatedUser = updatedUserData as User;
+
   const { status, data } = useFirestoreCollectionData(usersCollection);
   const allUsers = data as User[];
   const followers = allUsers
-    ? allUsers.filter((u) => user.followerIds.includes(u.id))
+    ? allUsers.filter((u) => (updatedUser || user).followerIds.includes(u.id))
     : [];
 
   // Redux
