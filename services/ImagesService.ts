@@ -19,4 +19,8 @@ export default {
 
     return getDownloadURL(uploadTask.ref);
   },
+
+  getProfileImageUrl(userId: string): string {
+    return `https://firebasestorage.googleapis.com/v0/b/prclub-f4e2e.appspot.com/o/images%2F${userId}%2Fprofile?alt=media`;
+  },
 };

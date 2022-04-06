@@ -23,10 +23,8 @@ export function selectUploadProfileImageResult(state: RootState) {
   return state.user.uploadProfileImageResult;
 }
 
-export function selectUploadedProfileImage(state: RootState, userId: string) {
-  return Object.keys(state.user.uploadedProfileImages).includes(userId)
-    ? state.user.uploadedProfileImages[userId]
-    : null;
+export function selectTimeLastUploadedProfileImage(state: RootState) {
+  return state.user.timeLastUploadedProfileImage;
 }
 
 export function selectUpdateProfileResult(state: RootState) {

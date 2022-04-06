@@ -20,6 +20,16 @@ export const tryFetchCurrentUser = createAsyncThunk<User | null, void>(
 
     if (currentUserIdJson) {
       const currentUserId = JSON.parse(currentUserIdJson) as string;
+
+      const expectedProfileImageRef = ref(storage, `images/${currentUserId}/profile`);
+
+      try {
+        await getDownloadURL(expectedProfileImageRef);
+      } catch {
+        const defaultProfilePicUrl = 'https://firebasestorage.googleapis.com/v0/b/prclub-f4e2e.appspot.com/o/images%2Fdefault-profile-pic.png?alt=media';
+        await ImagesService.uploadImage(defaultProfilePicUrl, currentUserId);
+      }
+
       return UsersService.fetchUser(currentUserId);
     }
 
@@ -35,13 +45,12 @@ export const userSignIn = createAsyncThunk<
   async ({ email, password }): Promise<User> => {
     const user = await AuthService.signIn(email, password);
 
-    const defaultProfileImageRef = ref(storage, 'images/default-profile-pic.png');
     const expectedProfileImageRef = ref(storage, `images/${user.id}/profile`);
 
     try {
       await getDownloadURL(expectedProfileImageRef);
     } catch {
-      const defaultProfilePicUrl = await getDownloadURL(defaultProfileImageRef);
+      const defaultProfilePicUrl = 'https://firebasestorage.googleapis.com/v0/b/prclub-f4e2e.appspot.com/o/images%2Fdefault-profile-pic.png?alt=media';
       await ImagesService.uploadImage(defaultProfilePicUrl, user.id);
     }
 
@@ -59,7 +68,7 @@ export const userSignUp = createAsyncThunk<
     name, username, email, password,
   }): Promise<User> => {
     const user = await AuthService.signUp(name, username, email, password);
-    const defaultProfilePicUrl = await getDownloadURL(ref(storage, 'images/default-profile-pic.png'));
+    const defaultProfilePicUrl = 'https://firebasestorage.googleapis.com/v0/b/prclub-f4e2e.appspot.com/o/images%2Fdefault-profile-pic.png?alt=media';
     await ImagesService.uploadImage(defaultProfilePicUrl, user.id);
     await AsyncStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user.id));
 
