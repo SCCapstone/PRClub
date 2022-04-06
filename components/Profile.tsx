@@ -126,19 +126,12 @@ export default function Profile({
     )
     : [''];
 
-  const likedPostsQuery = query(
-    postsCollection,
-    where(
-      'id',
-      'in',
-      currentUserLikedPostIds,
-    ),
-  );
   const {
     status: likedPostsStatus,
-    data: likedPostsData,
-  } = useFirestoreCollectionData(likedPostsQuery);
-  const likedPosts = likedPostsData as Post[] || [];
+    data: allPostsData,
+  } = useFirestoreCollectionData(postsCollection);
+  const allPosts = allPostsData as Post[];
+  const likedPosts = allPosts ? allPosts.filter((p) => currentUserLikedPostIds.includes(p.id)) : [];
   const likedWorkoutPosts = sortByDate(likedPosts.filter((p) => !p.prId), (p) => p.createdDate);
   const likedPRPosts = sortByDate(likedPosts.filter((p) => !!p.prId), (p) => p.createdDate);
 

@@ -5,10 +5,10 @@ import { useAppSelector } from '../../../hooks/redux';
 import { selectCurrentUser } from '../../../state/userSlice/selectors';
 import CreateWorkoutScreen from './screens/CreateWorkoutScreen';
 import HomeScreen from './screens/HomeScreen';
+import MessagesScreen from './screens/MessagesScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import SearchScreen from './screens/SearchScreen';
 import SettingsScreen from './screens/SettingsScreen';
-import ChatScreen from './screens/ChatScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -51,6 +51,11 @@ export default function MainStack() {
         options={{ tabBarShowLabel: false }}
       />
       <Tab.Screen
+        name="Messages"
+        component={MessagesScreen}
+        options={{ tabBarShowLabel: false }}
+      />
+      <Tab.Screen
         name="Search"
         component={SearchScreen}
         options={{ tabBarShowLabel: false }}
@@ -63,11 +68,6 @@ export default function MainStack() {
       <Tab.Screen
         name="Profile"
         component={ProfileScreen}
-        options={{ tabBarShowLabel: false }}
-      />
-      <Tab.Screen
-        name="Messages"
-        component={ChatScreen}
         options={{ tabBarShowLabel: false }}
       />
       <Tab.Screen

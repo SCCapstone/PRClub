@@ -18,16 +18,14 @@ export default function HomeScreen() {
   const postsCollection = collection(firestore, POSTS_COLLECTION);
 
   // get current user's following's posts
-  const currentUserFollowingPostsQuery = query(
-    postsCollection,
-    where('userId', 'in',
-      (!currentUser?.followingIds.length ? [''] : currentUser?.followingIds) || ['']),
-  );
   const {
     status: currentUserFollowPostsStatus,
-    data: currentUserFollowingPostsData,
-  } = useFirestoreCollectionData(currentUserFollowingPostsQuery);
-  const currentUserFollowingPosts = currentUserFollowingPostsData as Post[];
+    data: allPostsData,
+  } = useFirestoreCollectionData(postsCollection);
+  const allPosts = allPostsData as Post[];
+  const currentUserFollowingPosts = allPosts
+    ? allPosts.filter((p) => (currentUser?.followingIds || []).includes(p.userId))
+    : [];
 
   // get current user's posts:
   const currentUserPostsQuery = query(

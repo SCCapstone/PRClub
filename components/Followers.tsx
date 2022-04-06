@@ -1,4 +1,4 @@
-import { collection, query, where } from '@firebase/firestore';
+import { collection } from '@firebase/firestore';
 import React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -21,12 +21,11 @@ export default function Followers({
   // ReactFire
   const firestore = useFirestore();
   const usersCollection = collection(firestore, USERS_COLLECTION);
-  const followersQuery = query(
-    usersCollection,
-    where('id', 'in', !user.followerIds.length ? [''] : user.followerIds),
-  );
-  const { status, data } = useFirestoreCollectionData(followersQuery);
-  const followers = data as User[];
+  const { status, data } = useFirestoreCollectionData(usersCollection);
+  const allUsers = data as User[];
+  const followers = allUsers
+    ? allUsers.filter((u) => user.followerIds.includes(u.id))
+    : [];
 
   // Redux
   const dispatch = useAppDispatch();

@@ -1,6 +1,4 @@
-import {
-  collection, query, where,
-} from '@firebase/firestore';
+import { collection } from '@firebase/firestore';
 import React from 'react';
 import { Text, View } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
@@ -11,15 +9,16 @@ import Post from '../models/firestore/Post';
 import { sortByDate } from '../utils/arrays';
 import Comment from './Comment';
 
-export default function Comments({ post } : { post: Post }) {
+export default function Comments({ post }: { post: Post }) {
   const firestore = useFirestore();
   const commentsCollection = collection(firestore, COMMENTS_COLLECTION);
-  const commentsQuery = query(
-    commentsCollection,
-    where('id', 'in', !post.commentIds.length ? [''] : post.commentIds),
-  );
-  const { status, data } = useFirestoreCollectionData(commentsQuery);
-  const comments = data as CommentType[];
+  const { status, data } = useFirestoreCollectionData(commentsCollection);
+  const allComments = data as CommentType[];
+  const comments = allComments
+    ? (
+      allComments.filter((c) => post.commentIds.includes(c.id))
+    )
+    : [];
 
   if (status === 'loading') {
     return <ActivityIndicator />;
