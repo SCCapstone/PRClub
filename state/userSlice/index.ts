@@ -15,7 +15,7 @@ const userSlice = createSlice({
       state.authError = null;
     },
     clearUploadedProfileImage(state) {
-      state.timeLastUploadedProfileImage = null;
+      state.updatedProfileImageUrl = null;
     },
     clearUploadProfileImageResult(state) {
       state.uploadProfileImageResult = null;
@@ -77,6 +77,7 @@ const userSlice = createSlice({
       })
       .addCase(userLogOut.fulfilled, (state) => {
         state.currentUser = null;
+        state.updatedProfileImageUrl = null;
         state.status = 'idle';
       });
 
@@ -85,8 +86,8 @@ const userSlice = createSlice({
         state.uploadingProfileImage = true;
       })
       .addCase(uploadProfileImage.fulfilled,
-        (state) => {
-          state.timeLastUploadedProfileImage = Date.now();
+        (state, action: PayloadAction<{imageURL: string, userId: string}>) => {
+          state.updatedProfileImageUrl = action.payload.imageURL;
           state.uploadingProfileImage = false;
         })
       .addCase(uploadProfileImage.rejected, (state, action) => {

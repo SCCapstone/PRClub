@@ -2,7 +2,7 @@ import {
   collection, doc, query, where,
 } from '@firebase/firestore';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { TouchableHighlight, View } from 'react-native';
 import {
   ActivityIndicator, Button, Chip, Text, TextInput,
@@ -20,12 +20,11 @@ import Post from '../models/firestore/Post';
 import PR from '../models/firestore/PR';
 import User from '../models/firestore/User';
 import Workout from '../models/firestore/Workout';
-import ImagesService from '../services/ImagesService';
 import { clearUpdateProfileResult } from '../state/userSlice';
 import {
   selectCurrentUser,
   selectCurrentUserStatus,
-  selectTimeLastUploadedProfileImage,
+  selectUpdatedProfileImageUrl,
   selectUploadingProfileImage,
 } from '../state/userSlice/selectors';
 import {
@@ -54,14 +53,7 @@ export default function Profile({
 
   // component-level state
   const [profileBeingViewed, setProfileBeingViewed] = useState<User>(user);
-  const timeLastUploadedProfileImage = useAppSelector(selectTimeLastUploadedProfileImage);
-
-  const [profileImage, setProfileImage] = useState<string>(
-    ImagesService.getProfileImageUrl(profileBeingViewed.id),
-  );
-  useEffect(() => {
-    setProfileImage(ImagesService.getProfileImageUrl(profileBeingViewed.id));
-  }, [profileBeingViewed, timeLastUploadedProfileImage]);
+  const updatedProfileImageUrl = useAppSelector(selectUpdatedProfileImageUrl);
 
   const [newName, setNewName] = useState<string>(profileBeingViewed.name);
   const [newUsername, setNewUsername] = useState<string>(profileBeingViewed.username);
@@ -70,6 +62,19 @@ export default function Profile({
   const [showLikedPRPosts, setShowLikedPRPosts] = useState<boolean>(false);
 
   const forCurrentUser = currentUser ? (profileBeingViewed.id === currentUser.id) : false;
+
+  const safeProfileImageUrl = (
+    `https://firebasestorage.googleapis.com/v0/b/prclub-f4e2e.appspot.com/o/images%2F${
+      profileBeingViewed.id
+    }%2Fprofile?alt=media${
+      profileBeingViewed.profileImageHash
+        ? `&${profileBeingViewed.profileImageHash}`
+        : ''
+    }`
+  );
+
+  const profileImage = forCurrentUser ? (
+    updatedProfileImageUrl || safeProfileImageUrl) : safeProfileImageUrl;
 
   // ReactFire queries
   const firestore = useFirestore();
@@ -290,8 +295,7 @@ export default function Profile({
                   >
                     <>
                       <ImageWithAlt
-                        key={Date.now()}
-                        uri={profileImage}
+                        uri={updatedProfileImageUrl ? `${profileImage}&${updatedProfileImageUrl}` : profileImage}
                         style={tw`w-30 h-30`}
                         altText="Error loading profile image!"
                       />

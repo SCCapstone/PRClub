@@ -23,8 +23,8 @@ export function selectUploadProfileImageResult(state: RootState) {
   return state.user.uploadProfileImageResult;
 }
 
-export function selectTimeLastUploadedProfileImage(state: RootState) {
-  return state.user.timeLastUploadedProfileImage;
+export function selectUpdatedProfileImageUrl(state: RootState) {
+  return state.user.updatedProfileImageUrl;
 }
 
 export function selectUpdateProfileResult(state: RootState) {

@@ -17,7 +17,7 @@ interface CurrentUserInitialState {
   authError: SerializedError | null;
   uploadingProfileImage: boolean;
   uploadProfileImageResult: ServiceCallResult | null;
-  timeLastUploadedProfileImage: number | null;
+  updatedProfileImageUrl: string | null;
   updateProfileResult: ServiceCallResult | null;
   followResult: (ServiceCallResult & { user?: User }) | null;
   unfollowResult: (ServiceCallResult & { user?: User }) | null;
@@ -29,7 +29,7 @@ export const initialState: CurrentUserInitialState = {
   authError: null,
   uploadingProfileImage: false,
   uploadProfileImageResult: null,
-  timeLastUploadedProfileImage: null,
+  updatedProfileImageUrl: null,
   updateProfileResult: null,
   followResult: null,
   unfollowResult: null,

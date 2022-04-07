@@ -10,4 +10,5 @@ export default interface User {
   prIds: string[];
   commentIds: string[];
   likedPostIds: string[];
+  profileImageHash?: number;
 }

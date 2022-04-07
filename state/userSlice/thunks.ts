@@ -44,17 +44,8 @@ export const userSignIn = createAsyncThunk<
   'users/signIn',
   async ({ email, password }): Promise<User> => {
     const user = await AuthService.signIn(email, password);
-
-    const expectedProfileImageRef = ref(storage, `images/${user.id}/profile`);
-
-    try {
-      await getDownloadURL(expectedProfileImageRef);
-    } catch {
-      const defaultProfilePicUrl = 'https://firebasestorage.googleapis.com/v0/b/prclub-f4e2e.appspot.com/o/images%2Fdefault-profile-pic.png?alt=media';
-      await ImagesService.uploadImage(defaultProfilePicUrl, user.id);
-    }
-
     await AsyncStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user.id));
+
     return user;
   },
 );
@@ -68,8 +59,6 @@ export const userSignUp = createAsyncThunk<
     name, username, email, password,
   }): Promise<User> => {
     const user = await AuthService.signUp(name, username, email, password);
-    const defaultProfilePicUrl = 'https://firebasestorage.googleapis.com/v0/b/prclub-f4e2e.appspot.com/o/images%2Fdefault-profile-pic.png?alt=media';
-    await ImagesService.uploadImage(defaultProfilePicUrl, user.id);
     await AsyncStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user.id));
 
     return user;
@@ -90,7 +79,8 @@ export const uploadProfileImage = createAsyncThunk<
 >(
   'image/uploadProfileImage',
   async ({ image, userId }): Promise<{ imageURL: string, userId: string }> => {
-    const imageURL = await ImagesService.uploadImage(image, userId);
+    await ImagesService.uploadImage(image, userId);
+    const imageURL = await ImagesService.getProfileImageUrl(userId);
     return { imageURL, userId };
   },
 );
