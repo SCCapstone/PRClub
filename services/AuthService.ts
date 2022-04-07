@@ -5,9 +5,11 @@ import {
 import {
   collection, doc, getDoc, getDocs, query, setDoc, updateDoc, where,
 } from '@firebase/firestore';
+import { getDownloadURL, ref } from '@firebase/storage';
 import { USERS_COLLECTION } from '../constants/firestore';
-import { auth, firestore } from '../firebase-lib';
+import { auth, firestore, storage } from '../firebase-lib';
 import User from '../models/firestore/User';
+import ImagesService from './ImagesService';
 
 // "private" functions
 async function checkUsernameIsAvailable(username: string): Promise<void> {
@@ -46,15 +48,36 @@ export default {
       followingIds: [],
       likedPostIds: [],
       commentIds: [],
+      profileImageHash: Date.now(),
     };
     await setDoc(doc(firestore, USERS_COLLECTION, user.id), user);
+
+    const defaultProfilePicUrl = 'https://firebasestorage.googleapis.com/v0/b/prclub-f4e2e.appspot.com/o/images%2Fdefault-profile-pic.png?alt=media';
+    await ImagesService.uploadImage(defaultProfilePicUrl, user.id);
 
     return user;
   },
 
   async signIn(email: string, password: string): Promise<User> {
     const userCred = await signInWithEmailAndPassword(auth, email, password);
-    const documentSnapshot = await getDoc(doc(firestore, USERS_COLLECTION, userCred.user.uid));
+
+    const userDoc = doc(firestore, USERS_COLLECTION, userCred.user.uid);
+
+    const expectedProfileImageRef = ref(storage, `images/${userCred.user.uid}/profile`);
+
+    try {
+      await getDownloadURL(expectedProfileImageRef);
+    } catch {
+      const defaultProfilePicUrl = 'https://firebasestorage.googleapis.com/v0/b/prclub-f4e2e.appspot.com/o/images%2Fdefault-profile-pic.png?alt=media';
+      await ImagesService.uploadImage(defaultProfilePicUrl, userCred.user.uid);
+    }
+
+    await updateDoc(userDoc, {
+      profileImageHash: Date.now(),
+    });
+
+    const documentSnapshot = await getDoc(userDoc);
+
     return documentSnapshot.data() as User;
   },
 

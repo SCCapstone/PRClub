@@ -1,18 +1,15 @@
 import {
   collection, doc, query, where,
 } from '@firebase/firestore';
-import { ref } from '@firebase/storage';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import React, { useState } from 'react';
-import {
-  Image, TouchableHighlight, View,
-} from 'react-native';
+import { TouchableHighlight, View } from 'react-native';
 import {
   ActivityIndicator, Button, Chip, Text, TextInput,
 } from 'react-native-paper';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {
-  useFirestore, useFirestoreCollectionData, useFirestoreDocData, useStorage, useStorageDownloadURL,
+  useFirestore, useFirestoreCollectionData, useFirestoreDocData,
 } from 'reactfire';
 import tw from 'twrnc';
 import {
@@ -27,7 +24,7 @@ import { clearUpdateProfileResult } from '../state/userSlice';
 import {
   selectCurrentUser,
   selectCurrentUserStatus,
-  selectUploadedProfileImage,
+  selectUpdatedProfileImageUrl,
   selectUploadingProfileImage,
 } from '../state/userSlice/selectors';
 import {
@@ -37,6 +34,7 @@ import { sortByDate } from '../utils/arrays';
 import { launchImagePicker } from '../utils/expo';
 import BackButton from './BackButton';
 import Followers from './Followers';
+import ImageWithAlt from './ImageWIthAlt';
 import Posts from './Posts';
 import PRs from './PRs';
 import Workouts from './Workouts';
@@ -51,11 +49,11 @@ export default function Profile({
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(selectCurrentUser);
   const currentUserStatus = useAppSelector(selectCurrentUserStatus);
-  const uploadedProfileImage = useAppSelector(selectUploadedProfileImage);
   const uploadingProfileImage = useAppSelector(selectUploadingProfileImage);
 
   // component-level state
   const [profileBeingViewed, setProfileBeingViewed] = useState<User>(user);
+  const updatedProfileImageUrl = useAppSelector(selectUpdatedProfileImageUrl);
 
   const [newName, setNewName] = useState<string>(profileBeingViewed.name);
   const [newUsername, setNewUsername] = useState<string>(profileBeingViewed.username);
@@ -65,9 +63,21 @@ export default function Profile({
 
   const forCurrentUser = currentUser ? (profileBeingViewed.id === currentUser.id) : false;
 
+  const safeProfileImageUrl = (
+    `https://firebasestorage.googleapis.com/v0/b/prclub-f4e2e.appspot.com/o/images%2F${
+      profileBeingViewed.id
+    }%2Fprofile?alt=media${
+      profileBeingViewed.profileImageHash
+        ? `&${profileBeingViewed.profileImageHash}`
+        : ''
+    }`
+  );
+
+  const profileImage = forCurrentUser ? (
+    updatedProfileImageUrl || safeProfileImageUrl) : safeProfileImageUrl;
+
   // ReactFire queries
   const firestore = useFirestore();
-  const storage = useStorage();
 
   // workouts:
   const workoutsCollection = collection(firestore, WORKOUTS_COLLECTION);
@@ -104,13 +114,6 @@ export default function Profile({
     data: prsData,
   } = useFirestoreCollectionData(prsQuery);
   const prs = prsData as PR[];
-
-  // profile image:
-  const profileImageRef = ref(storage, `images/${profileBeingViewed.id}/profile`);
-  const {
-    status: profileImageStatus,
-    data: profileImage,
-  } = useStorageDownloadURL(profileImageRef);
 
   // liked posts:
   const currentUserDoc = doc(firestore, USERS_COLLECTION, currentUser?.id || '');
@@ -276,7 +279,7 @@ export default function Profile({
       <View style={tw`py-5 bg-gray-800`}>
         <View style={tw`flex flex-row`}>
           <View style={tw`flex flex-1 justify-center items-center`}>
-            {profileImageStatus === 'loading' || uploadingProfileImage
+            {uploadingProfileImage
               ? <ActivityIndicator size="large" color="white" />
               : (profileBeingViewed.id === currentUser.id
                 ? (
@@ -291,9 +294,10 @@ export default function Profile({
                     }}
                   >
                     <>
-                      <Image
-                        source={{ uri: uploadedProfileImage || profileImage }}
+                      <ImageWithAlt
+                        uri={updatedProfileImageUrl ? `${profileImage}&${updatedProfileImageUrl}` : profileImage}
                         style={tw`w-30 h-30`}
+                        altText="Error loading profile image!"
                       />
                       <View
                         style={{
@@ -318,9 +322,11 @@ export default function Profile({
                   </TouchableHighlight>
                 )
                 : (
-                  <Image
-                    source={{ uri: profileImage }}
+                  <ImageWithAlt
+                    key={Date.now()}
+                    uri={profileImage}
                     style={tw`w-30 h-30`}
+                    altText="Error loading profile image!"
                   />
                 )
               )}
