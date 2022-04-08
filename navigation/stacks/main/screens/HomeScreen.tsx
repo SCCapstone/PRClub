@@ -39,10 +39,12 @@ export default function HomeScreen() {
   const currentUserPosts = currentUserPostsData as Post[];
 
   // merge both queries
-  const posts = _.unionBy(
-    currentUserFollowingPosts,
-    currentUserPosts,
-    (p) => p.id,
+  const posts = sortByDate(
+    _.unionBy(
+      currentUserFollowingPosts,
+      currentUserPosts,
+      (p) => p.id,
+    ), (p) => p.createdDate,
   );
 
   // combine both queries' statuses
@@ -61,7 +63,7 @@ export default function HomeScreen() {
 
   return (
     <Posts
-      posts={sortByDate(posts, (p) => p.createdDate)}
+      posts={posts}
       postsStatus={postsStatus}
       isHomeScreen
     />
