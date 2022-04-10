@@ -38,6 +38,7 @@ import ImageWithAlt from './ImageWIthAlt';
 import Posts from './Posts';
 import PRs from './PRs';
 import Workouts from './Workouts';
+import { colors } from '../constants/styles';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -138,6 +139,10 @@ export default function Profile({
   const likedWorkoutPosts = sortByDate(likedPosts.filter((p) => !p.prId), (p) => p.createdDate);
   const likedPRPosts = sortByDate(likedPosts.filter((p) => !!p.prId), (p) => p.createdDate);
 
+  const {
+    gray1, gray2, gray3, black, creamWhite,
+  } = colors;
+
   if (!currentUser) {
     return <></>;
   }
@@ -165,8 +170,9 @@ export default function Profile({
           <View style={tw`flex flex-1`}>
             <Chip
               icon={() => <Ionicons name="barbell" size={16} />}
-              textStyle={tw`text-center font-bold text-lg`}
+              textStyle={tw`text-center font-bold text-lg text-[${black}]`}
               selected={!showLikedPRPosts}
+              selectedColor={gray1}
               onPress={() => setShowLikedPRPosts(false)}
             >
               Workouts
@@ -175,8 +181,9 @@ export default function Profile({
           <View style={tw`flex flex-1`}>
             <Chip
               icon={() => <Ionicons name="checkbox" size={16} />}
-              textStyle={tw`text-center font-bold text-lg`}
+              textStyle={tw`text-center font-bold text-lg text-[${black}]`}
               selected={showLikedPRPosts}
+              selectedColor={gray1}
               onPress={() => setShowLikedPRPosts(true)}
             >
               PRs
@@ -232,6 +239,7 @@ export default function Profile({
             onChangeText={(username) => setNewUsername(username)}
           />
           <Button
+            color={black}
             mode="contained"
             onPress={() => {
               if (newName !== currentUser.name) {
@@ -267,6 +275,7 @@ export default function Profile({
           ? (
             <Button
               mode="contained"
+              color={black}
               onPress={() => {
                 setProfileBeingViewed(currentUser);
               }}
@@ -276,7 +285,7 @@ export default function Profile({
           )
           : <></>
       }
-      <View style={tw`py-5 bg-gray-800`}>
+      <View style={tw`py-5 bg-[${gray3}]`}>
         <View style={tw`flex flex-row`}>
           <View style={tw`flex flex-1 justify-center items-center`}>
             {uploadingProfileImage
@@ -293,10 +302,10 @@ export default function Profile({
                       });
                     }}
                   >
-                    <>
+                    <View style={tw`overflow-hidden rounded-full`}>
                       <ImageWithAlt
                         uri={updatedProfileImageUrl ? `${profileImage}&${updatedProfileImageUrl}` : profileImage}
-                        style={tw`w-30 h-30`}
+                        style={tw`w-32 h-32 rounded-full`}
                         altText="Error loading profile image!"
                       />
                       <View
@@ -311,21 +320,18 @@ export default function Profile({
                           backgroundColor: 'rgba(0, 0, 0, 0.7)',
                         }}
                       >
-                        <Text style={{
-                          color: 'white',
-                        }}
-                        >
-                          TAP TO UPDATE
+                        <Text style={tw`text-white text-sm`}>
+                          UPDATE
                         </Text>
                       </View>
-                    </>
+                    </View>
                   </TouchableHighlight>
                 )
                 : (
                   <ImageWithAlt
                     key={Date.now()}
                     uri={profileImage}
-                    style={tw`w-30 h-30`}
+                    style={tw`w-32 h-32 rounded-full`}
                     altText="Error loading profile image!"
                   />
                 )
@@ -401,7 +407,7 @@ export default function Profile({
             <>
               <Button
                 mode="contained"
-                color="orange"
+                color={black}
                 onPress={() => setShowProfileNavigation(!showProfileNavigation)}
                 icon={() => (
                   showProfileNavigation
@@ -417,17 +423,18 @@ export default function Profile({
                     <>
                       <Button
                         mode="contained"
-                        color="darksalmon"
+                        color={gray1}
                         onPress={() => {
                           setViewOption('likedPosts');
                         }}
                         icon={() => <Ionicons name="heart" size={16} />}
+                        style={tw`mb-1`}
                       >
                         See Liked Posts
                       </Button>
                       <Button
                         mode="contained"
-                        color="darkseagreen"
+                        color={gray1}
                         onPress={() => {
                           setViewOption('editing');
                         }}
@@ -474,11 +481,27 @@ export default function Profile({
           )
       }
       <Tab.Navigator
-        screenOptions={{
-          tabBarLabelStyle: tw`text-xs`,
-        }}
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({ focused, color }) => {
+            let iconName = '';
+
+            if (route.name === 'Workouts') {
+              iconName = focused ? 'barbell' : 'barbell-outline';
+            } else if (route.name === 'PRs') {
+              iconName = focused ? 'trophy' : 'trophy-outline';
+            } else if (route.name === 'Posts') {
+              iconName = focused ? 'images' : 'images-outline';
+            } else if (route.name === 'Followers') {
+              iconName = focused ? 'people' : 'people-outline';
+            }
+
+            return <Ionicons name={iconName} size={20} color={color} />;
+          },
+          tabBarActiveTintColor: 'black',
+          tabBarInactiveTintColor: 'gray',
+        })}
       >
-        <Tab.Screen name="Workouts">
+        <Tab.Screen name="Workouts" options={{ tabBarShowLabel: false }}>
           {() => (
             <Workouts
               workouts={workouts}
@@ -487,7 +510,7 @@ export default function Profile({
             />
           )}
         </Tab.Screen>
-        <Tab.Screen name="PRs">
+        <Tab.Screen name="PRs" options={{ tabBarShowLabel: false }}>
           {() => (
             <PRs
               prs={prs}
@@ -496,7 +519,7 @@ export default function Profile({
             />
           )}
         </Tab.Screen>
-        <Tab.Screen name="Posts">
+        <Tab.Screen name="Posts" options={{ tabBarShowLabel: false }}>
           {() => (
             <Posts
               posts={posts}
@@ -505,7 +528,7 @@ export default function Profile({
             />
           )}
         </Tab.Screen>
-        <Tab.Screen name="Followers">
+        <Tab.Screen name="Followers" options={{ tabBarShowLabel: false }}>
           {() => (
             <Followers
               user={profileBeingViewed}
