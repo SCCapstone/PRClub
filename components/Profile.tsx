@@ -275,7 +275,7 @@ export default function Profile({
           ? (
             <Button
               mode="contained"
-              color={black}
+              color={gray2}
               onPress={() => {
                 setProfileBeingViewed(currentUser);
               }}
@@ -285,7 +285,7 @@ export default function Profile({
           )
           : <></>
       }
-      <View style={tw`py-5 bg-[${gray3}]`}>
+      <View style={tw`py-5 bg-[${black}]`}>
         <View style={tw`flex flex-row`}>
           <View style={tw`flex flex-1 justify-center items-center`}>
             {uploadingProfileImage
@@ -407,7 +407,7 @@ export default function Profile({
             <>
               <Button
                 mode="contained"
-                color={black}
+                color={gray3}
                 onPress={() => setShowProfileNavigation(!showProfileNavigation)}
                 icon={() => (
                   showProfileNavigation
