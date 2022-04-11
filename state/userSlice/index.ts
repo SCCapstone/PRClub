@@ -2,8 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import User from '../../models/firestore/User';
 import { initialState } from './state';
 import {
-  followUser,
-  tryFetchCurrentUser,
+  followUser, tryFetchCurrentUser,
   unfollowUser, updateName, updateUsername, uploadProfileImage, userLogOut, userSignIn,
   userSignUp,
 } from './thunks';
@@ -16,7 +15,7 @@ const userSlice = createSlice({
       state.authError = null;
     },
     clearUploadedProfileImage(state) {
-      state.uploadedProfileImage = null;
+      state.updatedProfileImageUrl = null;
     },
     clearUploadProfileImageResult(state) {
       state.uploadProfileImageResult = null;
@@ -78,6 +77,7 @@ const userSlice = createSlice({
       })
       .addCase(userLogOut.fulfilled, (state) => {
         state.currentUser = null;
+        state.updatedProfileImageUrl = null;
         state.status = 'idle';
       });
 
@@ -85,10 +85,14 @@ const userSlice = createSlice({
       .addCase(uploadProfileImage.pending, (state) => {
         state.uploadingProfileImage = true;
       })
-      .addCase(uploadProfileImage.fulfilled, (state, action: PayloadAction<string>) => {
-        state.uploadedProfileImage = action.payload;
-        state.updateProfileResult = { success: true };
+      .addCase(uploadProfileImage.fulfilled,
+        (state, action: PayloadAction<{imageURL: string, userId: string}>) => {
+          state.updatedProfileImageUrl = action.payload.imageURL;
+          state.uploadingProfileImage = false;
+        })
+      .addCase(uploadProfileImage.rejected, (state, action) => {
         state.uploadingProfileImage = false;
+        state.updateProfileResult = { success: false, error: action.error };
       });
 
     builder

@@ -1,7 +1,7 @@
 import { collection, query, where } from '@firebase/firestore';
 import _ from 'lodash';
 import React, { useState } from 'react';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import {
   ActivityIndicator, Searchbar, Text,
 } from 'react-native-paper';
@@ -11,14 +11,13 @@ import { USERS_COLLECTION } from '../constants/firestore';
 import { useAppSelector } from '../hooks/redux';
 import User from '../models/firestore/User';
 import { selectCurrentUser } from '../state/userSlice/selectors';
-import BackButton from './BackButton';
 import CenteredView from './CenteredView';
-import Profile from './Profile';
+import ChatForm from './ChatForm';
 
-function SearchResults(
-  { queryString, onUserPress }: { queryString: string, onUserPress: (user: User) => void },
+function FollowerSearchResults(
+  { queryString, onUserPress }: {queryString: string, onUserPress: (user: User) => void},
 ) {
-  // Redux-based state
+// Redux-based state
   const currentUser = useAppSelector(selectCurrentUser);
 
   // ReactFire query
@@ -50,12 +49,10 @@ function SearchResults(
     nameQueryData as User[],
     (u) => u.id,
   ).filter(
-    (u) => u.id !== currentUser?.id || '',
+    (u) => u.id !== currentUser?.id,
+  ).filter(
+    (u) => currentUser?.followingIds.includes(u.id),
   );
-
-  if (!currentUser) {
-    return <></>;
-  }
 
   if (nameQueryStatus === 'loading' || usernameQueryStatus === 'loading') {
     return (
@@ -104,48 +101,54 @@ function SearchResults(
   return <></>;
 }
 
-export default function Search({
-  onUserPress = undefined,
-}: { onUserPress?: (user: User) => void }) {
-  // component-level state
+export default function CreateNewChat() {
   const [userBeingViewedInSearch, setUserBeingViewedInSearch] = useState<User | null>(null);
   const [queryString, setQueryString] = useState<string>('');
 
   if (userBeingViewedInSearch) {
     return (
       <>
-        <BackButton
-          onPress={() => {
-            setUserBeingViewedInSearch(null);
-            setQueryString('');
-          }}
-        />
-        <Profile user={userBeingViewedInSearch} isProfileScreen={false} />
+        <CenteredView>
+          <Text style={tw`text-lg text-center`}>
+            Send a message to
+            {' '}
+            {userBeingViewedInSearch.username}
+          </Text>
+        </CenteredView>
+        <ChatForm id="" senderId={userBeingViewedInSearch.id} />
       </>
     );
   }
 
+  if (!userBeingViewedInSearch) {
+    return (
+      <View>
+        <Searchbar
+          placeholder="search for users..."
+          onChangeText={setQueryString}
+          value={queryString}
+        />
+        {
+          queryString.length > 0
+            ? (
+              <>
+                <FollowerSearchResults
+                  queryString={queryString}
+                  onUserPress={setUserBeingViewedInSearch}
+                />
+              </>
+            )
+            : (
+              <CenteredView>
+                <Text style={tw`text-lg text-center`}>Start searching for users by typing in the search bar above!</Text>
+              </CenteredView>
+            )
+        }
+      </View>
+    );
+  }
+
   return (
-    <>
-      <Searchbar
-        placeholder="search for users..."
-        onChangeText={setQueryString}
-        value={queryString}
-      />
-      {
-        queryString.length > 0
-          ? (
-            <SearchResults
-              queryString={queryString}
-              onUserPress={onUserPress || setUserBeingViewedInSearch}
-            />
-          )
-          : (
-            <CenteredView>
-              <Text style={tw`text-lg text-center`}>Start searching for users by typing in the search bar above!</Text>
-            </CenteredView>
-          )
-      }
-    </>
+    <></>
   );
 }

@@ -10,17 +10,16 @@ import { WORKOUTS_COLLECTION } from '../constants/firestore';
 import { useAppDispatch, useAppSelector } from '../hooks/redux';
 import Post from '../models/firestore/Post';
 import Workout from '../models/firestore/Workout';
-import { likePost, removePost, unlikePost } from '../state/postsSlice/thunks';
+import { removePost } from '../state/postsSlice/thunks';
 import { selectCurrentUser } from '../state/userSlice/selectors';
+import { likePost, unlikePost } from '../state/userSlice/thunks';
 import BackButton from './BackButton';
 import CenteredView from './CenteredView';
 import CommentForm from './CommentForm';
 import Comments from './Comments';
 import WorkoutItem from './WorkoutItem';
 
-export default function WorkoutPost(
-  { post, forCurrentUser }: { post: Post, forCurrentUser: boolean },
-) {
+export default function WorkoutPost({ post }: { post: Post }) {
   // Redux-level state
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(selectCurrentUser);
@@ -85,7 +84,7 @@ export default function WorkoutPost(
         </View>
         <View style={tw`flex flex-1`}>
           {
-            forCurrentUser
+            currentUser.id === post.userId
               && (
                 <Button onPress={() => dispatch(removePost(post))}>
                   <Ionicons name="trash" size={24} style={tw`text-black`} />

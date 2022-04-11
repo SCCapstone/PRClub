@@ -1,8 +1,11 @@
+import { doc, getDoc, updateDoc } from '@firebase/firestore';
 import {
   getDownloadURL,
-  ref, uploadBytesResumable,
+  ref, uploadBytes,
 } from '@firebase/storage';
-import { storage } from '../firebase-lib/index';
+import { USERS_COLLECTION } from '../constants/firestore';
+import { firestore, storage } from '../firebase-lib/index';
+import User from '../models/firestore/User';
 
 export default {
   async uploadImage(
@@ -15,8 +18,26 @@ export default {
       storage,
       postId ? `images/${userId}/posts/${postId}` : `images/${userId}/profile`,
     );
-    const uploadTask = await uploadBytesResumable(storageRef, blob);
+
+    const uploadTask = await uploadBytes(storageRef, blob);
+
+    if (postId) {
+      await updateDoc(doc(firestore, USERS_COLLECTION, userId), {
+        profileImageHash: Date.now(),
+      });
+    }
 
     return getDownloadURL(uploadTask.ref);
+  },
+
+  async getProfileImageUrl(userId: string): Promise<string> {
+    const userData = await getDoc(doc(firestore, USERS_COLLECTION, userId));
+    const user = userData.data() as User;
+
+    return `https://firebasestorage.googleapis.com/v0/b/prclub-f4e2e.appspot.com/o/images%2F${userId}%2Fprofile?alt=media${
+      user.profileImageHash
+        ? `&${user.profileImageHash}`
+        : ''
+    }`;
   },
 };

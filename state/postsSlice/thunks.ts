@@ -18,20 +18,6 @@ export const removePost = createAsyncThunk<void, Post>(
   },
 );
 
-export const likePost = createAsyncThunk<void, {post: Post, userId: string}>(
-  'posts/likePost',
-  async ({ post, userId }): Promise<void> => {
-    await PostsService.likePost(post, userId);
-  },
-);
-
-export const unlikePost = createAsyncThunk<void, {post: Post, userId: string}>(
-  'posts/unlikePost',
-  async ({ post, userId }): Promise<void> => {
-    await PostsService.unlikePost(post, userId);
-  },
-);
-
 export const addImageToPost = createAsyncThunk<
   string,
   {image: string, userId: string, postId: string}

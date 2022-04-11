@@ -1,35 +1,40 @@
-import { collection, query, where } from '@firebase/firestore';
-import { ref } from '@firebase/storage';
+import {
+  collection, doc, query, where,
+} from '@firebase/firestore';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import React, { useState } from 'react';
-import { Image, TouchableHighlight, View } from 'react-native';
+import { TouchableHighlight, View } from 'react-native';
 import {
-  ActivityIndicator, Button, Text, TextInput,
+  ActivityIndicator, Button, Chip, Text, TextInput,
 } from 'react-native-paper';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import {
-  useFirestore, useFirestoreCollectionData, useStorage, useStorageDownloadURL,
+  useFirestore, useFirestoreCollectionData, useFirestoreDocData,
 } from 'reactfire';
 import tw from 'twrnc';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import { POSTS_COLLECTION, PRS_COLLECTION, WORKOUTS_COLLECTION } from '../constants/firestore';
+import {
+  POSTS_COLLECTION, PRS_COLLECTION, USERS_COLLECTION, WORKOUTS_COLLECTION,
+} from '../constants/firestore';
 import { useAppDispatch, useAppSelector } from '../hooks/redux';
 import Post from '../models/firestore/Post';
 import PR from '../models/firestore/PR';
 import User from '../models/firestore/User';
 import Workout from '../models/firestore/Workout';
+import { clearUpdateProfileResult } from '../state/userSlice';
 import {
-  selectUploadedProfileImage, selectUploadingProfileImage,
-  selectCurrentUser, selectCurrentUserStatus,
+  selectCurrentUser,
+  selectCurrentUserStatus,
+  selectUpdatedProfileImageUrl,
+  selectUploadingProfileImage,
 } from '../state/userSlice/selectors';
 import {
-  uploadProfileImage,
-  followUser, unfollowUser, updateName, updateUsername,
+  followUser, unfollowUser, updateName, updateUsername, uploadProfileImage,
 } from '../state/userSlice/thunks';
-import { clearUpdateProfileResult } from '../state/userSlice';
+import { sortByDate } from '../utils/arrays';
 import { launchImagePicker } from '../utils/expo';
 import BackButton from './BackButton';
-import EditButton from './EditButton';
 import Followers from './Followers';
+import ImageWithAlt from './ImageWIthAlt';
 import Posts from './Posts';
 import PRs from './PRs';
 import Workouts from './Workouts';
@@ -44,21 +49,35 @@ export default function Profile({
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(selectCurrentUser);
   const currentUserStatus = useAppSelector(selectCurrentUserStatus);
-  const uploadedProfileImage = useAppSelector(selectUploadedProfileImage);
   const uploadingProfileImage = useAppSelector(selectUploadingProfileImage);
 
   // component-level state
   const [profileBeingViewed, setProfileBeingViewed] = useState<User>(user);
+  const updatedProfileImageUrl = useAppSelector(selectUpdatedProfileImageUrl);
 
   const [newName, setNewName] = useState<string>(profileBeingViewed.name);
   const [newUsername, setNewUsername] = useState<string>(profileBeingViewed.username);
-  const [editingProfile, setEditingProfile] = useState<boolean>(false);
+  const [viewOption, setViewOption] = useState<'likedPosts' | 'editing' | null>(null);
+  const [showProfileNavigation, setShowProfileNavigation] = useState<boolean>(false);
+  const [showLikedPRPosts, setShowLikedPRPosts] = useState<boolean>(false);
 
   const forCurrentUser = currentUser ? (profileBeingViewed.id === currentUser.id) : false;
 
+  const safeProfileImageUrl = (
+    `https://firebasestorage.googleapis.com/v0/b/prclub-f4e2e.appspot.com/o/images%2F${
+      profileBeingViewed.id
+    }%2Fprofile?alt=media${
+      profileBeingViewed.profileImageHash
+        ? `&${profileBeingViewed.profileImageHash}`
+        : ''
+    }`
+  );
+
+  const profileImage = forCurrentUser ? (
+    updatedProfileImageUrl || safeProfileImageUrl) : safeProfileImageUrl;
+
   // ReactFire queries
   const firestore = useFirestore();
-  const storage = useStorage();
 
   // workouts:
   const workoutsCollection = collection(firestore, WORKOUTS_COLLECTION);
@@ -96,29 +115,110 @@ export default function Profile({
   } = useFirestoreCollectionData(prsQuery);
   const prs = prsData as PR[];
 
-  // profile image:
-  const profileImageRef = ref(storage, `images/${profileBeingViewed.id}/profile`);
+  // liked posts:
+  const currentUserDoc = doc(firestore, USERS_COLLECTION, currentUser?.id || '');
   const {
-    status: profileImageStatus,
-    data: profileImage,
-  } = useStorageDownloadURL(profileImageRef);
+    status: currentUserLikedPostIdsStatus,
+    data: currentUserLikedPostIdsData,
+  } = useFirestoreDocData(currentUserDoc);
+  const currentUserLikedPostIds = currentUserLikedPostIdsData
+    ? (
+      (currentUserLikedPostIdsData as User).likedPostIds.length > 0
+        ? (currentUserLikedPostIdsData as User).likedPostIds
+        : ['']
+    )
+    : [''];
+
+  const {
+    status: likedPostsStatus,
+    data: allPostsData,
+  } = useFirestoreCollectionData(postsCollection);
+  const allPosts = allPostsData as Post[];
+  const likedPosts = allPosts ? allPosts.filter((p) => currentUserLikedPostIds.includes(p.id)) : [];
+  const likedWorkoutPosts = sortByDate(likedPosts.filter((p) => !p.prId), (p) => p.createdDate);
+  const likedPRPosts = sortByDate(likedPosts.filter((p) => !!p.prId), (p) => p.createdDate);
 
   if (!currentUser) {
     return <></>;
   }
 
-  if (editingProfile) {
+  if (viewOption === 'likedPosts') {
     return (
       <>
         <View style={tw`p-2`}>
-          <BackButton
-            onPress={() => {
-              setEditingProfile(false);
-              setNewName(currentUser.name);
-              setNewUsername(currentUser.username);
-              dispatch(clearUpdateProfileResult());
-            }}
-          />
+          <View style={tw`flex flex-row items-center`}>
+            <View style={tw`flex flex-1`}>
+              <BackButton
+                onPress={() => {
+                  setViewOption(null);
+                }}
+              />
+            </View>
+            <View style={tw`flex flex-3`}>
+              <Text style={tw`text-xl text-center font-bold`}>Liked Posts</Text>
+            </View>
+            <View style={tw`flex flex-1`} />
+          </View>
+          <View style={tw`p-2`} />
+        </View>
+        <View style={tw`flex flex-row items-center`}>
+          <View style={tw`flex flex-1`}>
+            <Chip
+              icon={() => <Ionicons name="barbell" size={16} />}
+              textStyle={tw`text-center font-bold text-lg`}
+              selected={!showLikedPRPosts}
+              onPress={() => setShowLikedPRPosts(false)}
+            >
+              Workouts
+            </Chip>
+          </View>
+          <View style={tw`flex flex-1`}>
+            <Chip
+              icon={() => <Ionicons name="checkbox" size={16} />}
+              textStyle={tw`text-center font-bold text-lg`}
+              selected={showLikedPRPosts}
+              onPress={() => setShowLikedPRPosts(true)}
+            >
+              PRs
+            </Chip>
+          </View>
+        </View>
+        <Posts
+          posts={showLikedPRPosts ? likedPRPosts : likedWorkoutPosts}
+          postsStatus={
+            currentUserLikedPostIdsStatus === 'success' && likedPostsStatus === 'success'
+              ? 'success'
+              : currentUserLikedPostIdsStatus === 'error' || likedPostsStatus === 'error'
+                ? 'error'
+                : 'loading'
+          }
+          isHomeScreen={false}
+        />
+      </>
+    );
+  }
+
+  if (viewOption === 'editing') {
+    return (
+      <>
+        <View style={tw`p-2`}>
+          <View style={tw`flex flex-row items-center`}>
+            <View style={tw`flex flex-1`}>
+              <BackButton
+                onPress={() => {
+                  setViewOption(null);
+                  setNewName(currentUser.name);
+                  setNewUsername(currentUser.username);
+                  dispatch(clearUpdateProfileResult());
+                }}
+              />
+            </View>
+            <View style={tw`flex flex-3`}>
+              <Text style={tw`text-xl text-center font-bold`}>Edit Profile</Text>
+            </View>
+            <View style={tw`flex flex-1`} />
+          </View>
+          <View style={tw`p-2`} />
           <Text style={tw`text-base`}>Name</Text>
           <TextInput
             style={tw`text-lg border-solid border-gray-500 border-b`}
@@ -179,7 +279,7 @@ export default function Profile({
       <View style={tw`py-5 bg-gray-800`}>
         <View style={tw`flex flex-row`}>
           <View style={tw`flex flex-1 justify-center items-center`}>
-            {profileImageStatus === 'loading' || uploadingProfileImage
+            {uploadingProfileImage
               ? <ActivityIndicator size="large" color="white" />
               : (profileBeingViewed.id === currentUser.id
                 ? (
@@ -194,9 +294,10 @@ export default function Profile({
                     }}
                   >
                     <>
-                      <Image
-                        source={{ uri: uploadedProfileImage || profileImage }}
+                      <ImageWithAlt
+                        uri={updatedProfileImageUrl ? `${profileImage}&${updatedProfileImageUrl}` : profileImage}
                         style={tw`w-30 h-30`}
+                        altText="Error loading profile image!"
                       />
                       <View
                         style={{
@@ -221,9 +322,11 @@ export default function Profile({
                   </TouchableHighlight>
                 )
                 : (
-                  <Image
-                    source={{ uri: profileImage }}
+                  <ImageWithAlt
+                    key={Date.now()}
+                    uri={profileImage}
                     style={tw`w-30 h-30`}
+                    altText="Error loading profile image!"
                   />
                 )
               )}
@@ -253,6 +356,8 @@ export default function Profile({
                 : (profileBeingViewed.workoutIds.length === 1 ? '' : 's')}
               {' '}
               |
+              {' '}
+              <Ionicons name="checkbox" />
               {' '}
               {profileBeingViewed.id === currentUser.id
                 ? currentUser.prIds.length
@@ -293,12 +398,48 @@ export default function Profile({
       {
         forCurrentUser
           ? (
-            <EditButton onPress={() => {
-              setEditingProfile(true);
-            }}
-            >
-              Edit Profile
-            </EditButton>
+            <>
+              <Button
+                mode="contained"
+                color="orange"
+                onPress={() => setShowProfileNavigation(!showProfileNavigation)}
+                icon={() => (
+                  showProfileNavigation
+                    ? <Ionicons name="chevron-up" size={16} />
+                    : <Ionicons name="chevron-down" size={16} />
+                )}
+              >
+                {`${showProfileNavigation ? 'Hide' : 'Show'} View Options`}
+              </Button>
+              {
+                showProfileNavigation
+                  ? (
+                    <>
+                      <Button
+                        mode="contained"
+                        color="darksalmon"
+                        onPress={() => {
+                          setViewOption('likedPosts');
+                        }}
+                        icon={() => <Ionicons name="heart" size={16} />}
+                      >
+                        See Liked Posts
+                      </Button>
+                      <Button
+                        mode="contained"
+                        color="darkseagreen"
+                        onPress={() => {
+                          setViewOption('editing');
+                        }}
+                        icon={() => <Ionicons name="create" size={16} />}
+                      >
+                        Edit Profile
+                      </Button>
+                    </>
+                  )
+                  : <></>
+              }
+            </>
           )
           : (
             currentUser.followingIds.includes(profileBeingViewed.id)
@@ -360,7 +501,7 @@ export default function Profile({
             <Posts
               posts={posts}
               postsStatus={postsStatus}
-              forCurrentUser={forCurrentUser}
+              isHomeScreen={false}
             />
           )}
         </Tab.Screen>
