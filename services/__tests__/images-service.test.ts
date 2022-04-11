@@ -1,5 +1,5 @@
-// const assert = require('assert');
+const assert = require('assert');
 
-// describe('ImagesService', async () => {
-//     test('upload image')
-// });
+describe('ImagesService', () => {
+    test('upload image')
+});
