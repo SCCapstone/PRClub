@@ -9,7 +9,7 @@
     "web:prod": "expo start --web --no-dev",
     "eject": "expo eject",
     "test": "USE_EMULATORS=true firebase emulators:exec --import ./test-data/ 'jest --runInBand --detectOpenHandles --forceExit'",
-    "test:pwsh": "$env:USE_EMULATORS='true'; firebase emulators:exec --import .\\test-data\\ 'jest --runInBand --detectOpenHandles --forceExit'; Remove-Item Env:\\USE_EMULATORS$",
+    "test:pwsh": "powershell $env:USE_EMULATORS='true'; firebase emulators:exec --import .\\test-data\\ 'jest --runInBand --detectOpenHandles --forceExit'; Remove-Item Env:\\USE_EMULATORS",
     "cy:open": "npx cypress open",
     "cy:run": "npx cypress run --headless",
     "cy": "start-server-and-test web:test http://localhost:19006 cy:open",
