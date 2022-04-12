@@ -43,6 +43,7 @@
     "firebase": "^9.6.9",
     "formik": "^2.2.9",
     "humps": "^2.0.1",
+    "jsc-android": "^250230.2.1",
     "lodash": "^4.17.21",
     "patch-package": "^6.4.7",
     "path": "^0.12.7",
