@@ -1,9 +1,9 @@
-import { FirebaseApp, FirebaseOptions, initializeApp } from '@firebase/app';
+import { FirebaseOptions, initializeApp } from '@firebase/app';
 import { connectAuthEmulator, getAuth } from '@firebase/auth';
 import { connectFirestoreEmulator, getFirestore, initializeFirestore } from '@firebase/firestore';
 import { connectStorageEmulator, getStorage } from '@firebase/storage';
-import { getDatabase } from 'firebase/database';
 import Constants from 'expo-constants';
+import { getDatabase } from 'firebase/database';
 
 export const firebaseConfig: FirebaseOptions = {
   apiKey: 'AIzaSyAAVQd1H3QrQbrSXioon-Rr9OTR1_opb8Y',
