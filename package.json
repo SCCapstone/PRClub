@@ -8,7 +8,7 @@
     "web:test": "USE_EMULATORS=true firebase emulators:exec 'expo start --web'",
     "web:prod": "expo start --web --no-dev",
     "eject": "expo eject",
-    "test": "USE_EMULATORS=true firebase emulators:exec 'jest --runInBand --detectOpenHandles --forceExit'",
+    "test": "USE_EMULATORS=true firebase emulators:exec --import ./test-data/ 'jest --runInBand --detectOpenHandles --forceExit'",
     "cy:open": "npx cypress open",
     "cy:run": "npx cypress run --headless",
     "cy": "start-server-and-test web:test http://localhost:19006 cy:open",
@@ -71,7 +71,7 @@
     "yup": "^0.32.11"
   },
   "devDependencies": {
-    "@babel/core": "^7.9.0",
+    "@babel/core": "^7.17.9",
     "@babel/preset-typescript": "^7.16.0",
     "@types/jest": "^27.4.0",
     "@types/react": "~16.9.35",
@@ -82,6 +82,7 @@
     "@types/uuid": "^8.3.1",
     "@typescript-eslint/eslint-plugin": "^5.1.0",
     "@typescript-eslint/parser": "^5.1.0",
+    "babel-jest": "^27.5.1",
     "concurrently": "^7.0.0",
     "cypress": "^9.2.1",
     "eslint": "^7.32.0",

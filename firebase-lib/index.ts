@@ -30,5 +30,4 @@ if (
   connectFirestoreEmulator(firestore, 'localhost', 8080);
   connectAuthEmulator(auth, 'http://localhost:9099');
   connectStorageEmulator(storage, 'localhost', 9199);
-  connectDatabaseEmulator(database, 'localhost', 10);
 }
