@@ -1,0 +1,20 @@
+{
+  "name": "images/debKjhaRMGqYRMOUkhgwm0etsfgZ/profile",
+  "bucket": "prclub-f4e2e.appspot.com",
+  "contentType": "image/jpeg",
+  "metageneration": 1,
+  "generation": 1648052141803,
+  "storageClass": "STANDARD",
+  "contentDisposition": "inline",
+  "cacheControl": "public, max-age=3600",
+  "contentEncoding": "identity",
+  "downloadTokens": [
+    "cd0daca4-0e6a-4684-bda5-8fdf3d879ec5"
+  ],
+  "etag": "MIG6TTUy5UxeEiS5//LKtTYaf/8",
+  "timeCreated": "2022-03-23T16:15:41.803Z",
+  "updated": "2022-03-23T16:15:41.803Z",
+  "size": 88351,
+  "md5Hash": "NmQM97EjvkqZlJGuvwWvaw==",
+  "crc32c": "516149233"
+}
