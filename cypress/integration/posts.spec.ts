@@ -9,22 +9,6 @@ describe('Posts', () => {
     });
   });
 
-  it('Can delete one of your posts.', () => {
-    // navigate to profile
-    cy.get('a[href="/Main/Profile"]').click();
-
-    // delete post
-    cy.get('div[role="tablist"]').eq(0).contains('Posts').click({ force: true });
-    cy
-      .contains('posted workout:')
-      .parent()
-      .parent()
-      .get('span[style="color: rgb(0, 0, 0); font-family: ionicons; font-size: 24px; font-style: normal; font-weight: normal;"]')
-      .eq(0)
-      .click({ force: true });
-    cy.contains('posted workout:').should('not.exist');
-  });
-
   it('Can unlike and like a post.', () => {
     // navigate to home screen
     cy.get('a[href="/Main/Home"]').click();
