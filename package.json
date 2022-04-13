@@ -10,7 +10,7 @@
     "eject": "expo eject",
     "test": "USE_EMULATORS=true firebase emulators:exec 'jest --runInBand --detectOpenHandles --forceExit'",
     "cy:open": "npx cypress open",
-    "cy:run": "npx cypress run --headless",
+    "cy:run": "npx cypress run --headless --config video=false",
     "cy": "start-server-and-test web:test http://localhost:19006 cy:open",
     "cy:ci": "start-server-and-test web:test http://localhost:19006 cy:run",
     "postinstall": "patch-package",
