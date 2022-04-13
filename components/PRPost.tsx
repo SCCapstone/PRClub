@@ -16,6 +16,7 @@ import { likePost, unlikePost } from '../state/userSlice/thunks';
 import CenteredView from './CenteredView';
 import CommentForm from './CommentForm';
 import Comments from './Comments';
+import { colors } from '../constants/styles';
 
 export default function PRPost({ post }: {post: Post}) {
   // Redux-level state
@@ -36,7 +37,9 @@ export default function PRPost({ post }: {post: Post}) {
   const workout = workoutData as Workout;
 
   const isLiked = post.likedByIds.includes(currentUser?.id || '');
-
+  const {
+    gray1, gray2, gray3, creamWhite,
+  } = colors;
   if (!currentUser) {
     return <></>;
   }
@@ -50,7 +53,7 @@ export default function PRPost({ post }: {post: Post}) {
   }
 
   return (
-    <View style={tw`rounded overflow-hidden shadow-lg m-2 p-2`}>
+    <View style={tw`rounded overflow-hidden shadow-lg m-2 p-2 bg-[${creamWhite}]`}>
       <View style={tw`flex flex-row`}>
         <View style={tw`flex flex-4`}>
           <Text>{`On ${new Date(post.createdDate).toLocaleString()},`}</Text>
@@ -97,7 +100,7 @@ export default function PRPost({ post }: {post: Post}) {
                       ? <Text style={tw`font-bold text-lg text-center`}>{workout.name}</Text>
                       : <Text style={tw`italic text-lg text-center`}>deleted workout</Text>}
                   </Text>
-                  <View style={tw`bg-gray-800 p-3`}>
+                  <View style={tw`bg-[${gray3}] p-3`}>
                     <Text style={tw`text-xl text-white text-center`}>
                       Increased total volume to
                       {' '}
