@@ -452,7 +452,7 @@ export default function Profile({
             currentUser.followingIds.includes(profileBeingViewed.id)
               ? (
                 <Button
-                  style={tw`bg-blue-200`}
+                  style={tw`bg-[${gray3}]`}
                   onPress={() => {
                     dispatch(unfollowUser(profileBeingViewed.id));
                   }}
@@ -466,7 +466,7 @@ export default function Profile({
               )
               : (
                 <Button
-                  style={tw`bg-blue-500`}
+                  style={tw`bg-[${gray1}]`}
                   onPress={() => {
                     dispatch(followUser(profileBeingViewed.id));
                   }}
