@@ -37,6 +37,7 @@ and meet others with the same interests.
 ### Optional
 Testing:
 - [`jest`](https://jestjs.io/)
+- [`cypress`](https://www.cypress.io/)
 - [`firebase-tools`](https://www.npmjs.com/package/firebase-tools)
 
 Deployment:

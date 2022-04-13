@@ -2,7 +2,6 @@
 
 describe('Authentication', () => {
   beforeEach(() => {
-    cy.clearLocalStorage();
     cy.visit('/');
   });
 
