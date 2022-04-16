@@ -101,7 +101,7 @@ export default function Profile({
     status: postsStatus,
     data: postsData,
   } = useFirestoreCollectionData(postsQuery);
-  const posts = postsData as Post[];
+  const posts = sortByDate((postsData || []) as Post[], (p) => p.createdDate);
 
   // prs:
   const prsCollection = collection(firestore, PRS_COLLECTION);

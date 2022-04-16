@@ -16,7 +16,11 @@ import CenteredView from './CenteredView';
 import Profile from './Profile';
 
 function SearchResults(
-  { queryString, onUserPress }: { queryString: string, onUserPress: (user: User) => void },
+  { queryString, onUserPress, filterBy = undefined }: {
+    queryString: string,
+    onUserPress: (user: User) => void,
+    filterBy?: (user: User) => boolean,
+  },
 ) {
   // Redux-based state
   const currentUser = useAppSelector(selectCurrentUser);
@@ -51,6 +55,8 @@ function SearchResults(
     (u) => u.id,
   ).filter(
     (u) => u.id !== currentUser?.id || '',
+  ).filter(
+    (u) => (filterBy ? filterBy(u) : true),
   );
 
   if (!currentUser) {
@@ -106,7 +112,8 @@ function SearchResults(
 
 export default function Search({
   onUserPress = undefined,
-}: { onUserPress?: (user: User) => void }) {
+  filterBy = undefined,
+}: { onUserPress?: (user: User) => void, filterBy?: (user: User) => boolean }) {
   // component-level state
   const [userBeingViewedInSearch, setUserBeingViewedInSearch] = useState<User | null>(null);
   const [queryString, setQueryString] = useState<string>('');
@@ -138,6 +145,7 @@ export default function Search({
             <SearchResults
               queryString={queryString}
               onUserPress={onUserPress || setUserBeingViewedInSearch}
+              filterBy={filterBy || undefined}
             />
           )
           : (
