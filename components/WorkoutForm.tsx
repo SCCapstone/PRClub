@@ -231,6 +231,7 @@ export default function WorkoutForm({
                                                       .exerciseSets[j]
                                                       .weight)}
                                                     keyboardType="numeric"
+                                                    maxLength={3}
                                                   />
                                                 )}
                                               </Field>
@@ -255,6 +256,7 @@ export default function WorkoutForm({
                                                       .exerciseSets[j]
                                                       .reps)}
                                                     keyboardType="numeric"
+                                                    maxLength={3}
                                                   />
                                                 )}
                                               </Field>
