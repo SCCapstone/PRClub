@@ -230,48 +230,53 @@ export default function Posts({
             ) : <></>
           }
         </ScrollView>
-        <Button
-          mode="contained"
-          onPress={() => {
-            if (thingToPost) {
-              let post: Post = {
-                id: postId,
-                userId: thingToPost.userId,
-                username: thingToPost.username,
-                workoutId: isPR(thingToPost) ? thingToPost.workoutId : thingToPost.id,
-                createdDate: new Date().toString(),
-                caption: postCaption,
-                commentIds: [],
-                likedByIds: [],
-              };
+        {
+          thingToPost
+            ? (
+              <Button
+                mode="contained"
+                onPress={() => {
+                  if (thingToPost) {
+                    let post: Post = {
+                      id: postId,
+                      userId: thingToPost.userId,
+                      username: thingToPost.username,
+                      workoutId: isPR(thingToPost) ? thingToPost.workoutId : thingToPost.id,
+                      createdDate: new Date().toString(),
+                      caption: postCaption,
+                      commentIds: [],
+                      likedByIds: [],
+                    };
 
-              if (isPR(thingToPost)) {
-                post = { ...post, prId: thingToPost.id };
-              }
+                    if (isPR(thingToPost)) {
+                      post = { ...post, prId: thingToPost.id };
+                    }
 
-              if (uploadedImageToPost) {
-                post = { ...post, image: uploadedImageToPost };
-              }
+                    if (uploadedImageToPost) {
+                      post = { ...post, image: uploadedImageToPost };
+                    }
 
-              dispatch(upsertPost(post));
-              dispatch(clearUploadedImageToPost());
+                    dispatch(upsertPost(post));
+                    dispatch(clearUploadedImageToPost());
 
-              setPostCaption('');
+                    setPostCaption('');
 
-              postId = uuidv4();
-            }
-          }}
-          disabled={
-            !thingToPost
-              || postCaption.length < 1
-              || postCaption.length > POST_CHARACTER_LIMIT
-              || callingPostsService
-              || uploadingImageToPost
-          }
-          loading={callingPostsService}
-        >
-          Post
-        </Button>
+                    postId = uuidv4();
+                  }
+                }}
+                disabled={
+                  !thingToPost
+                || postCaption.length < 1
+                || postCaption.length > POST_CHARACTER_LIMIT
+                || callingPostsService
+                || uploadingImageToPost
+                }
+                loading={callingPostsService}
+              >
+                Post
+              </Button>
+            ) : <></>
+        }
       </>
     );
   }
