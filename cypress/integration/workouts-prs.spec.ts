@@ -71,7 +71,11 @@ describe('Workouts and PRs', () => {
     cy.contains("Big Duck's Big Workout");
 
     // ensure new PRs show up
-    cy.get('div[role="tablist"]').eq(0).contains('PRs').click({ force: true });
+    cy.get('div[role="tablist"]')
+      .eq(0)
+      .get('div[style="font-family: ionicons; font-size: 18px; font-style: normal; font-weight: normal;"]')
+      .eq(2)
+      .click({ force: true });
     cy.contains('Bench Press Narrow Grip');
     cy.contains('Benchpress Dumbbells');
   });

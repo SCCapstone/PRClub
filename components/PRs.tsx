@@ -53,12 +53,15 @@ function PRsByExerciseListItem({
                 onPress={onDelete}
                 icon={() => <Ionicons name="trash" size={24} style={tw`text-black`} />}
               />
+              {/*
+              commenting out due to #194
               <Menu.Item
                 key={1}
                 title="Share as Post"
                 onPress={onPost}
                 icon={() => <Ionicons name="add" size={24} style={tw`text-black`} />}
               />
+              */}
             </Menu>
           )
           : undefined

@@ -478,7 +478,13 @@ export default function Profile({
           tabBarLabelStyle: tw`text-xs`,
         }}
       >
-        <Tab.Screen name="Workouts">
+        <Tab.Screen
+          name="Workouts"
+          options={{
+            tabBarIcon: () => <Ionicons name="barbell" size={18} />,
+            tabBarShowLabel: false,
+          }}
+        >
           {() => (
             <Workouts
               workouts={workouts}
@@ -487,7 +493,13 @@ export default function Profile({
             />
           )}
         </Tab.Screen>
-        <Tab.Screen name="PRs">
+        <Tab.Screen
+          name="PRs"
+          options={{
+            tabBarIcon: () => <Ionicons name="checkbox" size={18} />,
+            tabBarShowLabel: false,
+          }}
+        >
           {() => (
             <PRs
               prs={prs}
@@ -496,7 +508,13 @@ export default function Profile({
             />
           )}
         </Tab.Screen>
-        <Tab.Screen name="Posts">
+        <Tab.Screen
+          name="Posts"
+          options={{
+            tabBarIcon: () => <Ionicons name="image" size={18} />,
+            tabBarShowLabel: false,
+          }}
+        >
           {() => (
             <Posts
               posts={posts}
@@ -505,7 +523,13 @@ export default function Profile({
             />
           )}
         </Tab.Screen>
-        <Tab.Screen name="Followers">
+        <Tab.Screen
+          name="Followers"
+          options={{
+            tabBarIcon: () => <Ionicons name="person" size={18} />,
+            tabBarShowLabel: false,
+          }}
+        >
           {() => (
             <Followers
               user={profileBeingViewed}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Image, ScrollView, View } from 'react-native';
 import {
   ActivityIndicator, Button, Text, TextInput,
@@ -39,6 +39,12 @@ export default function Workouts({
   const [workoutToEdit, setWorkoutToEdit] = useState<Workout | null>(null);
   const [workoutToPost, setWorkoutToPost] = useState<Workout | null>(null);
   const [postCaption, setPostCaption] = useState<string>('');
+
+  useEffect(() => {
+    if (!forCurrentUser) {
+      setWorkoutsState('default');
+    }
+  }, [forCurrentUser]);
 
   if (workoutsStatus === 'loading') {
     return (
