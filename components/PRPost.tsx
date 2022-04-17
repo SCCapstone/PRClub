@@ -31,7 +31,7 @@ export default function PRPost({ post }: {post: Post}) {
   const pr = prData as PR;
 
   // workout:
-  const workoutRef = doc(firestore, PRS_COLLECTION, post.workoutId);
+  const workoutRef = doc(firestore, PRS_COLLECTION, pr.workoutId);
   const { status: workoutStatus, data: workoutData } = useFirestoreDocData(workoutRef);
   const workout = workoutData as Workout;
 
@@ -89,14 +89,20 @@ export default function PRPost({ post }: {post: Post}) {
               }
               <View style={tw`bg-gray-300 p-3`}>
                 <>
-                  <Text style={tw`font-bold text-lg text-center`}>{pr.exerciseName}</Text>
+                  <Text style={tw`text-center p-2`}>
+                    <Text style={tw`italic text-lg`}>For exercise: </Text>
+                    <Text style={tw`font-bold text-lg`}>{pr.exerciseName}</Text>
+                  </Text>
+                  {/*
+                  Commented out due to PR name and Workout name not matching up properly in database
                   <Text style={tw`text-base text-center`}>
                     During workout:
                     {' '}
-                    {workoutStatus === 'success' && workout
+                    {workout && workout
                       ? <Text style={tw`font-bold text-lg text-center`}>{workout.name}</Text>
                       : <Text style={tw`italic text-lg text-center`}>deleted workout</Text>}
                   </Text>
+                  */}
                   <View style={tw`bg-gray-800 p-3`}>
                     <Text style={tw`text-xl text-white text-center`}>
                       Increased total volume to
