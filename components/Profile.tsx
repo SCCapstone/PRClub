@@ -129,6 +129,13 @@ export default function Profile({
     )
     : [''];
 
+  // follower number
+  const userInDbDoc = doc(firestore, USERS_COLLECTION, profileBeingViewed.id);
+  const {
+    data: userInDbData,
+  } = useFirestoreDocData(userInDbDoc);
+  const numFollowers = (userInDbData as User)?.followerIds.length || 0;
+
   const {
     status: likedPostsStatus,
     data: allPostsData,
@@ -371,10 +378,10 @@ export default function Profile({
             <Text style={tw`text-sm text-white`}>
               <Ionicons name="person" />
               {' '}
-              {profileBeingViewed.followerIds.length}
+              {numFollowers}
               {' '}
               follower
-              {profileBeingViewed.followerIds.length === 1 ? '' : 's'}
+              {numFollowers === 1 ? '' : 's'}
             </Text>
           </View>
         </View>
