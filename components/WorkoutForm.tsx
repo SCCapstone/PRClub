@@ -45,7 +45,7 @@ export default function WorkoutForm({
     }
   }
 
-  const [formValues, setFormValues] = useState<WorkoutInput>({
+  const initialFormValues = {
     name: workoutToEdit?.name || '',
     exercises: workoutToEdit?.exercises.map((e) => ({
       id: e.id,
@@ -56,7 +56,9 @@ export default function WorkoutForm({
         reps: s.reps,
       })),
     })) || [],
-  });
+  };
+
+  const [formValues, setFormValues] = useState<WorkoutInput>(initialFormValues);
 
   if (!currentUser) {
     return <></>;
@@ -308,6 +310,13 @@ export default function WorkoutForm({
                 </>
               )}
             </FieldArray>
+            <Button
+              mode="contained"
+              color="blue"
+              onPress={() => formikProps.setValues(initialFormValues)}
+            >
+              reset workout
+            </Button>
             <Button
               mode="contained"
               onPress={() => {
