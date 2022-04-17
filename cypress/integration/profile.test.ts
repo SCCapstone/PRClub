@@ -14,7 +14,13 @@ describe('Profile', () => {
     cy.get('a[href="/Main/Profile"]').click();
 
     // delete post
-    cy.get('div[role="tablist"]').eq(0).contains('Posts').click({ force: true });
+    cy
+      .get('div[role="tablist"]')
+      .eq(0)
+      .get('div[style="font-family: ionicons; font-size: 18px; font-style: normal; font-weight: normal;"]')
+      .eq(4)
+      .click({ force: true });
+
     cy
       .contains('posted workout:')
       .parent()
