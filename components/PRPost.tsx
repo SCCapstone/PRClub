@@ -30,18 +30,13 @@ export default function PRPost({ post }: {post: Post}) {
   const { status: prStatus, data: prData } = useFirestoreDocData(prRef);
   const pr = prData as PR;
 
-  // workout:
-  const workoutRef = doc(firestore, PRS_COLLECTION, pr.workoutId);
-  const { status: workoutStatus, data: workoutData } = useFirestoreDocData(workoutRef);
-  const workout = workoutData as Workout;
-
   const isLiked = post.likedByIds.includes(currentUser?.id || '');
 
   if (!currentUser) {
     return <></>;
   }
 
-  if (prStatus === 'loading' || workoutStatus === 'loading') {
+  if (prStatus === 'loading') {
     return (
       <CenteredView>
         <ActivityIndicator />
@@ -95,6 +90,7 @@ export default function PRPost({ post }: {post: Post}) {
                   </Text>
                   {/*
                   Commented out due to PR name and Workout name not matching up properly in database
+                  (noted by #171)
                   <Text style={tw`text-base text-center`}>
                     During workout:
                     {' '}
