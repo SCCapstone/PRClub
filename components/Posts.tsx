@@ -134,42 +134,56 @@ export default function Posts({
                 workoutsStatus === 'loading'
                   ? <ActivityIndicator />
                   : (
-                    <Select
-                      options={workouts.map(
-                        (w) => ({
-                          value: JSON.stringify(w),
-                          label: `On ${new Date(w.modifiedDate || w.createdDate).toISOString().split('T')[0]}: ${w.name}`,
-                        }),
-                      )}
-                      placeholderText="select a workout..."
-                      onSelect={(option) => {
-                        if (option) {
-                          setThingToPost(JSON.parse(option.value) as Workout);
-                        }
-                      }}
-                      clearable={false}
-                    />
+                    workouts.length > 0
+                      ? (
+                        <Select
+                          options={workouts.map(
+                            (w) => ({
+                              value: JSON.stringify(w),
+                              label: `On ${new Date(w.modifiedDate || w.createdDate).toISOString().split('T')[0]}: ${w.name}`,
+                            }),
+                          )}
+                          placeholderText="select a workout..."
+                          onSelect={(option) => {
+                            if (option) {
+                              setThingToPost(JSON.parse(option.value) as Workout);
+                            }
+                          }}
+                          clearable={false}
+                        />
+                      ) : (
+                        <CenteredView>
+                          <Text style={tw`text-center`}>No workouts to post!</Text>
+                        </CenteredView>
+                      )
                   )
               )
               : (
                 prsStatus === 'loading'
                   ? <ActivityIndicator />
                   : (
-                    <Select
-                      options={prs.map(
-                        (p) => ({
-                          value: JSON.stringify(p),
-                          label: `On ${new Date(p.date).toISOString().split('T')[0]}: ${p.exerciseName}`,
-                        }),
-                      )}
-                      placeholderText="select a PR..."
-                      onSelect={(option) => {
-                        if (option) {
-                          setThingToPost(JSON.parse(option.value) as PR);
-                        }
-                      }}
-                      clearable={false}
-                    />
+                    prs.length > 0
+                      ? (
+                        <Select
+                          options={prs.map(
+                            (p) => ({
+                              value: JSON.stringify(p),
+                              label: `On ${new Date(p.date).toISOString().split('T')[0]}: ${p.exerciseName}`,
+                            }),
+                          )}
+                          placeholderText="select a PR..."
+                          onSelect={(option) => {
+                            if (option) {
+                              setThingToPost(JSON.parse(option.value) as PR);
+                            }
+                          }}
+                          clearable={false}
+                        />
+                      ) : (
+                        <CenteredView>
+                          <Text style={tw`text-center`}>No PRs to post!</Text>
+                        </CenteredView>
+                      )
                   )
               )
           }
