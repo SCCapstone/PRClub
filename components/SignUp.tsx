@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View } from 'react-native';
-import { Button, TextInput } from 'react-native-paper';
+import { Button, Text, TextInput } from 'react-native-paper';
 import tw from 'twrnc';
 import { useAppDispatch } from '../hooks/redux';
 import { userSignUp } from '../state/userSlice/thunks';
@@ -63,6 +63,9 @@ export default function SignUp() {
         style={getConfirmPasswordStyle()}
         secureTextEntry
       />
+      <View style={tw`p-3`}>
+        <Text style={tw`text-sm italic`}>Note: your password must be at least 6 characters long.</Text>
+      </View>
       <View style={tw`items-center`}>
         <Button
           mode="contained"

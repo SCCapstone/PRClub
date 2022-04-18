@@ -5,7 +5,7 @@ import { View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import 'react-native-get-random-values';
 import {
-  ActivityIndicator, Button, Text, TextInput, List,
+  ActivityIndicator, Button, List, Text, TextInput,
 } from 'react-native-paper';
 import tw from 'twrnc';
 import { v4 as uuidv4 } from 'uuid';
@@ -40,6 +40,8 @@ export default function WorkoutForm({
   const {
     black, gray1, gray3, creamWhite,
   } = colors;
+  const [customExerciseName, setCustomExerciseName] = useState<string>('');
+
   const categories: string[] = [];
   for (let i = 0; i < exerciseInfos.length; i += 1) {
     const category = exerciseInfos[i].category.name;
@@ -71,12 +73,34 @@ export default function WorkoutForm({
         <Button
           onPress={() => {
             setExerciseToUpdateIndex(null);
+            setCustomExerciseName('');
           }}
         >
           Back
         </Button>
         <Text style={tw`text-lg font-bold`}>{`Exercise #${exerciseToUpdateIndex + 1}`}</Text>
         <ScrollView>
+          <TextInput
+            placeholder="enter a custom exercise name..."
+            value={customExerciseName}
+            onChangeText={(input) => setCustomExerciseName(input)}
+          />
+          <Button
+            mode="contained"
+            onPress={() => {
+              const updatedFormValues = _.cloneDeep(formValues);
+              updatedFormValues
+                .exercises[exerciseToUpdateIndex].name = customExerciseName;
+              setFormValues(updatedFormValues);
+              setExerciseToUpdateIndex(null);
+              setCustomExerciseName('');
+            }}
+            disabled={customExerciseName.length === 0}
+          >
+            submit
+          </Button>
+          <View style={tw`p-3`} />
+          <Text style={tw`text-center`}>Or select an exercise below:</Text>
           <List.AccordionGroup>
             {categories.map((category) => (
               <List.Accordion
@@ -101,6 +125,7 @@ export default function WorkoutForm({
                             .exercises[exerciseToUpdateIndex].name = exerciseInfo.name;
                           setFormValues(updatedFormValues);
                           setExerciseToUpdateIndex(null);
+                          setCustomExerciseName('');
                         }}
                       />
                     ),
@@ -234,6 +259,7 @@ export default function WorkoutForm({
                                                       .exerciseSets[j]
                                                       .weight)}
                                                     keyboardType="numeric"
+                                                    maxLength={3}
                                                   />
                                                 )}
                                               </Field>
@@ -258,6 +284,7 @@ export default function WorkoutForm({
                                                       .exerciseSets[j]
                                                       .reps)}
                                                     keyboardType="numeric"
+                                                    maxLength={3}
                                                   />
                                                 )}
                                               </Field>
@@ -309,6 +336,16 @@ export default function WorkoutForm({
                 </>
               )}
             </FieldArray>
+            <Button
+              mode="contained"
+              color={gray1}
+              onPress={() => formikProps.setValues({
+                name: '',
+                exercises: [],
+              })}
+            >
+              reset workout
+            </Button>
             <Button
               mode="contained"
               color={black}

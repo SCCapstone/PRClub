@@ -30,6 +30,7 @@ export default function CommentForm({ post } : { post: Post }) {
         onChangeText={setCommentText}
         value={commentText}
         style={tw`flex flex-3`}
+        multiline
       />
       <Button
         mode="contained"

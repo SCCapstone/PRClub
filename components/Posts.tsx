@@ -135,42 +135,56 @@ export default function Posts({
                 workoutsStatus === 'loading'
                   ? <ActivityIndicator />
                   : (
-                    <Select
-                      options={workouts.map(
-                        (w) => ({
-                          value: JSON.stringify(w),
-                          label: `On ${new Date(w.modifiedDate || w.createdDate).toISOString().split('T')[0]}: ${w.name}`,
-                        }),
-                      )}
-                      placeholderText="select a workout..."
-                      onSelect={(option) => {
-                        if (option) {
-                          setThingToPost(JSON.parse(option.value) as Workout);
-                        }
-                      }}
-                      clearable={false}
-                    />
+                    workouts.length > 0
+                      ? (
+                        <Select
+                          options={workouts.map(
+                            (w) => ({
+                              value: JSON.stringify(w),
+                              label: `On ${new Date(w.modifiedDate || w.createdDate).toISOString().split('T')[0]}: ${w.name}`,
+                            }),
+                          )}
+                          placeholderText="select a workout..."
+                          onSelect={(option) => {
+                            if (option) {
+                              setThingToPost(JSON.parse(option.value) as Workout);
+                            }
+                          }}
+                          clearable={false}
+                        />
+                      ) : (
+                        <CenteredView>
+                          <Text style={tw`text-center`}>No workouts to post!</Text>
+                        </CenteredView>
+                      )
                   )
               )
               : (
                 prsStatus === 'loading'
                   ? <ActivityIndicator />
                   : (
-                    <Select
-                      options={prs.map(
-                        (p) => ({
-                          value: JSON.stringify(p),
-                          label: `On ${new Date(p.date).toISOString().split('T')[0]}: ${p.exerciseName}`,
-                        }),
-                      )}
-                      placeholderText="select a PR..."
-                      onSelect={(option) => {
-                        if (option) {
-                          setThingToPost(JSON.parse(option.value) as PR);
-                        }
-                      }}
-                      clearable={false}
-                    />
+                    prs.length > 0
+                      ? (
+                        <Select
+                          options={prs.map(
+                            (p) => ({
+                              value: JSON.stringify(p),
+                              label: `On ${new Date(p.date).toISOString().split('T')[0]}: ${p.exerciseName}`,
+                            }),
+                          )}
+                          placeholderText="select a PR..."
+                          onSelect={(option) => {
+                            if (option) {
+                              setThingToPost(JSON.parse(option.value) as PR);
+                            }
+                          }}
+                          clearable={false}
+                        />
+                      ) : (
+                        <CenteredView>
+                          <Text style={tw`text-center`}>No PRs to post!</Text>
+                        </CenteredView>
+                      )
                   )
               )
           }
@@ -217,48 +231,53 @@ export default function Posts({
             ) : <></>
           }
         </ScrollView>
-        <Button
-          mode="contained"
-          onPress={() => {
-            if (thingToPost) {
-              let post: Post = {
-                id: postId,
-                userId: thingToPost.userId,
-                username: thingToPost.username,
-                workoutId: isPR(thingToPost) ? thingToPost.workoutId : thingToPost.id,
-                createdDate: new Date().toString(),
-                caption: postCaption,
-                commentIds: [],
-                likedByIds: [],
-              };
+        {
+          thingToPost
+            ? (
+              <Button
+                mode="contained"
+                onPress={() => {
+                  if (thingToPost) {
+                    let post: Post = {
+                      id: postId,
+                      userId: thingToPost.userId,
+                      username: thingToPost.username,
+                      workoutId: isPR(thingToPost) ? thingToPost.workoutId : thingToPost.id,
+                      createdDate: new Date().toString(),
+                      caption: postCaption,
+                      commentIds: [],
+                      likedByIds: [],
+                    };
 
-              if (isPR(thingToPost)) {
-                post = { ...post, prId: thingToPost.id };
-              }
+                    if (isPR(thingToPost)) {
+                      post = { ...post, prId: thingToPost.id };
+                    }
 
-              if (uploadedImageToPost) {
-                post = { ...post, image: uploadedImageToPost };
-              }
+                    if (uploadedImageToPost) {
+                      post = { ...post, image: uploadedImageToPost };
+                    }
 
-              dispatch(upsertPost(post));
-              dispatch(clearUploadedImageToPost());
+                    dispatch(upsertPost(post));
+                    dispatch(clearUploadedImageToPost());
 
-              setPostCaption('');
+                    setPostCaption('');
 
-              postId = uuidv4();
-            }
-          }}
-          disabled={
-            !thingToPost
-              || postCaption.length < 1
-              || postCaption.length > POST_CHARACTER_LIMIT
-              || callingPostsService
-              || uploadingImageToPost
-          }
-          loading={callingPostsService}
-        >
-          Post
-        </Button>
+                    postId = uuidv4();
+                  }
+                }}
+                disabled={
+                  !thingToPost
+                || postCaption.length < 1
+                || postCaption.length > POST_CHARACTER_LIMIT
+                || callingPostsService
+                || uploadingImageToPost
+                }
+                loading={callingPostsService}
+              >
+                Post
+              </Button>
+            ) : <></>
+        }
       </>
     );
   }
