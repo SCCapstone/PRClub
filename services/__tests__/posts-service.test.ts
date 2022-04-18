@@ -1,9 +1,10 @@
 import { doc, getDoc } from '@firebase/firestore';
 import { v4 as uuidv4 } from 'uuid';
-import { POSTS_COLLECTION, USERS_COLLECTION } from '../../constants/firestore';
+import { COMMENTS_COLLECTION, POSTS_COLLECTION, USERS_COLLECTION } from '../../constants/firestore';
 import { firestore } from '../../firebase-lib';
 import Post from '../../models/firestore/Post';
 import User from '../../models/firestore/User';
+import Comment from '../../models/firestore/Comment';
 import PostsService from '../PostsService';
 
 describe('PostsService', () => {
@@ -56,64 +57,81 @@ describe('PostsService', () => {
     expect(userAfterDelete.postIds).not.toContain(post.id);
   });
 
-  // test('like and unlike a post', async () => {
-  //   // user data from emulator
-  //   const postingUser = {
-  //     id: 'UU5NXWiguC36dWBCYZEtlqpnLvFE',
-  //     name: 'Emulator1',
-  //   };
-  //   const likingUser = {
-  //     id: 'debKjhaRMGqYRMOUkhgwm0etsfgZ',
-  //     name: 'BigDuck',
-  //   };
+  test('comment and uncomment on a post', async () => {
+    // user data from emulator
+    const postingUser = {
+      id: 'UU5NXWiguC36dWBCYZEtlqpnLvFE',
+      name: 'Emulator1',
+    };
+    const commentingUser = {
+      id: 'debKjhaRMGqYRMOUkhgwm0etsfgZ',
+      name: 'BigDuck',
+    };
 
-  //   // initializing mock post object
-  //   const post: Post = {
-  //     id: uuidv4(),
-  //     userId: postingUser.id,
-  //     username: postingUser.name,
-  //     workoutId: uuidv4(),
-  //     createdDate: new Date().toString(),
-  //     caption: 'test',
-  //     commentIds: [],
-  //     likedByIds: [],
-  //   };
+    // initializing mock post object
+    const post: Post = {
+      id: uuidv4(),
+      userId: postingUser.id,
+      username: postingUser.name,
+      workoutId: uuidv4(),
+      createdDate: new Date().toString(),
+      caption: 'test',
+      commentIds: [],
+      likedByIds: [],
+    };
 
-  //   // put mock post in emulator
-  //   await PostsService.upsertPost(post);
+    const comment: Comment = {
+      id: uuidv4(),
+      userId: commentingUser.id,
+      username: commentingUser.name,
+      postId: post.id,
+      body: 'Test Comment',
+      date: Date.toString(),
+    };
 
-  //   // attempt for likingUser to like this post
-  //   await PostsService.likePost(post, likingUser.id);
+    // put mock post in emulator
+    await PostsService.upsertPost(post);
 
-  //   // ensure reference to post in firestore includes likingUser
-  //   const postDoc = doc(firestore, POSTS_COLLECTION, post.id);
-  //   const postDataAfterLiking = await getDoc(postDoc);
-  //   const postAfterLiking = postDataAfterLiking.data() as Post;
-  //   expect(postAfterLiking.likedByIds).toContain(likingUser.id);
+    // attempt for commentingUser to comment on this post
+    await PostsService.addComment(post, comment);
 
-  //   // ensure reference to likingUser in firestore includes post
-  //   const userDoc = doc(firestore, USERS_COLLECTION, likingUser.id);
-  //   const userDataAfterLiking = await getDoc(userDoc);
-  //   const userAfterLiking = userDataAfterLiking.data() as User;
-  //   expect(userAfterLiking.likedPostIds).toContain(post.id);
+    // ensure reference to post in firestore includes commentingUser
+    const postDoc = doc(firestore, POSTS_COLLECTION, post.id);
+    const postDataAfterCommenting = await getDoc(postDoc);
+    const postAfterCommenting = postDataAfterCommenting.data() as Post;
+    expect(postAfterCommenting.commentIds).toContain(comment.id);
 
-  //   // attempt for likingUser to unlike this post
-  //   await PostsService.unlikePost(post, likingUser.id);
+    // // ensure reference to commentingUser in firestore includes post
+    // const userDoc = doc(firestore, USERS_COLLECTION, commentingUser.id);
+    // const userDataAfterCommenting = await getDoc(userDoc);
+    // const userAfterCommenting = userDataAfterCommenting.data() as User;
+    // expect(userAfterCommenting.commentIds).toContain(comment.id);
 
-  //   // ensure reference to post in firestore does not include likingUser
-  //   const postDataAfterUnliking = await getDoc(postDoc);
-  //   const postAfterUnliking = postDataAfterUnliking.data() as Post;
-  //   expect(postAfterUnliking.likedByIds).not.toContain(likingUser.id);
+    // ensure commment is in COMMENT_COLLECTION
+    const commentDoc = doc(firestore, COMMENTS_COLLECTION, comment.id);
+    const commentDataAfterCommenting = await getDoc(commentDoc);
+    const commentAfterCommenting = commentDataAfterCommenting.data() as Comment;
+    expect(commentAfterCommenting).not.toBeUndefined();
 
-  //   // ensure reference to likingUser in firestore does not include post
-  //   const userDataAfterUnliking = await getDoc(userDoc);
-  //   const userAfterUnliking = userDataAfterUnliking.data() as User;
-  //   expect(userAfterUnliking.likedPostIds).not.toContain(post.id);
+    // attempt for commentingUser to remove comment on this post
+    await PostsService.removeComment(post, comment);
 
-  //   // remove testing post
-  //   await PostsService.removePost(post);
-  // });
-    test('like and unlike a post', async () => {
-      
-    }
+    // ensure reference to post in firestore does not include commentingUser
+    const postDataAfterUncommenting = await getDoc(postDoc);
+    const postAfterUncommenting = postDataAfterUncommenting.data() as Post;
+    expect(postAfterUncommenting.likedByIds).not.toContain(commentingUser.id);
+
+    // // ensure reference to commentingUser in firestore does not include post
+    // const userDataAfterUncommenting = await getDoc(userDoc);
+    // const userAfterUncommenting = userDataAfterUncommenting.data() as User;
+    // expect(userAfterUncommenting.commentIds).not.toContain(post.id);
+
+    // ensure commment is not in COMMENT_COLLECTION
+    const commentDataAfterUncommenting = await getDoc(commentDoc);
+    const commentAfterUncommenting = commentDataAfterUncommenting.data() as Comment;
+    expect(commentAfterUncommenting).toBeUndefined();
+
+    // remove testing post
+    await PostsService.removePost(post);
+  });
 });
