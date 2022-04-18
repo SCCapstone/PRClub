@@ -65,11 +65,14 @@ describe('PRsService', () => {
     // attempt to add new PR
     await PRsService.upsertPRs(prs);
 
-    // query firestore to get the prdoc
+    // query firestore to get the pr doc and check firestore
     const upsertedPrData = await getDoc(prDoc);
     const upsertedPr = upsertedPrData.data() as PR;
-
     expect(upsertedPr).toEqual(pr);
+
+    // remove PR and make sure it got deleted
     await PRsService.removePRs(prs);
+    const deletedPrData = await getDoc(prDoc);
+    expect(deletedPrData.exists()).toBe(false);
   });
 });
