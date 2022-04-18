@@ -49,7 +49,7 @@ export default function PRPost({ post }: {post: Post}) {
 
   return (
     <View style={tw`rounded overflow-hidden shadow-lg m-2 p-2 bg-[${creamWhite}]`}>
-      <View style={tw`flex flex-row`}>
+      <View style={tw`flex flex-row p-2`}>
         <View style={tw`flex flex-4`}>
           <Text>{`On ${new Date(post.createdDate).toLocaleString()},`}</Text>
           <Text>
