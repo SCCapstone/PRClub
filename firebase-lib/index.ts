@@ -2,10 +2,7 @@ import { FirebaseOptions, initializeApp } from '@firebase/app';
 import { connectAuthEmulator, getAuth } from '@firebase/auth';
 import { connectFirestoreEmulator, getFirestore, initializeFirestore } from '@firebase/firestore';
 import { connectStorageEmulator, getStorage } from '@firebase/storage';
-<<<<<<< HEAD
-=======
 import Constants from 'expo-constants';
->>>>>>> wger-tests
 import { getDatabase } from 'firebase/database';
 
 export const firebaseConfig: FirebaseOptions = {
