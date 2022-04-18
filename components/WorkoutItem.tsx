@@ -54,12 +54,15 @@ export default function WorkoutItem({
                   title="Delete"
                   icon={() => <Ionicons name="trash" size={24} style={tw`text-black`} />}
                 />
+                {/*
+                commenting out due to #194
                 <Menu.Item
                   key={2}
                   onPress={onPost}
                   title="Share as Post"
                   icon={() => <Ionicons name="add" size={24} style={tw`text-black`} />}
                 />
+                */}
               </Menu>
             )}
         </View>

@@ -89,7 +89,7 @@ export default function Profile({
     status: workoutsStatus,
     data: workoutsData,
   } = useFirestoreCollectionData(workoutsQuery);
-  const workouts = workoutsData as Workout[];
+  const workouts = (workoutsData || []) as Workout[];
 
   // posts:
   const postsCollection = collection(firestore, POSTS_COLLECTION);
@@ -101,7 +101,7 @@ export default function Profile({
     status: postsStatus,
     data: postsData,
   } = useFirestoreCollectionData(postsQuery);
-  const posts = postsData as Post[];
+  const posts = sortByDate((postsData || []) as Post[], (p) => p.createdDate);
 
   // prs:
   const prsCollection = collection(firestore, PRS_COLLECTION);
@@ -113,7 +113,7 @@ export default function Profile({
     status: prsStatus,
     data: prsData,
   } = useFirestoreCollectionData(prsQuery);
-  const prs = prsData as PR[];
+  const prs = (prsData || []) as PR[];
 
   // liked posts:
   const currentUserDoc = doc(firestore, USERS_COLLECTION, currentUser?.id || '');
@@ -128,6 +128,13 @@ export default function Profile({
         : ['']
     )
     : [''];
+
+  // follower number
+  const userInDbDoc = doc(firestore, USERS_COLLECTION, profileBeingViewed.id);
+  const {
+    data: userInDbData,
+  } = useFirestoreDocData(userInDbDoc);
+  const numFollowers = (userInDbData as User)?.followerIds.length || 0;
 
   const {
     status: likedPostsStatus,
@@ -346,51 +353,35 @@ export default function Profile({
             <Text style={tw`text-sm text-white`}>
               <Ionicons name="barbell" />
               {' '}
-              {profileBeingViewed.id === currentUser.id
-                ? currentUser.workoutIds.length
-                : profileBeingViewed.workoutIds.length}
+              {workouts.length}
               {' '}
               workout
-              {profileBeingViewed.id === currentUser.id
-                ? (currentUser.workoutIds.length === 1 ? '' : 's')
-                : (profileBeingViewed.workoutIds.length === 1 ? '' : 's')}
+              {workouts.length === 1 ? '' : 's'}
               {' '}
               |
               {' '}
               <Ionicons name="checkbox" />
               {' '}
-              {profileBeingViewed.id === currentUser.id
-                ? currentUser.prIds.length
-                : profileBeingViewed.prIds.length}
+              {prs.length}
               {' '}
               PR
-              {profileBeingViewed.id === currentUser.id
-                ? (currentUser.prIds.length === 1 ? '' : 's')
-                : (profileBeingViewed.prIds.length === 1 ? '' : 's')}
+              {prs.length === 1 ? '' : 's'}
             </Text>
             <Text style={tw`text-sm text-white`}>
               <Ionicons name="image" />
               {' '}
-              {profileBeingViewed.id === currentUser.id
-                ? currentUser.postIds.length
-                : profileBeingViewed.postIds.length}
+              {posts.length}
               {' '}
               post
-              {profileBeingViewed.id === currentUser.id
-                ? (currentUser.postIds.length === 1 ? '' : 's')
-                : (profileBeingViewed.postIds.length === 1 ? '' : 's')}
+              {posts.length === 1 ? '' : 's'}
             </Text>
             <Text style={tw`text-sm text-white`}>
               <Ionicons name="person" />
               {' '}
-              {profileBeingViewed.id === currentUser.id
-                ? currentUser.followerIds.length
-                : profileBeingViewed.followerIds.length}
+              {numFollowers}
               {' '}
               follower
-              {profileBeingViewed.id === currentUser.id
-                ? (currentUser.followerIds.length === 1 ? '' : 's')
-                : (profileBeingViewed.followerIds.length === 1 ? '' : 's')}
+              {numFollowers === 1 ? '' : 's'}
             </Text>
           </View>
         </View>
@@ -478,7 +469,13 @@ export default function Profile({
           tabBarLabelStyle: tw`text-xs`,
         }}
       >
-        <Tab.Screen name="Workouts">
+        <Tab.Screen
+          name="Workouts"
+          options={{
+            tabBarIcon: () => <Ionicons name="barbell" size={18} />,
+            tabBarShowLabel: false,
+          }}
+        >
           {() => (
             <Workouts
               workouts={workouts}
@@ -487,7 +484,13 @@ export default function Profile({
             />
           )}
         </Tab.Screen>
-        <Tab.Screen name="PRs">
+        <Tab.Screen
+          name="PRs"
+          options={{
+            tabBarIcon: () => <Ionicons name="checkbox" size={18} />,
+            tabBarShowLabel: false,
+          }}
+        >
           {() => (
             <PRs
               prs={prs}
@@ -496,7 +499,13 @@ export default function Profile({
             />
           )}
         </Tab.Screen>
-        <Tab.Screen name="Posts">
+        <Tab.Screen
+          name="Posts"
+          options={{
+            tabBarIcon: () => <Ionicons name="image" size={18} />,
+            tabBarShowLabel: false,
+          }}
+        >
           {() => (
             <Posts
               posts={posts}
@@ -505,7 +514,13 @@ export default function Profile({
             />
           )}
         </Tab.Screen>
-        <Tab.Screen name="Followers">
+        <Tab.Screen
+          name="Followers"
+          options={{
+            tabBarIcon: () => <Ionicons name="person" size={18} />,
+            tabBarShowLabel: false,
+          }}
+        >
           {() => (
             <Followers
               user={profileBeingViewed}
