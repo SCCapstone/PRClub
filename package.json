@@ -8,7 +8,7 @@
     "web:test": "firebase emulators:exec --import ./test-data/ 'USE_EMULATORS=true expo start --web'",
     "web:prod": "expo start --web --no-dev",
     "eject": "expo eject",
-    "test": "USE_EMULATORS=true firebase emulators:exec 'jest --runInBand --forceExit'",
+    "test": "USE_EMULATORS=true firebase emulators:exec --import ./test-data/ 'jest --runInBand --forceExit'",
     "cy:open": "npx cypress open",
     "cy:run": "npx cypress run --headless --config video=false",
     "cy": "start-server-and-test web:test http://localhost:19006 cy:open",
