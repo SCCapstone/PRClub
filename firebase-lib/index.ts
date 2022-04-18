@@ -1,7 +1,11 @@
 import { FirebaseOptions, initializeApp } from '@firebase/app';
 import { connectAuthEmulator, getAuth } from '@firebase/auth';
-import { connectFirestoreEmulator, getFirestore } from '@firebase/firestore';
+import { connectFirestoreEmulator, getFirestore, initializeFirestore } from '@firebase/firestore';
 import { connectStorageEmulator, getStorage } from '@firebase/storage';
+<<<<<<< HEAD
+=======
+import Constants from 'expo-constants';
+>>>>>>> wger-tests
 import { getDatabase } from 'firebase/database';
 
 export const firebaseConfig: FirebaseOptions = {
@@ -16,7 +20,16 @@ export const firebaseConfig: FirebaseOptions = {
 
 export const app = initializeApp(firebaseConfig);
 
-export const firestore = getFirestore(app);
+export const firestore = (
+  Constants.manifest
+    && Constants.manifest.extra
+    && Constants.manifest.extra.useEmulators
+)
+  ? initializeFirestore(app, {
+    experimentalForceLongPolling: true,
+  })
+  : getFirestore(app);
+
 export const auth = getAuth(app);
 export const storage = getStorage(app);
 export const database = getDatabase(app);

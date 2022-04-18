@@ -9,7 +9,6 @@ import { PRS_COLLECTION } from '../constants/firestore';
 import { useAppDispatch, useAppSelector } from '../hooks/redux';
 import Post from '../models/firestore/Post';
 import PR from '../models/firestore/PR';
-import Workout from '../models/firestore/Workout';
 import { removePost } from '../state/postsSlice/thunks';
 import { selectCurrentUser } from '../state/userSlice/selectors';
 import { likePost, unlikePost } from '../state/userSlice/thunks';
@@ -30,18 +29,13 @@ export default function PRPost({ post }: {post: Post}) {
   const { status: prStatus, data: prData } = useFirestoreDocData(prRef);
   const pr = prData as PR;
 
-  // workout:
-  const workoutRef = doc(firestore, PRS_COLLECTION, post.workoutId);
-  const { status: workoutStatus, data: workoutData } = useFirestoreDocData(workoutRef);
-  const workout = workoutData as Workout;
-
   const isLiked = post.likedByIds.includes(currentUser?.id || '');
 
   if (!currentUser) {
     return <></>;
   }
 
-  if (prStatus === 'loading' || workoutStatus === 'loading') {
+  if (prStatus === 'loading') {
     return (
       <CenteredView>
         <ActivityIndicator />
@@ -89,14 +83,21 @@ export default function PRPost({ post }: {post: Post}) {
               }
               <View style={tw`bg-gray-300 p-3`}>
                 <>
-                  <Text style={tw`font-bold text-lg text-center`}>{pr.exerciseName}</Text>
+                  <Text style={tw`text-center p-2`}>
+                    <Text style={tw`italic text-lg`}>For exercise: </Text>
+                    <Text style={tw`font-bold text-lg`}>{pr.exerciseName}</Text>
+                  </Text>
+                  {/*
+                  Commented out due to PR name and Workout name not matching up properly in database
+                  (noted by #171)
                   <Text style={tw`text-base text-center`}>
                     During workout:
                     {' '}
-                    {workoutStatus === 'success' && workout
+                    {workout && workout
                       ? <Text style={tw`font-bold text-lg text-center`}>{workout.name}</Text>
                       : <Text style={tw`italic text-lg text-center`}>deleted workout</Text>}
                   </Text>
+                  */}
                   <View style={tw`bg-gray-800 p-3`}>
                     <Text style={tw`text-xl text-white text-center`}>
                       Increased total volume to
