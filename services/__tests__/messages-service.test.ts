@@ -9,16 +9,16 @@ import MessagesService from '../MessagesService';
 
 describe('MessagesService', () => {
   test('create a chat, send a message, and like/unlike a message', async () => {
-    const bigDuckUserId = 'debKjhaRMGqYRMOUkhgwm0etsfgZ';
-    const susManUserId = 'EEZkaBDz75E5OSSQV79JoRl8EjJ1';
+    const fromUserId = 'debKjhaRMGqYRMOUkhgwm0etsfgZ';
+    const toUserId = 'EEZkaBDz75E5OSSQV79JoRl8EjJ1';
 
     // create the chat between the two users
-    await MessagesService.createChat(bigDuckUserId, susManUserId);
+    await MessagesService.createChat(fromUserId, toUserId);
 
     // check if chat doc was created
     const chatQuery = query(
       collection(firestore, CHATS_COLLECTION),
-      where('userIds', 'array-contains', bigDuckUserId),
+      where('userIds', 'array-contains', fromUserId),
     );
     const chatQueryResult = await getDocs(chatQuery);
     expect(chatQueryResult.size).toBe(1);
@@ -28,13 +28,13 @@ describe('MessagesService', () => {
     const chatDoc = doc(firestore, CHATS_COLLECTION, chat.id);
 
     // send a message from one user to another
-    await MessagesService.sendMessage(chat.id, bigDuckUserId, 'Yo');
+    await MessagesService.sendMessage(chat.id, fromUserId, 'Yo');
 
     // ensure message was added to chat
     const chatWithMessage = (await getDoc(chatDoc)).data() as Chat;
     const { lastMessage } = chatWithMessage;
     expect(lastMessage).toBeDefined();
-    expect(lastMessage!.userId).toBe(bigDuckUserId);
+    expect(lastMessage!.userId).toBe(fromUserId);
     expect(lastMessage!.text).toBe('Yo');
 
     // get other user to like message
