@@ -222,12 +222,13 @@ export default function MessagesScreen() {
       <>
         <BackButton onPress={() => setSearchingForUsers(false)} />
         <Search
-          onUserPress={async (user: User) => {
+          onUserPress={(user: User) => {
             MessagesService.createChat(currentUser.id, user.id)
               .then(() => {
                 setSearchingForUsers(false);
               });
           }}
+          filterBy={(u: User) => !chats.flatMap((c) => c.userIds).includes(u.id)}
         />
       </>
     );
