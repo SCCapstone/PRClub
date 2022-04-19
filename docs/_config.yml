@@ -23,7 +23,7 @@ description: >- # this means to ignore newlines until "baseurl:"
   *Insert Description here*
 baseurl: "/PRClub" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
-github_username:  SCCapstone
+github_username:  PRCluv
 
 # Build settings
 theme: minima
