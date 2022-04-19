@@ -6,6 +6,36 @@ on:
 
 jobs:
   cypress:
+    name: Run Jest tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🗃 Checkout repo
+        uses: actions/checkout@v2
+
+      - name: ☕️ Configure Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: ⚙️ Configure Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
+
+      - name: 🛠 Install firebase-tools, sharp-cli
+        run: npm i -g expo-cli firebase-tools sharp-cli
+
+      - name: 📦 Install node_modules
+        run: npm ci
+
+      - name: 🧪 Run Jest tests
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+        run: npm test
+
+
+  cypress:
     name: Run Cypress tests
     runs-on: ubuntu-latest
     steps:
@@ -38,7 +68,7 @@ jobs:
   eslint:
     name: Run ESLint
     runs-on: ubuntu-latest
-    needs: cypress
+    needs: [jest, cypress]
     steps:
       - name: 🗃 Checkout repo
         uses: actions/checkout@v2
