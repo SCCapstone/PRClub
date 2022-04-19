@@ -12,6 +12,7 @@ describe('UsersService', () => {
     const expected = expectedData.data() as User;
     expect(result).toEqual(expected);
   });
+
   test('follow and unfollow', async () => {
     const userId = 'debKjhaRMGqYRMOUkhgwm0etsfgZ';
     const userToFollowId = 'UU5NXWiguC36dWBCYZEtlqpnLvFE';
@@ -19,11 +20,23 @@ describe('UsersService', () => {
     await UsersService.createFollowerRelationship(userId, userToFollowId);
 
     const userDoc = doc(firestore, USERS_COLLECTION, userId);
-    const userToFollowDoc = doc(firestore, USERS_COLLECTION, userToFollowId);
-
     const userData = await getDoc(userDoc);
     const user = userData.data() as User;
+    expect(user.followingIds).toContain(userToFollowId);
 
+    const userToFollowDoc = doc(firestore, USERS_COLLECTION, userToFollowId);
     const userToFollowData = await getDoc(userToFollowDoc);
+    const userToFollow = userToFollowData.data() as User;
+    expect(userToFollow.followerIds).toContain(userId);
+
+    await UsersService.removeFollowerRelationship(userId, userToFollowId);
+
+    const userAfterFollowingData = await getDoc(userDoc);
+    const userAfterFollowing = userAfterFollowingData.data() as User;
+    expect(userAfterFollowing.followingIds).not.toContain(userToFollowId);
+
+    const userToFollowAfterFollowedData = await getDoc(userToFollowDoc);
+    const userToFollowAfterFollowed = userToFollowAfterFollowedData.data() as User;
+    expect(userToFollowAfterFollowed.followerIds).not.toContain(userId);
   });
 });
