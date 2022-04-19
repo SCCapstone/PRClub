@@ -32,12 +32,14 @@ and meet others with the same interests.
 ## External Dependencies
 ### Required
 - [`npm`](https://github.com/npm/cli)
-- [`expo-cli`](https://github.com/expo/expo-cli)
+- [`expo-cli`](https://github.com/expo/expo-cli) - install globally using
+  `npm i -g expo-cli`
 
 ### Optional
 Testing:
 - [Java](https://www.java.com/en/download/help/download_options.html)
-- [`firebase-tools`](https://firebase.tools/)
+- [`firebase-tools`](https://www.npmjs.com/package/firebase-tools) - install globally
+  using `npm i -g firebase-tools` 
 
 Deployment:
 - [`act`](https://github.com/nektos/act)
