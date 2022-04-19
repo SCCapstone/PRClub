@@ -74,8 +74,6 @@ for behavioral tests.
 * Located in `cypress/integration/`.
 * To run locally, run `npm run cy` from the root of this repository to launch the graphical
   Cypress test runner and select the test suites you would like to run as necessary.
-  * If you are on Windows and are not using
-    [`WSL2`](https://docs.microsoft.com/en-us/windows/wsl/install), run `npm run cy:win`.
   * Alternatively, run `npm run cy:ci` if you are in a Unix development environment and
     would like all behavioral tests to be run headlessly.
 
