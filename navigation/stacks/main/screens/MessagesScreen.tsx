@@ -23,6 +23,7 @@ import UsersService from '../../../../services/UsersService';
 import { selectCurrentUser } from '../../../../state/userSlice/selectors';
 import { sortByDate } from '../../../../utils/arrays';
 import { colors } from '../../../../constants/styles';
+import { toHumanReadableDate } from '../../../../utils/dates';
 
 function ChatPreview({
   chatId,
@@ -85,7 +86,7 @@ function MessageReceived({ message, date }: { message: string, date: string}) {
         <Text>{message}</Text>
       </View>
       <View style={tw`m-1`}>
-        <Text style={tw`text-gray-500`}>{date.split('T')[1].split('.')[0]}</Text>
+        <Text style={tw`text-gray-500`}>{toHumanReadableDate(date)}</Text>
       </View>
 
     </View>
@@ -100,7 +101,7 @@ function MessageSent({ message, date }: { message: string, date:string }) {
         <Text style={tw`text-white`}>{message}</Text>
       </View>
       <View style={tw`m-1 ml-auto`}>
-        <Text style={tw`text-gray-500`}>{date.split('T')[1].split('.')[0]}</Text>
+        <Text style={tw`text-gray-500`}>{toHumanReadableDate(date)}</Text>
       </View>
     </View>
   );
@@ -302,7 +303,18 @@ export default function MessagesScreen() {
               chats.length > 0
                 ? (
                   <ScrollView>
-                    {(chats).map((c) => (
+                    {chats
+                      .filter((c) => !c.lastMessage)
+                      .map((c) => (
+                        <ChatPreview
+                          key={c.id}
+                          chatId={c.id}
+                          onChatPress={(chat) => setChatBeingViewed(chat)}
+                        />
+                      ))}
+                    {(sortByDate(
+                      chats.filter((c) => c.lastMessage), (c) => c.lastMessage!.date,
+                    )).map((c) => (
                       <ChatPreview
                         key={c.id}
                         chatId={c.id}
