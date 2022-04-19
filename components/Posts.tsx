@@ -26,6 +26,7 @@ import BackButton from './BackButton';
 import CenteredView from './CenteredView';
 import PRPost from './PRPost';
 import WorkoutPost from './WorkoutPost';
+import { colors } from '../constants/styles';
 
 function isPR(thing: PR | Workout): thing is PR {
   return !!(thing as PR).volume;
@@ -75,7 +76,7 @@ export default function Posts({
     data: prsData,
   } = useFirestoreCollectionData(prsQuery);
   const prs = prsData as PR[];
-
+  const { black } = colors;
   if (creatingPost) {
     let postId = uuidv4();
 
@@ -294,7 +295,7 @@ export default function Posts({
                   size={16}
                 />
               )}
-              color="green"
+              color={black}
               mode="contained"
               onPress={() => setCreatingPost(true)}
             >

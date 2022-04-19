@@ -18,6 +18,7 @@ import CenteredView from './CenteredView';
 import CommentForm from './CommentForm';
 import Comments from './Comments';
 import WorkoutItem from './WorkoutItem';
+import { colors } from '../constants/styles';
 
 export default function WorkoutPost({ post }: { post: Post }) {
   // Redux-level state
@@ -34,7 +35,9 @@ export default function WorkoutPost({ post }: { post: Post }) {
   const workout = workoutData as Workout;
 
   const isLiked = post.likedByIds.includes(currentUser?.id || '');
-
+  const {
+    creamWhite, black, gray1, gray2, gray3,
+  } = colors;
   if (!currentUser) {
     return <></>;
   }
@@ -69,8 +72,8 @@ export default function WorkoutPost({ post }: { post: Post }) {
   }
 
   return (
-    <View style={tw`rounded overflow-hidden shadow-lg m-2 p-2`}>
-      <View style={tw`flex flex-row`}>
+    <View style={tw`rounded overflow-hidden shadow-lg m-2 p-2 bg-[${creamWhite}]`}>
+      <View style={tw`flex flex-row p-2`}>
         <View style={tw`flex flex-4`}>
           <Text>{`On ${new Date(post.createdDate).toLocaleString()},`}</Text>
           <Text>
@@ -105,7 +108,7 @@ export default function WorkoutPost({ post }: { post: Post }) {
                     </View>
                   )
               }
-              <View style={tw`bg-gray-300 p-3 flex flex-row`}>
+              <View style={tw`p-3 flex flex-row`}>
                 <View style={tw`flex flex-3`}>
                   <Text style={tw`font-bold text-lg text-center`}>{workout.name}</Text>
                 </View>
@@ -116,6 +119,7 @@ export default function WorkoutPost({ post }: { post: Post }) {
                       onPress={() => {
                         setViewingDetails(true);
                       }}
+                      color={black}
                     >
                       <Ionicons name="chevron-forward" size={16} style={tw`text-white`} />
                     </Button>

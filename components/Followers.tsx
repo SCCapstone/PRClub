@@ -13,6 +13,7 @@ import {
 } from '../state/userSlice/selectors';
 import { followUser, unfollowUser } from '../state/userSlice/thunks';
 import CenteredView from './CenteredView';
+import { colors } from '../constants/styles';
 
 export default function Followers({
   user,
@@ -37,7 +38,9 @@ export default function Followers({
   // Redux
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(selectCurrentUser);
-
+  const {
+    gray1, black, gray2, gray3,
+  } = colors;
   if (!currentUser) {
     return <></>;
   }
@@ -83,17 +86,17 @@ export default function Followers({
                       : currentUser.followingIds.includes(follower.id)
                         ? (
                           <Button
-                            style={tw`bg-blue-200`}
+                            style={tw`bg-[${gray3}]`}
                             onPress={() => {
                               dispatch(unfollowUser(follower.id));
                             }}
                           >
-                            <Text>Unfollow</Text>
+                            <Text style={tw`text-white`}>Unfollow</Text>
                           </Button>
                         )
                         : (
                           <Button
-                            style={tw`bg-blue-500`}
+                            style={tw`bg-[${gray1}]`}
                             onPress={() => {
                               dispatch(followUser(follower.id));
                             }}

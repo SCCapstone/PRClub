@@ -34,8 +34,7 @@ export const database = getDatabase(app);
 if (
   Constants.manifest
     && Constants.manifest.extra
-    && Constants.manifest.extra.useEmulators
-) {
+    && Constants.manifest.extra.useEmulators) {
   connectFirestoreEmulator(firestore, 'localhost', 8080);
   connectAuthEmulator(auth, 'http://localhost:9099');
   connectStorageEmulator(storage, 'localhost', 9199);

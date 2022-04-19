@@ -4,6 +4,7 @@ import { Button, Menu, Text } from 'react-native-paper';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import tw from 'twrnc';
 import Workout from '../models/firestore/Workout';
+import { colors } from '../constants/styles';
 
 export default function WorkoutItem({
   workout,
@@ -17,9 +18,11 @@ export default function WorkoutItem({
   onPost?: () => void,
 }) {
   const [menuIsVisible, setMenuIsVisible] = useState<boolean>(false);
-
+  const {
+    black, gray1, gray2, gray3, creamWhite,
+  } = colors;
   return (
-    <View style={tw`rounded overflow-hidden shadow-lg m-2 p-2`}>
+    <View style={tw`rounded overflow-hidden shadow-lg m-2 p-2 bg-[${creamWhite}]`}>
       <View style={tw`flex flex-row`}>
         <View style={tw`flex flex-4`}>
           {
