@@ -31,7 +31,10 @@ export const auth = getAuth(app);
 export const storage = getStorage(app);
 export const database = getDatabase(app);
 
-if (process.env.USE_EMULATORS && process.env.USE_EMULATORS === 'true') {
+if (
+  Constants.manifest
+    && Constants.manifest.extra
+    && Constants.manifest.extra.useEmulators) {
   connectFirestoreEmulator(firestore, 'localhost', 8080);
   connectAuthEmulator(auth, 'http://localhost:9099');
   connectStorageEmulator(storage, 'localhost', 9199);
