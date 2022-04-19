@@ -12,12 +12,18 @@ describe('UsersService', () => {
     const expected = expectedData.data() as User;
     expect(result).toEqual(expected);
   });
-  // test('make follower relationship', async () => {
-  //   const result = await UsersService.createFollowerRelationship();
-  //   expect(result);
-  // });
-  // test('remove follower relationship', async () => {
-  //   const result = await UsersService.removeFollowerRelationship();
-  //   expect(result);
-  // });
+  test('follow and unfollow', async () => {
+    const userId = 'debKjhaRMGqYRMOUkhgwm0etsfgZ';
+    const userToFollowId = 'UU5NXWiguC36dWBCYZEtlqpnLvFE';
+
+    await UsersService.createFollowerRelationship(userId, userToFollowId);
+
+    const userDoc = doc(firestore, USERS_COLLECTION, userId);
+    const userToFollowDoc = doc(firestore, USERS_COLLECTION, userToFollowId);
+
+    const userData = await getDoc(userDoc);
+    const user = userData.data() as User;
+
+    const userToFollowData = await getDoc(userToFollowDoc);
+  });
 });

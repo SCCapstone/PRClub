@@ -74,8 +74,11 @@ for behavioral tests.
 * Located in `cypress/integration/`.
 * To run locally, run `npm run cy` from the root of this repository to launch the graphical
   Cypress test runner and select the test suites you would like to run as necessary.
-  * Alternatively, run `npm run cy:ci` if you are in a Unix development environment and
-    would like all behavioral tests to be run headlessly.
+  * If you are on Windows and are not using WSL2, do the following in a Powershell instance:
+      1. Run `npx cypress verify`.
+      2. Run `npm run cy:win`.
+  * Alternatively, if you are in a Unix development environment and would like to run all
+    behavioral tests headlessly, run `npm run cy:ci`.
 
 #### Unit Tests
 * Located in all `**/__tests__/` subfolders as appropriate.
