@@ -5,7 +5,7 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "web:test": "USE_EMULATORS=true firebase emulators:exec --import ./test-data/ 'expo start --web'",
+    "web:test": "firebase emulators:exec --import ./test-data/ 'USE_EMULATORS=true expo start --web'",
     "web:test:win": "powershell $env:USE_EMULATORS='true'; firebase emulators:exec --import .\\test-data\\ 'expo start --web'; Remove-Item Env:\\USE_EMULATORS",
     "web:prod": "expo start --web --no-dev",
     "eject": "expo eject",
