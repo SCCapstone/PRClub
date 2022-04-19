@@ -37,7 +37,7 @@ and meet others with the same interests.
 ### Optional
 Testing:
 - [Java](https://www.java.com/en/download/help/download_options.html)
-- [`firebase-tools`](https://www.npmjs.com/package/firebase-tools)
+- [`firebase-tools`](https://firebase.tools/)
 
 Deployment:
 - [`act`](https://github.com/nektos/act)
@@ -48,7 +48,9 @@ Deployment:
 
 ## Running
 Run `expo start` from the root directory of your local copy of this repository, and follow the
-instructions within the command line output that is opened by the command.
+instructions within the command line output that is opened by the command. Alternatively,
+access `http://localhost:19002/` in a web browser to view Expo's GUI dashboard that is spun
+up by `expo start`.
 
 ## Testing
 ### Testing Infrastructure
@@ -59,8 +61,8 @@ for behavioral tests.
 1. Ensure you have a valid installation of Java within your development environment. This is needed
    for the [Firebase Local Emulator Suite](https://firebase.google.com/docs/emulator-suite), our
    primary means of mocking backend data for tests, to work.
-2. Install the [Firebase CLI (`firebase-tools`)](https://www.npmjs.com/package/firebase-tools).
-   This is needed in order to run an instance of the Firebase Local Emulator Suite.
+2. Install the Firebase CLI (`firebase-tools`). This is needed in order to run an instance of the
+   Firebase Local Emulator Suite.
 3. `cd` to the root of this repo (the Firebase CLI must be run from a directory containing a valid
    `firebase.json` file at its root).
 4. If you haven't already, run `npm install` to ensure that `jest` and `cypress` get installed.
