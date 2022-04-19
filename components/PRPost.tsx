@@ -9,7 +9,6 @@ import { PRS_COLLECTION } from '../constants/firestore';
 import { useAppDispatch, useAppSelector } from '../hooks/redux';
 import Post from '../models/firestore/Post';
 import PR from '../models/firestore/PR';
-import Workout from '../models/firestore/Workout';
 import { removePost } from '../state/postsSlice/thunks';
 import { selectCurrentUser } from '../state/userSlice/selectors';
 import { likePost, unlikePost } from '../state/userSlice/thunks';

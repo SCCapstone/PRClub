@@ -32,13 +32,14 @@ and meet others with the same interests.
 ## External Dependencies
 ### Required
 - [`npm`](https://github.com/npm/cli)
-- [`expo-cli`](https://github.com/expo/expo-cli)
+- [`expo-cli`](https://github.com/expo/expo-cli) - install globally using
+  `npm i -g expo-cli`
 
 ### Optional
 Testing:
-- [`jest`](https://jestjs.io/)
-- [`cypress`](https://www.cypress.io/)
-- [`firebase-tools`](https://www.npmjs.com/package/firebase-tools)
+- [Java](https://www.java.com/en/download/help/download_options.html)
+- [`firebase-tools`](https://www.npmjs.com/package/firebase-tools) - install globally
+  using `npm i -g firebase-tools` 
 
 Deployment:
 - [`act`](https://github.com/nektos/act)
@@ -49,31 +50,43 @@ Deployment:
 
 ## Running
 Run `expo start` from the root directory of your local copy of this repository, and follow the
-instructions within the command line output that is opened by the command.
+instructions within the command line output that is opened by the command. Alternatively,
+access `http://localhost:19002/` in a web browser to view Expo's GUI dashboard that is spun
+up by `expo start`.
 
 ## Testing
 ### Testing Infrastructure
-We are using `jest` for unit tests and `cypress` for behavioral tests.
+We are using [`jest`](https://jestjs.io/) for unit tests and [`cypress`](https://www.cypress.io/)
+for behavioral tests.
 
 ### Prerequisites
-1. Install the [Firebase CLI (`firebase-tools`)](https://www.npmjs.com/package/firebase-tools).
-   This is needed in order to run an instance of the
-   [Firebase Local Emulator Suite](https://firebase.google.com/docs/emulator-suite), which is used as
-   our primary means of mocking backend data for tests.
-2. `cd` to the root of this repo (the Firebase CLI must be run from a directory containing a valid
+1. Ensure you have a valid installation of Java within your development environment. This is needed
+   for the [Firebase Local Emulator Suite](https://firebase.google.com/docs/emulator-suite), our
+   primary means of mocking backend data for tests, to work.
+2. Install the Firebase CLI (`firebase-tools`). This is needed in order to run an instance of the
+   Firebase Local Emulator Suite.
+3. `cd` to the root of this repo (the Firebase CLI must be run from a directory containing a valid
    `firebase.json` file at its root).
+4. If you haven't already, run `npm install` to ensure that `jest` and `cypress` get installed.
 
 ### Running Tests
 #### Behavioral Tests
 * Located in `cypress/integration/`.
 * To run locally, run `npm run cy` from the root of this repository to launch the graphical
   Cypress test runner and select the test suites you would like to run as necessary.
+  * If you are on Windows and are not using WSL2, do the following in a Powershell instance:
+      1. Run `npx cypress verify`.
+      2. Run `npm run cy:win`.
+  * Alternatively, if you are in a Unix development environment and would like to run all
+    behavioral tests headlessly, run `npm run cy:ci`.
 
 #### Unit Tests
 * Located in all `**/__tests__/` subfolders as appropriate.
   * e.g. in `services/__tests__/` for now but could also be added to `components/__tests__/` to
-unit test React components.
+    unit test React components in the future.
 * To run, simply run `npm test` from the root of this repository.
+  * Note: if you are on Windows and are not using WSL2, run `npm run test:win` in a Powershell
+    instance.
 
 ## Deployment
 All deployments are done automatically on each merge into `main` using our
