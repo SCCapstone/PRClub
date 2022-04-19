@@ -70,7 +70,7 @@ workflow run, complete the following steps:
    ~/path/to/PRClub $ git checkout -b my-new-branch 
    ```
 2. Make a small, non-breaking change. The easiest way to do this would be by modifying this README
-   by getting rid of this line:
+   by, for instance, getting rid of this line:
 
    **REMOVE ME**
 
@@ -82,7 +82,34 @@ workflow run, complete the following steps:
   ```
 
 4. Click on the [`Pull Requests`](https://github.com/SCCapstone/PRClub/pulls) tab and create a new
-   pull request for `my-new-branch -> main`:
+   pull request for `my-new-branch -> main` by clicking `Compare & pull request`:
+
+<center>
+  <image src="./assets/create-pr.png" style="max-width:60%;" />
+</center>
+
+5. Create the pull request:
+
+<center>
+  <image src="./assets/create-pr-2.png" style="max-width:60%;" />
+</center>
+
+
+6. Once created, you can now click on either of the `Details` links marked below to see the test
+   runs in action:
+
+<center>
+  <image src="./assets/create-pr-3.png" style="max-width:60%;" />
+</center>
+
+<center>
+  <image src="./assets/jest.png" style="max-width:60%;" />
+</center>
+
+<center>
+  <image src="./assets/cypress.png" style="max-width:60%;" />
+</center>
+
    
 
 ### Running Locally
