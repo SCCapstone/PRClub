@@ -42,6 +42,7 @@ Testing:
   using `npm i -g firebase-tools` 
 
 Deployment:
+- [Docker](https://www.docker.com/)
 - [`act`](https://github.com/nektos/act)
 
 ## Setup
@@ -59,7 +60,33 @@ up by `expo start`.
 We are using [`jest`](https://jestjs.io/) for unit tests and [`cypress`](https://www.cypress.io/)
 for behavioral tests.
 
-### Prerequisites
+### Running using GitHub Actions
+The easiest way to run our tests is by using our [`ci` GitHub Action](.github/workflows/ci.yml),
+which automatically runs our `jest` and `cypress` on every pull request. To manually trigger a
+workflow run, complete the following steps:
+1. After cloning this repository and `cd`-ing into its respective folder, create a new branch,
+   e.g.:
+   ```
+   ~/path/to/PRClub $ git checkout -b my-new-branch 
+   ```
+2. Make a small, non-breaking change. The easiest way to do this would be by modifying this README
+   by getting rid of this line:
+
+   **REMOVE ME**
+
+3. Check in your change, and push up the branch by successively running the following commands:
+  ```
+   ~/path/to/PRClub $ git add README.md
+   ~/path/to/PRClub $ git commit -m "my change to trigger the `ci` GitHub Action"
+   ~/path/to/PRClub $ git push -u origin my-new-branch
+  ```
+
+4. Click on the [`Pull Requests`](https://github.com/SCCapstone/PRClub/pulls) tab and create a new
+   pull request for `my-new-branch -> main`:
+   
+
+### Running Locally
+#### Prerequisites
 1. Ensure you have a valid installation of Java within your development environment. This is needed
    for the [Firebase Local Emulator Suite](https://firebase.google.com/docs/emulator-suite), our
    primary means of mocking backend data for tests, to work.
@@ -69,8 +96,8 @@ for behavioral tests.
    `firebase.json` file at its root).
 4. If you haven't already, run `npm install` to ensure that `jest` and `cypress` get installed.
 
-### Running Tests
-#### Behavioral Tests
+#### Running Tests
+##### Behavioral Tests
 * Located in `cypress/integration/`.
 * To run locally, run `npm run cy` from the root of this repository to launch the graphical
   Cypress test runner and select the test suites you would like to run as necessary.
@@ -80,7 +107,7 @@ for behavioral tests.
   * Alternatively, if you are in a Unix development environment and would like to run all
     behavioral tests headlessly, run `npm run cy:ci`.
 
-#### Unit Tests
+##### Unit Tests
 * Located in all `**/__tests__/` subfolders as appropriate.
   * e.g. in `services/__tests__/` for now but could also be added to `components/__tests__/` to
     unit test React components in the future.
@@ -93,8 +120,8 @@ All deployments are done automatically on each merge into `main` using our
 [`deploy` GitHub Action](.github/workflows/deploy.yml). Our entire deployment pipeline can be run
 locally using [`act`](https://github.com/nektos/act). To do so, follow the below steps:
 
-1. Install [Docker](https://www.docker.com/), if you don't already have it. This is required for
-`act` to be able to run workflows locally.
+1. Install Docker, if you don't already have it. This is required for `act` to be able to run
+   workflows locally.
 
 2. Install `act` using the instructions
 [here](https://github.com/nektos/act/blob/master/README.md#installation).
