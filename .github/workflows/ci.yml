@@ -24,7 +24,7 @@ jobs:
           node-version: 16.x
 
       - name: 🛠 Install firebase-tools, sharp-cli
-        run: npm i -g expo-cli firebase-tools sharp-cli
+        run: npm i -g firebase-tools sharp-cli
 
       - name: 📦 Install node_modules
         run: npm ci
