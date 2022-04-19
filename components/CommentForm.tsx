@@ -9,6 +9,7 @@ import Comment from '../models/firestore/Comment';
 import Post from '../models/firestore/Post';
 import { addComment } from '../state/postsSlice/thunks';
 import { selectCurrentUser } from '../state/userSlice/selectors';
+import { colors } from '../constants/styles';
 
 export default function CommentForm({ post } : { post: Post }) {
   // Redux-level state
@@ -17,7 +18,7 @@ export default function CommentForm({ post } : { post: Post }) {
 
   // component-level state
   const [commentText, setCommentText] = useState<string>('');
-
+  const { gray1 } = colors;
   if (!currentUser) {
     return <></>;
   }
@@ -46,10 +47,10 @@ export default function CommentForm({ post } : { post: Post }) {
           setCommentText('');
         }}
         style={tw`flex flex-1`}
-        color={DefaultTheme.colors.accent}
+        color={gray1}
         disabled={commentText.length === 0}
       >
-        <Ionicons name="chatbubble" />
+        <Ionicons name="chatbubble" color="white" />
       </Button>
     </View>
   );

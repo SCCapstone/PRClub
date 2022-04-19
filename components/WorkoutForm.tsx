@@ -21,6 +21,7 @@ import { selectExerciseInfos, selectExericseInfosStatus } from '../state/exercis
 import { selectCurrentUser } from '../state/userSlice/selectors';
 import { upsertWorkout } from '../state/workoutsSlice/thunks';
 import DeleteButton from './DeleteButton';
+import { colors } from '../constants/styles';
 
 export default function WorkoutForm({
   workoutToEdit = undefined,
@@ -36,6 +37,9 @@ export default function WorkoutForm({
   const exerciseInfosStatus: SliceStatus = useAppSelector(selectExericseInfosStatus);
 
   const [exerciseToUpdateIndex, setExerciseToUpdateIndex] = useState<number | null>(null);
+  const {
+    black, gray1, gray3, creamWhite,
+  } = colors;
   const [customExerciseName, setCustomExerciseName] = useState<string>('');
 
   const categories: string[] = [];
@@ -213,7 +217,7 @@ export default function WorkoutForm({
                             </View>
                             <FieldArray name={`exercises.${i}.exerciseSets`}>
                               {(exerciseSetsHelpers) => (
-                                <View style={tw`bg-gray-400 p-3`}>
+                                <View style={tw`bg-[${gray1}] p-3`}>
                                   <View style={tw`flex flex-row`}>
                                     <View style={tw`flex flex-1`}>
                                       <Text style={tw`text-center text-xl font-bold`}>Set #</Text>
@@ -298,7 +302,7 @@ export default function WorkoutForm({
                                     <Button
                                       mode="contained"
                                       icon="plus"
-                                      color="green"
+                                      color={gray3}
                                       onPress={() => exerciseSetsHelpers.push({
                                         id: uuidv4(),
                                         weight: '',
@@ -319,7 +323,7 @@ export default function WorkoutForm({
                     <Button
                       mode="contained"
                       icon="plus"
-                      color="green"
+                      color={gray3}
                       onPress={() => exercisesHelpers.push({
                         id: uuidv4(),
                         name: '',
@@ -334,7 +338,7 @@ export default function WorkoutForm({
             </FieldArray>
             <Button
               mode="contained"
-              color="blue"
+              color={gray1}
               onPress={() => formikProps.setValues({
                 name: '',
                 exercises: [],
@@ -344,6 +348,7 @@ export default function WorkoutForm({
             </Button>
             <Button
               mode="contained"
+              color={black}
               onPress={() => {
                 formikProps.handleSubmit();
                 if (workoutToEdit) {

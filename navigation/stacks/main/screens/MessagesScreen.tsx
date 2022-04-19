@@ -22,6 +22,8 @@ import MessagesService from '../../../../services/MessagesService';
 import UsersService from '../../../../services/UsersService';
 import { selectCurrentUser } from '../../../../state/userSlice/selectors';
 import { sortByDate } from '../../../../utils/arrays';
+import { colors } from '../../../../constants/styles';
+import { toHumanReadableDate } from '../../../../utils/dates';
 
 function ChatPreview({
   chatId,
@@ -64,7 +66,7 @@ function ChatPreview({
                 {
                   chat.lastMessage
                     ? (
-                      `${chat.lastMessage.date}: ${chat.lastMessage.text}`
+                      `${chat.lastMessage.date.split('T')[0]}: ${chat.lastMessage.text}`
                     )
                     : 'No messages'
                 }
@@ -76,19 +78,30 @@ function ChatPreview({
   );
 }
 
-function MessageReceived({ message }: { message: string }) {
+function MessageReceived({ message, date }: { message: string, date: string}) {
+  const { gray1 } = colors;
   return (
-    <View style={tw`bg-[#8e8e93] m-2 p-4 max-w-xs rounded-md`}>
-      <Text>{message}</Text>
+    <View>
+      <View style={tw`bg-[${gray1}] m-2 p-4 max-w-xs mr-auto rounded-md`}>
+        <Text>{message}</Text>
+      </View>
+      <View style={tw`m-1`}>
+        <Text style={tw`text-gray-500`}>{toHumanReadableDate(date)}</Text>
+      </View>
+
     </View>
   );
 }
 
-function MessageSent({ message }: { message: string }) {
+function MessageSent({ message, date }: { message: string, date:string }) {
+  const { lightBlue } = colors;
   return (
     <View>
-      <View style={tw`bg-[#147efb] m-2 p-4 max-w-xs ml-auto rounded-md`}>
+      <View style={tw`bg-[${lightBlue}] m-2 p-4 max-w-xs ml-auto rounded-md`}>
         <Text style={tw`text-white`}>{message}</Text>
+      </View>
+      <View style={tw`m-1 ml-auto`}>
+        <Text style={tw`text-gray-500`}>{toHumanReadableDate(date)}</Text>
       </View>
     </View>
   );
@@ -154,7 +167,7 @@ function ChatView({ chatId }: { chatId: string }) {
                     m.userId === currentUser.id
                       ? (
                         <View key={m.id}>
-                          <MessageSent message={m.text} />
+                          <MessageSent message={m.text} date={m.date} />
                           {
                             m.isLiked ? (
                               <View style={tw`items-end pl-10 pb-5`}>
@@ -175,7 +188,7 @@ function ChatView({ chatId }: { chatId: string }) {
                               }
                             }}
                           >
-                            <MessageReceived message={m.text} />
+                            <MessageReceived message={m.text} date={m.date} />
                           </TouchableOpacity>
                           {
                             m.isLiked ? (
@@ -216,7 +229,7 @@ export default function MessagesScreen() {
   const [searchingForUsers, setSearchingForUsers] = useState<boolean>(false);
   const [chatBeingViewed, setChatBeingViewed] = useState<Chat | null>(null);
   const [otherChatUsername, setOtherChatUsername] = useState<string | null>(null);
-
+  const { black } = colors;
   if (!!currentUser && searchingForUsers) {
     return (
       <>
@@ -243,7 +256,7 @@ export default function MessagesScreen() {
       <>
         <View style={tw`flex flex-row`}>
           <View style={tw`flex flex-1`}>
-            <Button
+            {/* <Button
               mode="contained"
               onPress={() => {
                 setOtherChatUsername(null);
@@ -251,7 +264,12 @@ export default function MessagesScreen() {
               }}
             >
               <Ionicons name="arrow-back" size={16} color="white" />
-            </Button>
+            </Button> */}
+            <BackButton onPress={() => {
+              setOtherChatUsername(null);
+              setChatBeingViewed(null);
+            }}
+            />
           </View>
           <View style={tw`flex flex-3`}>
             {
@@ -274,6 +292,7 @@ export default function MessagesScreen() {
           mode="contained"
           icon={() => <Ionicons name="create" size={16} color="white" />}
           onPress={() => setSearchingForUsers(true)}
+          color={black}
         >
           Start New Chat
         </Button>
@@ -284,7 +303,18 @@ export default function MessagesScreen() {
               chats.length > 0
                 ? (
                   <ScrollView>
-                    {(chats).map((c) => (
+                    {chats
+                      .filter((c) => !c.lastMessage)
+                      .map((c) => (
+                        <ChatPreview
+                          key={c.id}
+                          chatId={c.id}
+                          onChatPress={(chat) => setChatBeingViewed(chat)}
+                        />
+                      ))}
+                    {(sortByDate(
+                      chats.filter((c) => c.lastMessage), (c) => c.lastMessage!.date,
+                    )).map((c) => (
                       <ChatPreview
                         key={c.id}
                         chatId={c.id}
