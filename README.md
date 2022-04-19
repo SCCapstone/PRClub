@@ -36,8 +36,7 @@ and meet others with the same interests.
 
 ### Optional
 Testing:
-- [`jest`](https://jestjs.io/)
-- [`cypress`](https://www.cypress.io/)
+- [Java](https://www.java.com/en/download/help/download_options.html)
 - [`firebase-tools`](https://www.npmjs.com/package/firebase-tools)
 
 Deployment:
@@ -53,11 +52,11 @@ instructions within the command line output that is opened by the command.
 
 ## Testing
 ### Testing Infrastructure
-We are using `jest` for unit tests and `cypress` for behavioral tests.
+We are using [`jest`](https://jestjs.io/) for unit tests and [`cypress`](https://www.cypress.io/)
+for behavioral tests.
 
 ### Prerequisites
-1. Ensure you have a valid installation of [Java](https://www.java.com/en/download/help/download_options.html)
-   within your development environment. This is needed
+1. Ensure you have a valid installation of Java within your development environment. This is needed
    for the [Firebase Local Emulator Suite](https://firebase.google.com/docs/emulator-suite), our
    primary means of mocking backend data for tests, to work.
 2. Install the [Firebase CLI (`firebase-tools`)](https://www.npmjs.com/package/firebase-tools).
