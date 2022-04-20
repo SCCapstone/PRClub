@@ -20,7 +20,13 @@ import { removePR } from '../state/prsSlice/thunks';
 import { launchImagePicker } from '../utils/expo';
 import BackButton from './BackButton';
 import CenteredView from './CenteredView';
-
+/**
+ * This child component displays the details of the exercise for which there is a PR
+ * @param pr The specified PR whose details are displayed
+ * @param onDelete a function that executes when the PR is deleted
+ * @param onPost a function that executes when the PR is shared as a post
+ * @returns the details of a PR
+ */
 function PRsByExerciseListItem({
   pr, onDelete, onPost,
 }: { pr: PR, onDelete?: () => void, onPost?: () => void }) {
@@ -69,7 +75,13 @@ function PRsByExerciseListItem({
     />
   );
 }
-
+/**
+ * This component displays all PRs of a specified user
+ * @param prs An array of PRs associated with a specified user
+ * @param prsStatus The status of the prs array
+ * @param forCurrentUser Boolean that returns true if the PRs belong to the currently logged in
+ * @returns a list of PRs
+ */
 export default function PRs({
   prs,
   prsStatus,

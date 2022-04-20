@@ -5,7 +5,14 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import tw from 'twrnc';
 import Workout from '../models/firestore/Workout';
 import { colors } from '../constants/styles';
-
+/**
+ * This component displays a specified workout
+ * @param workout The specified workout object
+ * @param onEdit function that executes when the workout is edited
+ * @param onDelete function that executes when the workout is deleted
+ * @param onPost function that executes when the workout is shared as a post
+ * @returns the data of a specified workout
+ */
 export default function WorkoutItem({
   workout,
   onEdit = undefined,

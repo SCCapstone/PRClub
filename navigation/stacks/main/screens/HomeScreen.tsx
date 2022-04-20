@@ -8,7 +8,10 @@ import { useAppSelector } from '../../../../hooks/redux';
 import Post from '../../../../models/firestore/Post';
 import { selectCurrentUser } from '../../../../state/userSlice/selectors';
 import { sortByDate } from '../../../../utils/arrays';
-
+/**
+ * This component displays the home screen, which consists of the posts associated with a user
+ * @returns list of posts
+ */
 export default function HomeScreen() {
   // Redux-level state
   const currentUser = useAppSelector(selectCurrentUser);

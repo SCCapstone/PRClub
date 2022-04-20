@@ -8,7 +8,11 @@ import CommentType from '../models/firestore/Comment';
 import Post from '../models/firestore/Post';
 import { sortByDate } from '../utils/arrays';
 import Comment from './Comment';
-
+/**
+ * This component returns all comments associated with a specified post, sorted oldest to newest
+ * @param post The post whose comments will be displayed
+ * @returns the comments of a post
+ */
 export default function Comments({ post }: { post: Post }) {
   const firestore = useFirestore();
   const commentsCollection = collection(firestore, COMMENTS_COLLECTION);

@@ -19,7 +19,11 @@ import CommentForm from './CommentForm';
 import Comments from './Comments';
 import WorkoutItem from './WorkoutItem';
 import { colors } from '../constants/styles';
-
+/**
+ * This component displays a post as a Workout post
+ * @param post The specified post that is displayed as a Workout post
+ * @returns a workout post
+ */
 export default function WorkoutPost({ post }: { post: Post }) {
   // Redux-level state
   const dispatch = useAppDispatch();

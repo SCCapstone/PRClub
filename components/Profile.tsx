@@ -41,7 +41,14 @@ import Workouts from './Workouts';
 import { colors } from '../constants/styles';
 
 const Tab = createMaterialTopTabNavigator();
-
+/**
+ * This component displays a specified user's profile
+ * @param user The user whose profile is displayed
+ * @param isProfileScreen A boolean that returns
+ * true if a profile was accessed from the logged in user's profile and
+ * false if it was accessed from the search bar
+ * @returns a user profile
+ */
 export default function Profile({
   user,
   isProfileScreen,

@@ -14,7 +14,13 @@ import { selectCurrentUser } from '../state/userSlice/selectors';
 import BackButton from './BackButton';
 import CenteredView from './CenteredView';
 import Profile from './Profile';
-
+/**
+ * This component filters through all users based on a search query
+ * @param queryString The search query typed by the current user
+ * @param onUserPress A function that is executed when a result is clicked on
+ * @param filterBy A function that filters the results given a user
+ * @returns a list of users found
+ */
 function SearchResults(
   { queryString, onUserPress, filterBy = undefined }: {
     queryString: string,
@@ -109,7 +115,12 @@ function SearchResults(
 
   return <></>;
 }
-
+/**
+ * This component displays a search bar and search results
+ * @param onUserPress A function that executes when a result is clicked on
+ * @param filterBy A function that filters the results given a user
+ * @returns the search bar
+ */
 export default function Search({
   onUserPress = undefined,
   filterBy = undefined,

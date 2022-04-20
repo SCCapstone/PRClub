@@ -7,6 +7,7 @@ import userReducer from './userSlice';
 import { tryFetchCurrentUser } from './userSlice/thunks';
 import workoutsReducer from './workoutsSlice';
 
+// root Redux store is configured here
 export const store = configureStore({
   reducer: {
     workouts: workoutsReducer,
@@ -20,6 +21,7 @@ export const store = configureStore({
   }),
 });
 
+// sync with exercise database and fetch current user if they wre already logged in
 store.dispatch(fetchExerciseInfos());
 store.dispatch(syncExerciseInfos());
 store.dispatch(tryFetchCurrentUser());

@@ -16,7 +16,11 @@ import CenteredView from './CenteredView';
 import CommentForm from './CommentForm';
 import Comments from './Comments';
 import { colors } from '../constants/styles';
-
+/**
+ * This component displays a post as a PR post
+ * @param post The specified post that will be displayed as a PR post
+ * @returns a PR post
+ */
 export default function PRPost({ post }: {post: Post}) {
   // Redux-level state
   const dispatch = useAppDispatch();

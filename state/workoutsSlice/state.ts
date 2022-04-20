@@ -6,6 +6,7 @@ interface WorkoutsInitialState {
   removeWorkoutResult: ServiceCallResult | null;
 }
 
+// global state for workouts accessible by all components
 export const initialState: WorkoutsInitialState = {
   callingService: false,
   upsertWorkoutResult: null,

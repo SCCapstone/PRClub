@@ -22,7 +22,12 @@ import { selectCurrentUser } from '../state/userSlice/selectors';
 import { upsertWorkout } from '../state/workoutsSlice/thunks';
 import DeleteButton from './DeleteButton';
 import { colors } from '../constants/styles';
-
+/**
+ * This component provides all the functionality for creating a workout, using Formik
+ * @param workoutToEdit the workout that is being edited, if specified
+ * @param onSave function that executes when a new workout is saved
+ * @returns the create workout form
+ */
 export default function WorkoutForm({
   workoutToEdit = undefined,
   onSave = undefined,

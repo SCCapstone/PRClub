@@ -7,6 +7,10 @@ import Comment from '../models/firestore/Comment';
 import Post from '../models/firestore/Post';
 
 export default {
+  /**
+   * This function adds a post to firestore
+   * @param post the post that is added
+   */
   async upsertPost(post: Post): Promise<void> {
     // add or update post
     await setDoc(doc(firestore, POSTS_COLLECTION, post.id), post);
@@ -16,7 +20,10 @@ export default {
       postIds: arrayUnion(post.id),
     });
   },
-
+  /**
+   * This function removes a post from firestore
+   * @param post the post that is removed
+   */
   async removePost(post: Post): Promise<void> {
     // remove post
     await deleteDoc(doc(firestore, POSTS_COLLECTION, post.id));
@@ -46,12 +53,16 @@ export default {
       ),
     );
   },
-
+  /**
+   * This function adds a like to a specified post from the current user
+   * @param post the post that is liked
+   * @param userId the id of the user that liked the post
+   */
   async likePost(post: Post, userId: string): Promise<void> {
     const postDoc = await getDoc(doc(firestore, POSTS_COLLECTION, post.id));
     const postInDb: Post = postDoc.data() as Post;
 
-    // if user hasn't already liked post, add like to post and increment like counter
+    // if user hasn't already liked post, add like to post
     if (!postInDb.likedByIds.includes(userId)) {
       await updateDoc(doc(firestore, POSTS_COLLECTION, post.id), {
         likedByIds: arrayUnion(userId),
@@ -63,10 +74,14 @@ export default {
       likedPostIds: arrayUnion(post.id),
     });
   },
-
+  /**
+   * This function removes the current user's like from a post
+   * @param post the post that is unliked by the current user
+   * @param userId the id of the user that unliked the post
+   */
   async unlikePost(post: Post, userId: string): Promise<void> {
     if (post.likedByIds.length > 0) {
-      // add like to post and increment post's like counter
+      // remove like from post
       await updateDoc(doc(firestore, POSTS_COLLECTION, post.id), {
         likedByIds: arrayRemove(userId),
       });
@@ -77,7 +92,11 @@ export default {
       });
     }
   },
-
+  /**
+   * This function adds a comment to a post
+   * @param post the post that is being commented
+   * @param comment the comment that is added to the post
+   */
   async addComment(post: Post, comment: Comment): Promise<void> {
     // add comment to comments collection
     await setDoc(doc(firestore, COMMENTS_COLLECTION, comment.id), comment);
@@ -90,7 +109,11 @@ export default {
       commentIds: arrayUnion(comment.id),
     });
   },
-
+  /**
+   * This function removes a comment from a specified post
+   * @param post the referenced post
+   * @param comment the comment removed from the post
+   */
   async removeComment(post: Post, comment: Comment): Promise<void> {
     // remove comment from comments collection
     await deleteDoc(doc(firestore, COMMENTS_COLLECTION, comment.id));

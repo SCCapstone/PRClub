@@ -18,7 +18,14 @@ import { launchImagePicker } from '../utils/expo';
 import BackButton from './BackButton';
 import WorkoutForm from './WorkoutForm';
 import WorkoutItem from './WorkoutItem';
-
+/**
+ * This component displays all workouts for a specified user.
+ * If a workout is created by the currently logged in user, they have the option to edit/delete it.
+ * @param workouts An array of workouts
+ * @param workoutsStatus the status of the workouts array
+ * @param forCurrentUser returns true if the workouts refer to the currently logged in user
+ * @returns a list of workouts
+ */
 export default function Workouts({
   workouts,
   workoutsStatus,

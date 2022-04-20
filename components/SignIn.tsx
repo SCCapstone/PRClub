@@ -6,7 +6,10 @@ import {
 import tw from 'twrnc';
 import { useAppDispatch } from '../hooks/redux';
 import { userSignIn } from '../state/userSlice/thunks';
-
+/**
+ * This component displays the login screen and authenticates user
+ * @returns login screen
+ */
 export default function SignIn() {
   const [email, setEmail] = useState<string | null>(null);
   const [password, setPassword] = useState<string | null>(null);

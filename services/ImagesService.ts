@@ -8,6 +8,13 @@ import { firestore, storage } from '../firebase-lib/index';
 import User from '../models/firestore/User';
 
 export default {
+  /**
+   * This function uploads an image to cloud storage
+   * @param image uri of the image
+   * @param userId id of the user uploading the image
+   * @param postId id of the post, if image is uploaded with a post
+   * @returns url of the uploaded image
+   */
   async uploadImage(
     image: string, userId: string, postId?: string,
   ): Promise<string> {
@@ -21,7 +28,9 @@ export default {
 
     const uploadTask = await uploadBytes(storageRef, blob);
 
-    if (postId) {
+    // if uploading a profile image, need to update the hash of the profile
+    // image so a cached image isn't used for the profile picture
+    if (!postId) {
       await updateDoc(doc(firestore, USERS_COLLECTION, userId), {
         profileImageHash: Date.now(),
       });
@@ -29,7 +38,11 @@ export default {
 
     return getDownloadURL(uploadTask.ref);
   },
-
+  /**
+   * This function gets the url of a user's profile image
+   * @param userId id of the user
+   * @returns a string url
+   */
   async getProfileImageUrl(userId: string): Promise<string> {
     const userData = await getDoc(doc(firestore, USERS_COLLECTION, userId));
     const user = userData.data() as User;
