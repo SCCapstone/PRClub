@@ -18,7 +18,10 @@ function WgerLink() {
     </Text>
   );
 }
-
+/**
+ * This component displays the settings screen, which includes the log out function
+ * @returns log out button
+ */
 export default function Settings() {
   const dispatch = useAppDispatch();
 

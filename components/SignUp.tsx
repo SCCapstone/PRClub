@@ -4,7 +4,10 @@ import { Button, Text, TextInput } from 'react-native-paper';
 import tw from 'twrnc';
 import { useAppDispatch } from '../hooks/redux';
 import { userSignUp } from '../state/userSlice/thunks';
-
+/**
+ * This component displays the sign up screen and creates a new user
+ * @returns sign up screen
+ */
 export default function SignUp() {
   const [name, setName] = useState<string | null>(null);
   const [username, setUsername] = useState<string | null>(null);

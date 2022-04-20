@@ -10,7 +10,11 @@ import Post from '../models/firestore/Post';
 import { addComment } from '../state/postsSlice/thunks';
 import { selectCurrentUser } from '../state/userSlice/selectors';
 import { colors } from '../constants/styles';
-
+/**
+ * This component provides the functionality to add comments to a specified post
+ * @param post The post that the user will add comments to
+ * @returns a TextInput and Button
+ */
 export default function CommentForm({ post } : { post: Post }) {
   // Redux-level state
   const dispatch = useAppDispatch();

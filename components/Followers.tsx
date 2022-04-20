@@ -14,7 +14,13 @@ import {
 import { followUser, unfollowUser } from '../state/userSlice/thunks';
 import CenteredView from './CenteredView';
 import { colors } from '../constants/styles';
-
+/**
+ * This component displays the followers of a specified user.
+ * Each follower has a follow/unfollow button that the user can click on.
+ * @param user The user whose followers will be displayed
+ * @param onFollowerPress A function that takes in a User object and executes when clicked
+ * @returns all followers
+ */
 export default function Followers({
   user,
   onFollowerPress,

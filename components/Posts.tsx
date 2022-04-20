@@ -31,7 +31,15 @@ import { colors } from '../constants/styles';
 function isPR(thing: PR | Workout): thing is PR {
   return !!(thing as PR).volume;
 }
-
+/**
+ * This component displays all workout and PR posts.
+ * If in the profile screen, only the logged in user's posts will be displayed.
+ * If in the home screen, all posts made by the logged in user and their followers are displayed.
+ * @param posts An array of posts
+ * @param postsStatus The status of the posts array
+ * @param isHomeScreen Boolean that represents whether we are in the home screen or not.
+ * @returns posts
+ */
 export default function Posts({
   posts,
   postsStatus,

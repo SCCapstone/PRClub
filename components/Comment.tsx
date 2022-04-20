@@ -8,7 +8,13 @@ import CommentType from '../models/firestore/Comment';
 import Post from '../models/firestore/Post';
 import { removeComment } from '../state/postsSlice/thunks';
 import { selectCurrentUser } from '../state/userSlice/selectors';
-
+/**
+ * This component displays the data associated with a specified comment.
+ * If the comment is made by the user logged in, they have the option to delete it.
+ * @param post The post that the comment belongs to
+ * @param thisComment  The comment whose data will be displayed
+ * @returns a comment
+ */
 export default function Comment({ post, thisComment }: {post: Post, thisComment: CommentType}) {
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(selectCurrentUser);
