@@ -11,7 +11,10 @@ import { auth, firestore, storage } from '../firebase-lib';
 import User from '../models/firestore/User';
 import ImagesService from './ImagesService';
 
-// "private" functions
+/**
+ * This function checks if a username already exists in the db
+ * @param username the username
+ */
 async function checkUsernameIsAvailable(username: string): Promise<void> {
   const q = query(
     collection(firestore, USERS_COLLECTION),
@@ -25,6 +28,14 @@ async function checkUsernameIsAvailable(username: string): Promise<void> {
 
 // "public" functions
 export default {
+  /**
+   * This function creates a new user
+   * @param name name of the new user
+   * @param username username of the new user
+   * @param email email of the new user
+   * @param password password of the new user
+   * @returns user object
+   */
   async signUp(name: string, username: string, email: string, password: string): Promise<User> {
     await checkUsernameIsAvailable(username);
 
@@ -57,7 +68,12 @@ export default {
 
     return user;
   },
-
+  /**
+   * This function signs a user into their account
+   * @param email user's email
+   * @param password user's password
+   * @returns user object
+   */
   async signIn(email: string, password: string): Promise<User> {
     const userCred = await signInWithEmailAndPassword(auth, email, password);
 
@@ -80,11 +96,17 @@ export default {
 
     return documentSnapshot.data() as User;
   },
-
+  /**
+   * This function signs a user out of their account
+   */
   async logOut(): Promise<void> {
     signOut(auth);
   },
-
+  /**
+   * This function updates a user's name
+   * @param userId id of the current user
+   * @param newName the new name
+   */
   async updateName(userId: string, newName: string): Promise<void> {
     const docRef = doc(firestore, USERS_COLLECTION, userId);
 
@@ -97,7 +119,11 @@ export default {
       throw new Error('User does not exist!');
     }
   },
-
+  /**
+   * This function updates a user's username
+   * @param userId id of the current user
+   * @param newName the new username
+   */
   async updateUsername(userId: string, newUsername: string): Promise<void> {
     const docRef = doc(firestore, USERS_COLLECTION, userId);
 

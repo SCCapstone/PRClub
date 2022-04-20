@@ -26,7 +26,10 @@ const baseQueryParams = {
   offset: 0,
   license_author: 'wger.de',
 };
-
+/**
+ * This function returns the number of exercises
+ * @returns the number of exercises
+ */
 async function getExerciseInfosCount() {
   await process.nextTick(_.noop);
   const response = await client.get<WgerExerciseInfoResponse>(exerciseInfosEndpoint, {
