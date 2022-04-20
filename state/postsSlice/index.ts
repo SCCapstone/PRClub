@@ -3,7 +3,9 @@ import { initialState } from './state';
 import {
   addComment, addImageToPost, removeComment, removePost, upsertPost,
 } from './thunks';
-
+/**
+ * Creates reducer logic and actions for posts
+ */
 const postsSlice = createSlice({
   name: 'posts',
   initialState,

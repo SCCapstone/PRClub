@@ -5,7 +5,9 @@ import { EXERCISE_INFOS_KEY } from '../../constants/async-storage';
 import WgerService from '../../services/WgerService';
 import WgerExerciseInfo from '../../models/services/WgerExerciseInfo';
 import FallbackExerciseInfos from '../../assets/exerciseInfos.json';
-
+/**
+ * This thunk fetches and returns an array of exercises from Wger, a 3rd party API
+ */
 export const fetchExerciseInfos = createAsyncThunk<WgerExerciseInfo[], void>(
   'exerciseInfos/fetchExerciseInfos',
   async (): Promise<WgerExerciseInfo[]> => {
@@ -22,7 +24,9 @@ export const fetchExerciseInfos = createAsyncThunk<WgerExerciseInfo[], void>(
     return JSON.parse(exerciseInfosJson) as WgerExerciseInfo[];
   },
 );
-
+/**
+ * This thunk syncs the exercises from Wger and returns a new array of exercises
+ */
 export const syncExerciseInfos = createAsyncThunk<WgerExerciseInfo[], void>(
   'exerciseInfos/syncExerciseInfos',
   async (): Promise<WgerExerciseInfo[]> => {

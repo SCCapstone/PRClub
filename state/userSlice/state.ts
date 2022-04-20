@@ -2,7 +2,7 @@ import { SerializedError } from '@reduxjs/toolkit';
 import User from '../../models/firestore/User';
 import { ServiceCallResult } from '../../models/state/ServiceCallResult';
 import { SliceStatus } from '../../models/state/SliceStatus';
-
+// Define status of current user
 export type CurrentUserStatus = SliceStatus
 | 'signingIn'
 | 'signingUp'
@@ -10,7 +10,9 @@ export type CurrentUserStatus = SliceStatus
 | 'updatingProfile'
 | 'followingUser'
 | 'unfollowingUser';
-
+/**
+ * Define initial state of user
+ */
 interface CurrentUserInitialState {
   currentUser: User | null;
   status: CurrentUserStatus;

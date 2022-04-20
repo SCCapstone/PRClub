@@ -1,7 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { initialState } from './state';
 import { upsertPRs } from './thunks';
-
+/**
+ * Creates reducer logic and actions for PRs
+ */
 const prsSlice = createSlice({
   name: 'prs',
   initialState,

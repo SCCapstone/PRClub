@@ -1,5 +1,7 @@
 import { ServiceCallResult } from '../../models/state/ServiceCallResult';
-
+/**
+ * Define initial state of a post
+ */
 interface PostsInitialState {
   callingService: boolean,
   interactingWithPost: boolean,

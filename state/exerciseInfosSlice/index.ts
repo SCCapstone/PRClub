@@ -2,7 +2,9 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import WgerExerciseInfo from '../../models/services/WgerExerciseInfo';
 import { exerciseInfosAdapter, initialState } from './state';
 import { fetchExerciseInfos, syncExerciseInfos } from './thunks';
-
+/**
+ * Creates reducer logic and actions for exercises
+ */
 const exerciseInfosSlice = createSlice({
   name: 'exerciseInfos',
   initialState,
