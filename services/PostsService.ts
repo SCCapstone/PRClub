@@ -62,7 +62,7 @@ export default {
     const postDoc = await getDoc(doc(firestore, POSTS_COLLECTION, post.id));
     const postInDb: Post = postDoc.data() as Post;
 
-    // if user hasn't already liked post, add like to post and increment like counter
+    // if user hasn't already liked post, add like to post
     if (!postInDb.likedByIds.includes(userId)) {
       await updateDoc(doc(firestore, POSTS_COLLECTION, post.id), {
         likedByIds: arrayUnion(userId),
@@ -81,7 +81,7 @@ export default {
    */
   async unlikePost(post: Post, userId: string): Promise<void> {
     if (post.likedByIds.length > 0) {
-      // add like to post and increment post's like counter
+      // remove like from post
       await updateDoc(doc(firestore, POSTS_COLLECTION, post.id), {
         likedByIds: arrayRemove(userId),
       });

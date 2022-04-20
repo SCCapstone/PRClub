@@ -28,7 +28,9 @@ export default {
 
     const uploadTask = await uploadBytes(storageRef, blob);
 
-    if (postId) {
+    // if uploading a profile image, need to update the hash of the profile
+    // image so a cached image isn't used for the profile picture
+    if (!postId) {
       await updateDoc(doc(firestore, USERS_COLLECTION, userId), {
         profileImageHash: Date.now(),
       });
