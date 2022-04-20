@@ -1,5 +1,7 @@
 import { RootState } from '../store';
 
+// selectors can be called by components to access global state about workouts
+
 export function selectWorkoutsCallingService(state: RootState) {
   return state.workouts.callingService;
 }

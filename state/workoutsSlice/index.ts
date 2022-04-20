@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { initialState } from './state';
 import { removeWorkout, upsertWorkout } from './thunks';
 
+// reducer definition for workouts store
 const workoutsSlice = createSlice({
   name: 'workouts',
   initialState,
@@ -20,10 +21,12 @@ const workoutsSlice = createSlice({
         state.callingService = true;
       })
       .addCase(upsertWorkout.fulfilled, (state) => {
+        // notify frontend to send successful snackbar
         state.upsertWorkoutResult = { success: true };
         state.callingService = false;
       })
       .addCase(upsertWorkout.rejected, (state, action) => {
+        // notify frontend to send failure snackbar
         state.upsertWorkoutResult = { success: false, error: action.error };
         state.callingService = false;
       });
