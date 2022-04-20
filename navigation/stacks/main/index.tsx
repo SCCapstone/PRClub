@@ -11,7 +11,10 @@ import SearchScreen from './screens/SearchScreen';
 import SettingsScreen from './screens/SettingsScreen';
 
 const Tab = createBottomTabNavigator();
-
+/**
+ * This component displays the bottom navigation bar
+ * @returns bottom navigation bar
+ */
 export default function MainStack() {
   const currentUser = useAppSelector(selectCurrentUser);
 

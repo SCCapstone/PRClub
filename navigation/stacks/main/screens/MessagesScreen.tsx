@@ -24,7 +24,12 @@ import { selectCurrentUser } from '../../../../state/userSlice/selectors';
 import { sortByDate } from '../../../../utils/arrays';
 import { colors } from '../../../../constants/styles';
 import { toHumanReadableDate } from '../../../../utils/dates';
-
+/**
+ * This child component displays the name of the recipient and the last message sent in the chat
+ * @param chatId the id of the specified chat
+ * @param onChatPress function that executes when the specified chat is clicked
+ * @returns a preview of a specified chat
+ */
 function ChatPreview({
   chatId,
   onChatPress,
@@ -77,7 +82,12 @@ function ChatPreview({
     </>
   );
 }
-
+/**
+ * This child component displays a message as a received messaged (gray colored)
+ * @param message The text of a given message
+ * @param date the time the message was received
+ * @returns a message
+ */
 function MessageReceived({ message, date }: { message: string, date: string}) {
   const { gray1 } = colors;
   return (
@@ -92,7 +102,12 @@ function MessageReceived({ message, date }: { message: string, date: string}) {
     </View>
   );
 }
-
+/**
+ * This child component displays a message as a sent messaged (blue colored)
+ * @param message The text of a given message
+ * @param date the time the message was sent
+ * @returns a message
+ */
 function MessageSent({ message, date }: { message: string, date:string }) {
   const { lightBlue } = colors;
   return (
@@ -106,7 +121,11 @@ function MessageSent({ message, date }: { message: string, date:string }) {
     </View>
   );
 }
-
+/**
+ * This child component displays all messages of a specified chat
+ * @param chatId the id of the specified chat
+ * @returns messages
+ */
 function ChatView({ chatId }: { chatId: string }) {
   const currentUser = useAppSelector(selectCurrentUser);
 
@@ -210,7 +229,11 @@ function ChatView({ chatId }: { chatId: string }) {
 
   return <></>;
 }
-
+/**
+ * This component displays all chats associated with the currently logged in user
+ * Also provides functionality for searching for users & creating new chats with them
+ * @returns all chats and create new chat button
+ */
 export default function MessagesScreen() {
   const currentUser = useAppSelector(selectCurrentUser);
 
