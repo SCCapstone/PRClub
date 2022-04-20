@@ -1,5 +1,7 @@
 import { RootState } from '../store';
 
+// selectors can be called by components to access global state about posts
+
 export function selectUpsertPostResult(state: RootState) {
   return state.posts.upsertPostResult;
 }

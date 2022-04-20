@@ -1,5 +1,7 @@
 import { ServiceCallResult } from '../../models/state/ServiceCallResult';
-
+/**
+ * Define initial state of a workout
+ */
 interface WorkoutsInitialState {
   callingService: boolean;
   upsertWorkoutResult: ServiceCallResult | null;

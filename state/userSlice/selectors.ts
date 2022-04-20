@@ -3,6 +3,8 @@ import User from '../../models/firestore/User';
 import { RootState } from '../store';
 import { CurrentUserStatus } from './state';
 
+// selectors can be called by components to access global state about users
+
 export function selectCurrentUser(state: RootState): User | null {
   return state.user.currentUser;
 }

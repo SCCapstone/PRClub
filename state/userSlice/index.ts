@@ -6,7 +6,9 @@ import {
   unfollowUser, updateName, updateUsername, uploadProfileImage, userLogOut, userSignIn,
   userSignUp,
 } from './thunks';
-
+/**
+ * Creates reducer logic and actions for users
+ */
 const userSlice = createSlice({
   name: 'user',
   initialState,
