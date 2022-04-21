@@ -5,13 +5,6 @@
 layout: PRClub
 ---
 
-### Demo
-<iframe width="560" height="315" src="https://www.youtube.com/embed/wXDWn2_5Wmk" title="YouTube video player" frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-
- 
-
-<!-- ### Join the club
-![Home Page](prclub_home.png)
-
-### Check out your friend's workouts and share your own!
-![Work Out Page](prclub_workout.png) -->
+PR Club is a fitness-oriented social networking app centered around users being able to share their personal records (PRs) with each other. 
+  The goal of this project is to allow users to support each other as they meet their fitness goals,
+  all while being able to exchange each other's workouts and meet others with the same interests.

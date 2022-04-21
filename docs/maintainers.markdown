@@ -1,10 +1,8 @@
 ---
 layout: page
-title: About
-permalink: /about/
+title: Maintainers
+permalink: /maintainers/
 ---
-
-## Maintainers
 
 Dhruv Pai | [GitHub](https://github.com/thatpaiguy) | [email](mailto:dhruv.k.pai@gmail.com)
 Ethan Schimelman | [GitHub](https://github.com/eschim) | [email](mailto:eschimelman@gmail.com)
