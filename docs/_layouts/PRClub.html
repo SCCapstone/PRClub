@@ -7,18 +7,32 @@ layout: default
 
   {{ content }}
 
-    <h2 class="post-list-heading"></h2>
-    <ul class="post-list">
+  <table>
+    <tbody>
+      <tr>
+        <td>Join the club</td>
+        <td>Check out your friend's workouts and share your own!</td>
+      </tr>
+      <tr>
+        <td><img src="prclub_profile.png" alt="Home"/></td>
+        <td><img src="prclub_home.png" alt="Workout"/></td>
+      </tr>
+      <tr>
+        <td>Create your own workouts</td>
+        <td>You can also chat with your friends</td>
+      </tr>
+      <tr>
+        <td><img src="prclub_workout.png" alt="Home"/></td>
+        <td><img src="prclub_chat.png" alt="Chat"/></td>
+      </tr>
+    </tbody>
+  </table>
 
-      <li>
-
-        <h3>
-
-        </h3>
-        {%- if site.show_excerpts -%}
-          {{ post.excerpt }}
-        {%- endif -%}
-      </li>
-    </ul>
+  <style>
+      table {border-style: none;}
+      table td { width: 20em; border-style: none; text-align: center;}
+      table td:nth-child(3) { text-align: end; }
+      table img {display: block; margin-left: auto; margin-right: auto;}
+  </style>
 
 </div>

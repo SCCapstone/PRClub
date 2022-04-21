@@ -10,5 +10,8 @@ layout: PRClub
 
  
 
-### Join the club
-![Home Page](/docs/assets/images/prclub_home.png)
+<!-- ### Join the club
+![Home Page](prclub_home.png)
+
+### Check out your friend's workouts and share your own!
+![Work Out Page](prclub_workout.png) -->
